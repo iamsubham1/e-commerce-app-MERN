@@ -26,7 +26,14 @@ const userSchema = new mongoose.Schema({
     },
     address: {
         type: String,
-    }
+    },
+    orders: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Order'
+
+        }
+    ]
 })
 
 const User = mongoose.model('User', userSchema);
