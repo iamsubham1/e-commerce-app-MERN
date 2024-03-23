@@ -3,10 +3,13 @@ const app = express();
 const port = 4000;
 const connectToMongo = require('./db.js');
 
-
+const connectToRedis = require('./redis.js');
 
 const startServer = async () => {
     try {
+
+
+
         app.use(express.json());
 
 
@@ -22,7 +25,7 @@ const startServer = async () => {
         app.use('/api/product', require('./routes/product.js'));
 
 
-        // Start Express server
+
         app.listen(port, () => {
             console.log(`Server is running on port ${port}`);
         });
@@ -32,14 +35,12 @@ const startServer = async () => {
 };
 
 const initializeApp = async () => {
-    try {
-        await connectToMongo();
-        await startServer();
 
-    } catch (error) {
-        console.error('Error initializing app:', error);
-        process.exit(1);
-    }
+    await connectToMongo();
+
+    await startServer();
+
+
 };
 
 initializeApp();

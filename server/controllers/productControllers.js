@@ -1,8 +1,8 @@
 const Product = require('../models/ProductModel');
-const redis = require('redis');
 
 
 
+const redisClient = require('../redis')
 
 const addProduct = async (req, res) => {
     try {
@@ -58,27 +58,29 @@ const searchedProduct = async (req, res) => {
 const getAllProducts = async (req, res) => {
     try {
 
-        const client = await createClient({
-            password: 'eJRY5dzG5fGJBzXhud0UzuRgAzk1YTi8',
-            socket: {
-                host: 'redis-13999.c212.ap-south-1-1.ec2.cloud.redislabs.com',
-                port: 13999
-            }
-        });
+        const cache = await redisClient.get('products');
+        if (cache) {
+            console.log("hit");
+            res.status(200).send(cache);
+        }
+        else {
+            console.log("miss");
+            const products = await Product.find();
 
-        client.on('connect', () => {
-            console.log('Redis client connected');
-        });
+            // Store products in Redis
+            redisClient.set('products', JSON.stringify(products), (error, reply) => {
+                if (error) {
+                    console.error('Error storing products in Redis:', error);
+                } else {
+                    console.log('Products stored in Redis');
+                }
+            });
 
-        // Listen for the 'error' event
-        client.on('error', (err) => {
-            console.error('Redis client error:', err);
-        });
-        const products = await Product.find();
+            res.status(200).json(products);
+        }
 
-        res.status(200).json(products);
     } catch (error) {
-        console.error(error);
+        console.error('Error fetching products:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
