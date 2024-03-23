@@ -1,4 +1,6 @@
-const Product = require('../models/ProductModel')
+const Product = require('../models/ProductModel');
+const redis = require('redis');
+
 
 
 
@@ -55,7 +57,25 @@ const searchedProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
     try {
+
+        const client = await createClient({
+            password: 'eJRY5dzG5fGJBzXhud0UzuRgAzk1YTi8',
+            socket: {
+                host: 'redis-13999.c212.ap-south-1-1.ec2.cloud.redislabs.com',
+                port: 13999
+            }
+        });
+
+        client.on('connect', () => {
+            console.log('Redis client connected');
+        });
+
+        // Listen for the 'error' event
+        client.on('error', (err) => {
+            console.error('Redis client error:', err);
+        });
         const products = await Product.find();
+
         res.status(200).json(products);
     } catch (error) {
         console.error(error);
