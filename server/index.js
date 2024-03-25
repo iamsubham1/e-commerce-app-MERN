@@ -1,9 +1,11 @@
 const express = require('express');
 const app = express();
-const port = 4000;
+
 const connectToMongo = require('./db.js');
 
 const connectToRedis = require('./redis.js');
+require('dotenv').config()
+const port = process.env.PORT;
 
 const startServer = async () => {
     try {
@@ -11,8 +13,6 @@ const startServer = async () => {
 
 
         app.use(express.json());
-
-
 
         app.get("/health", (req, res) => {
             res.json("health is running");
@@ -23,6 +23,8 @@ const startServer = async () => {
 
         // Product routes
         app.use('/api/product', require('./routes/product.js'));
+
+        app.use('/api/order', require('./routes/order.js'))
 
 
 
@@ -35,6 +37,9 @@ const startServer = async () => {
 };
 
 const initializeApp = async () => {
+
+
+    await connectToRedis.connect();
 
     await connectToMongo();
 

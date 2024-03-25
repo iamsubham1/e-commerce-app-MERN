@@ -1,9 +1,9 @@
 const Product = require('../models/ProductModel');
 
-
-
 const redisClient = require('../redis')
 
+
+//add product to shop
 const addProduct = async (req, res) => {
     try {
         const { name, description, price, category, quantity, brand } = req.body;
@@ -18,8 +18,7 @@ const addProduct = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 }
-
-// Delete product by ID
+//delete product from shop
 const deleteProduct = async (req, res) => {
     try {
         const { productId } = req.params;
@@ -38,6 +37,7 @@ const deleteProduct = async (req, res) => {
     }
 };
 
+//search product by name or desciption
 const searchedProduct = async (req, res) => {
     try {
         const { keyword } = req.params;
@@ -55,13 +55,15 @@ const searchedProduct = async (req, res) => {
     }
 }
 
+//get all avalabile products
 const getAllProducts = async (req, res) => {
     try {
-
+        //check in redisCache
         const cache = await redisClient.get('products');
         if (cache) {
-            console.log("hit");
-            res.status(200).send(cache);
+            const products = JSON.parse(cache);
+            console.log("cache hit");
+            res.status(200).send(products);
         }
         else {
             console.log("miss");
@@ -85,6 +87,7 @@ const getAllProducts = async (req, res) => {
     }
 };
 
+//get products by brands
 const getProductsByBrand = async (req, res) => {
     try {
         const { brand } = req.params;
@@ -102,6 +105,7 @@ const getProductsByBrand = async (req, res) => {
     }
 }
 
+//get products by category
 const getProductsByCategory = async (req, res) => {
     try {
         const { category } = req.params;
@@ -118,7 +122,5 @@ const getProductsByCategory = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 }
-
-
 
 module.exports = { addProduct, deleteProduct, searchedProduct, getAllProducts, getProductsByBrand, getProductsByCategory };

@@ -1,11 +1,11 @@
 const User = require("../models/UserModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+require('dotenv').config();
+
 
 //signup controller 
 const signUpController = async (req, res) => {
-
-
     try {
         const email = req.body.email;
         let user = await User.findOne({ email: email });
@@ -40,9 +40,15 @@ const loginController = async (req, res) => {
         if (user) {
             const passwordCompare = bcrypt.compare(password, user.password);
             if (passwordCompare) {
-                const data = { user };
+                const data = {
 
-                const JWT = jwt.sign(data, "dA&*(&&*S76$##$%&Dj");
+                    name: user.name,
+                    orders: user.orders,
+                    _id: user._id,
+                    email: user.email,
+                }
+
+                const JWT = jwt.sign(data, process.env.signature);
                 return res.status(200).json({ success: true, JWT });
 
             } console.log("Incorrect credentials");

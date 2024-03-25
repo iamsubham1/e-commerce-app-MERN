@@ -8,9 +8,19 @@ const shoppingCartSchema = new mongoose.Schema({
         unique: true
     },
     items: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Product' // Reference to the Product model
+        productId: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Product'
+        },
+        quantity: {
+            type: Number,
+            default: 1
+        }
     }],
+    totalValue: {
+        type: Number,
+        required: true
+    },
     createdAt: {
         type: Date,
         default: Date.now
@@ -20,6 +30,7 @@ const shoppingCartSchema = new mongoose.Schema({
         default: Date.now
     }
 });
+
 
 // Create the ShoppingCart model
 const ShoppingCart = mongoose.model('ShoppingCart', shoppingCartSchema);
