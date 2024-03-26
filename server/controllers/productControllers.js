@@ -67,7 +67,7 @@ const getAllProducts = async (req, res) => {
         }
         else {
             console.log("miss");
-            const products = await Product.find();
+            const products = await Product.find().populate('reviews')
 
             // Store products in Redis
             redisClient.set('products', JSON.stringify(products), (error, reply) => {

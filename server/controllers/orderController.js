@@ -3,7 +3,10 @@ const User = require('../models/UserModel');
 const Order = require('../models/OrderModel');
 const Cart = require('../models/CartModel');
 const calculateTotalPrice = require('../utility/helperFunctions');
-const redisClient = require('../redis')
+
+
+
+
 const addtocart = async (req, res) => {
     try {
         const { productId, quantity } = req.body;
@@ -26,7 +29,7 @@ const addtocart = async (req, res) => {
         }
 
         // Calculate total value of the cart based on product prices
-        const totalValue = await calculateTotalValue(shoppingCart.items);
+        const totalValue = await calculateTotalPrice(shoppingCart.items);
 
         // Update the totalValue field of the cart
         shoppingCart.totalValue = totalValue;
@@ -39,8 +42,6 @@ const addtocart = async (req, res) => {
         res.status(500).json({ message: 'Internal server error' });
     }
 };
-
-
 
 const getCartDetails = async (req, res) => {
     try {
@@ -120,6 +121,7 @@ const clearCart = async (req, res) => {
     }
 }
 
+//redis added
 const createOrder = async (req, res) => {
 
     const generateFakeTransactionId = () => {
@@ -154,7 +156,7 @@ const createOrder = async (req, res) => {
         console.error('Error creating order:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
-};
+}
 
 
 

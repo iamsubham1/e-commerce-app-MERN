@@ -15,7 +15,7 @@ const startServer = async () => {
         app.use(express.json());
 
         app.get("/health", (req, res) => {
-            res.json("health is running");
+            res.json("health is running ok");
         });
 
         // Authentication routes
@@ -24,7 +24,9 @@ const startServer = async () => {
         // Product routes
         app.use('/api/product', require('./routes/product.js'));
 
-        app.use('/api/order', require('./routes/order.js'))
+        app.use('/api/order', require('./routes/order.js'));
+
+        app.use('/api/review', require('./routes/review.js'))
 
 
 
