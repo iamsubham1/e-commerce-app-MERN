@@ -21,8 +21,12 @@ const userSchema = new mongoose.Schema({
     },
 
     profilePic: {
-        type: String,
-
+        name: {
+            type: String
+        },
+        url: {
+            type: String
+        }
     },
     address: [{
         address: {

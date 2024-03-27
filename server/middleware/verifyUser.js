@@ -6,7 +6,7 @@ const verifyUser = (req, res, next) => {
     const token = req.header('JWT');
 
     try {
-        const userData = jwt.verify(token, process.env.signature);
+        const userData = jwt.verify(token, process.env.JWT_SECRET);
 
 
         req.user = userData;

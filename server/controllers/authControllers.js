@@ -48,7 +48,7 @@ const loginController = async (req, res) => {
                     email: user.email,
                 }
 
-                const JWT = jwt.sign(data, process.env.signature);
+                const JWT = jwt.sign(data, process.env.JWT_SECRET);
                 return res.status(200).json({ success: true, JWT });
 
             } console.log("Incorrect credentials");

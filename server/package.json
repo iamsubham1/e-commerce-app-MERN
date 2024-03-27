@@ -9,6 +9,8 @@
   "author": "subham-das",
   "license": "ISC",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.540.0",
+    "@aws-sdk/s3-request-presigner": "^3.540.0",
     "bcryptjs": "^2.4.3",
     "cloudinary": "^2.0.3",
     "dotenv": "^16.4.5",
@@ -17,6 +19,7 @@
     "mongodb": "^6.3.0",
     "mongoose": "^8.2.2",
     "multer": "^1.4.5-lts.1",
-    "redis": "^4.6.13"
+    "redis": "^4.6.13",
+    "sharp": "^0.33.3"
   }
 }
