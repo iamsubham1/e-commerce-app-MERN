@@ -25,6 +25,12 @@ const productSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    pictures: [{
+
+        type: String,
+    }
+
+    ],
     reviews: [
         {
             type: mongoose.Schema.Types.ObjectId,

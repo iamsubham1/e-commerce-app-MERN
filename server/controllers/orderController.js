@@ -132,26 +132,35 @@ const createOrder = async (req, res) => {
         const userId = req.user._id;
         const products = req.body.products;
 
-        // Calculate total price based on the products' prices and quantities in the cart
-        const totalPrice = await calculateTotalPrice(products);
+        const user = await User.findById(userId);
 
-        // Make payment and get transaction ID (Fake transaction ID for testing)
-        const transactionId = generateFakeTransactionId();
+        if (!user) {
+            return res.status(400).send("User not found");
+        } else {
+            // Calculate total price based on the products' prices and quantities in the cart
+            const totalPrice = await calculateTotalPrice(products);
 
-        // Create the order
-        const order = new Order({
-            userId,
-            products: products,
-            totalPrice,
-            transactionId,
-            status: 'pending' // Assuming order status is pending until processed
-        });
+            // Make payment and get transaction ID (Fake transaction ID for testing)
+            const transactionId = generateFakeTransactionId();
 
-        // Save the order to the database
-        await order.save();
+            // Create the order
+            const order = new Order({
+                userId,
+                products: products,
+                totalPrice,
+                transactionId,
+                status: 'pending'
+            });
 
-        // Return the created order
-        res.status(201).json({ message: 'Order created successfully', order });
+            // Save the order to the database
+            await order.save();
+            user.orders.push(order._id);
+            await user.save();
+
+            // Return the created order
+            res.status(201).json({ message: 'Order created successfully', order });
+        }
+
     } catch (error) {
         console.error('Error creating order:', error);
         res.status(500).json({ error: 'Internal server error' });

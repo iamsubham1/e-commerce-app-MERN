@@ -57,7 +57,7 @@ const deleteReview = async (req, res) => {
         if (product) {
             // Remove the review object from the reviews array
             product.reviews = product.reviews.filter(review => review._id.toString() !== reviewId);
-            // Save the updated product
+
             await product.save();
 
             console.log('Review deleted successfully');

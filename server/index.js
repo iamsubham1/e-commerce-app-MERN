@@ -26,8 +26,10 @@ const startServer = async () => {
 
         app.use('/api/order', require('./routes/order.js'));
 
-        app.use('/api/review', require('./routes/review.js'))
+        app.use('/api/review', require('./routes/review.js'));
 
+
+        app.use('/api/user', require('./routes/user.js'));
 
 
         app.listen(port, () => {
