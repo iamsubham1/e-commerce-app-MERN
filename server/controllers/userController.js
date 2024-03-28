@@ -29,18 +29,23 @@ const getUserDetails = async (req, res) => {
         if (user) {
             await user.populate('orders');
 
-            // console.log(user.profilePic.name);
+            //check profile name else aws will throw error
+            if (user.profilePic.name) {
+                const getObjectParams = {
+                    Bucket: bucketName,
+                    Key: user.profilePic.name
+                }
+                const command = new GetObjectCommand(getObjectParams);
+                const url = await getSignedUrl(s3, command);
 
-            const getObjectParams = {
-                Bucket: bucketName,
-                Key: user.profilePic.name
+                user.profilePic.url = url;
+
+
+                await user.save();
+
             }
-            const command = new GetObjectCommand(getObjectParams);
-            const url = await getSignedUrl(s3, command);
 
-            user.profilePic.url = url;
-            await user.save();
-
+            user.password = null;
 
             return res.status(200).send(user);
         }
@@ -51,6 +56,18 @@ const getUserDetails = async (req, res) => {
         return res.status(500).send("Internal server error");
     }
 };
+
+const editUserDetails = async (req, res) => {
+    try {
+        const userId = req.params._id
+        const updatedUser = await User.findByIdAndUpdate(userId, req.body, { new: true });
+
+
+        return res.status(200).send(updatedUser);
+    } catch (error) {
+
+    }
+}
 
 const addAddress = async (req, res) => {
     try {
@@ -199,4 +216,8 @@ const uploadImg = async (req, res) => {
     }
 };
 
-module.exports = { getUserDetails, addAddress, uploadImg, deleteAddress, updateAddress };
+const resetPassword = async (req, res) => {
+}
+
+
+module.exports = { getUserDetails, addAddress, uploadImg, deleteAddress, updateAddress, editUserDetails };

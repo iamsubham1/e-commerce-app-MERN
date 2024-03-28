@@ -1,11 +1,13 @@
 const express = require('express');
 const router = express.Router();
-const verifyUser = require('../middleware/verifyUser')
-const { getUserDetails, addAddress, uploadImg, deleteAddress, updateAddress } = require('../controllers/userController');
+const verifyUser = require('../middleware/verifyUser');
+const { getUserDetails, addAddress, uploadImg, deleteAddress, updateAddress, editUserDetails } = require('../controllers/userController');
 
 
 
 router.get('/details', verifyUser, getUserDetails);
+
+router.patch('/edituser', verifyUser, editUserDetails);
 
 router.post('/addaddress', verifyUser, addAddress);
 

@@ -20,7 +20,7 @@ const signUpController = async (req, res) => {
                 email: req.body.email,
                 phoneNumber: req.body.number,
             })
-            return res.status(200).json({ sucess: true, msg: "account created" });
+            return res.status(200).json({ sucess: true, msg: "account created", user });
         } console.log("Account exists Login instead");
         return res.status(400).json({ error: "account exists" });
 

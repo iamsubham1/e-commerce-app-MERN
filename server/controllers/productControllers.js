@@ -1,6 +1,6 @@
 const Product = require('../models/ProductModel');
 
-const redisClient = require('../redis')
+const redisClient = require('../redis');
 
 
 //add product to shop
@@ -67,7 +67,7 @@ const getAllProducts = async (req, res) => {
         }
         else {
             console.log("miss");
-            const products = await Product.find().populate('reviews')
+            const products = await Product.find().populate('reviews');
 
             // Store products in Redis
             redisClient.set('products', JSON.stringify(products), (error, reply) => {

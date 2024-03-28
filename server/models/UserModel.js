@@ -29,7 +29,6 @@ const userSchema = new mongoose.Schema({
         }
     },
     address: [{
-
         streetname: {
             type: String,
         }, landmark: {
