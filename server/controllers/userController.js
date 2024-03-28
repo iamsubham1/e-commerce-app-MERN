@@ -36,7 +36,7 @@ const getUserDetails = async (req, res) => {
                 Key: user.profilePic.name
             }
             const command = new GetObjectCommand(getObjectParams);
-            const url = await getSignedUrl(s3, command, { expiresIn: 3600 });
+            const url = await getSignedUrl(s3, command);
 
             user.profilePic.url = url;
             await user.save();
@@ -56,21 +56,110 @@ const addAddress = async (req, res) => {
     try {
         const userId = req.user._id;
 
-        const { address, type } = req.body;
+        const { streetname,
+            landmark,
+            city,
+            state,
+            pincode,
+            type } = req.body;
+
         const user = await User.findById(userId);
-        if (user) {
-            console.log(user);
-            user.address.push({ address, type });
-            await user.save();
-            return res.status(200).send(user);
+
+        if (!user) {
+            return res.status(400).send("No user found");
         }
 
-        return res.status(400).send("No user found");
+        // Check if the type already exists in the user's address array
+        const typeExists = user.address.some(address => address.type === type);
+        if (typeExists) {
+            return res.status(400).send("Address type already exists");
+        }
+
+        user.address.push({
+            streetname,
+            landmark,
+            city,
+            state,
+            pincode,
+            type
+        });
+
+        await user.save();
+        user.password = null;
+        return res.status(200).send(user);
     } catch (error) {
         console.log(error);
         return res.status(500).send("Internal server error");
     }
 };
+
+//can be optimized 
+const updateAddress = async (req, res) => {
+    try {
+
+        const userid = req.user._id;
+
+        const addressId = req.params.id;
+
+        const { streetname,
+            landmark,
+            city,
+            state,
+            pincode,
+            type } = req.body;
+
+        const user = await User.findById(userid);
+        if (!user) {
+            return res.status(400).json({ message: "user not found" });
+
+        }
+        // Find the index of the address in the user's addresses array
+        const addressIndex = user.address.findIndex(addres => addres._id.toString() === addressId);
+
+        if (addressIndex === -1) {
+            return res.status(404).json({ message: "Address not found" });
+        }
+
+
+        const addressToUpdate = user.address[addressIndex];
+        if (streetname) addressToUpdate.streetname = streetname;
+        if (landmark) addressToUpdate.landmark = landmark;
+        if (city) addressToUpdate.city = city;
+        if (state) addressToUpdate.state = state;
+        if (pincode) addressToUpdate.pincode = pincode;
+        if (type) addressToUpdate.type = type;
+        // Save the updated user object
+        await user.save();
+
+        return res.status(200).json({ message: "Address updated successfully", user });
+
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal Server Error", error });
+    }
+}
+
+const deleteAddress = async (req, res) => {
+    try {
+        const userId = req.user._id;
+        const addressId = req.params.id;
+        const user = await User.findByIdAndUpdate(
+            userId,
+            //pull address where _id = addressid
+            { $pull: { address: { _id: addressId } } },
+            { new: true }
+        );
+
+        if (!user) {
+            return res.status(404).json({ message: "User not found" });
+        }
+        user.password = null;
+        res.status(200).json({ message: "Address deleted successfully", user });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal Server Error" });
+    }
+}
 
 const uploadImg = async (req, res) => {
     try {
@@ -105,8 +194,9 @@ const uploadImg = async (req, res) => {
             }
         });
     } catch (error) {
-        res.status(500).send({ error: "An error occurred", details: error });
+        console.error(error);
+        res.status(500).json({ message: "Internal Server Error", error });
     }
 };
 
-module.exports = { getUserDetails, addAddress, uploadImg };
+module.exports = { getUserDetails, addAddress, uploadImg, deleteAddress, updateAddress };
