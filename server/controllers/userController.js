@@ -216,8 +216,6 @@ const uploadImg = async (req, res) => {
     }
 };
 
-const resetPassword = async (req, res) => {
-}
 
 
 module.exports = { getUserDetails, addAddress, uploadImg, deleteAddress, updateAddress, editUserDetails };

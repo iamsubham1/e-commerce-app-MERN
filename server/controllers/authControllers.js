@@ -1,8 +1,23 @@
 const User = require("../models/UserModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
+const { generateUniqueOTP } = require("../utility/helperFunctions");
+
 require('dotenv').config();
 
+var otp;
+const transporter = nodemailer.createTransport({
+    service: "gmail",
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+
+        user: process.env.GOOGLE_EMAIL,
+        pass: process.env.GOOGLE_PASSWORD
+    },
+});
 
 //signup controller 
 const signUpController = async (req, res) => {
@@ -64,5 +79,101 @@ const loginController = async (req, res) => {
 
 };
 
+const sendOtp = async (req, res) => {
+    try {
+        const user = await User.findOne({ email: req.body.email });
+        if (user) {
+            otp = generateUniqueOTP();
 
-module.exports = { signUpController, loginController };
+            const mailOptions = {
+                from: `Gadgets Grab <${process.env.GOOGLE_EMAIL}>`,
+                to: req.body.email,
+                subject: "Password Reset OTP",
+                html: `
+                <div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
+                <div style="margin:50px auto;width:70%;padding:20px 0">
+                  <div style="border-bottom:1px solid #eee">
+                    <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">Gadgets Grab</a>
+                  </div>
+                  <p style="font-size:1.1em">Hi,</p>
+                  <p>Thank you for choosing Gadgets Grab. Use the following OTP to Reset your password OTP is valid for 2 minutes</p>
+                  <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${otp}</h2>
+                  <p style="font-size:0.9em;">Regards,<br />Gadgets Grab</p>
+                  <hr style="border:none;border-top:1px solid #eee" />
+                  <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
+                    <p>Gadgets Grab Inc</p>
+                    <p>Berhampur</p>
+                    <p>Odisha</p>
+                  </div>
+                </div>
+              </div>`
+            };
+
+            transporter.sendMail(mailOptions, (error, info) => {
+                if (error) {
+                    console.log("Error:", error);
+                    res.status(500).json({ error: "An error occurred while sending the email" });
+
+
+                } else {
+                    console.log("Email sent:", info.response);
+
+                    setTimeout(() => {
+                        otp = null;
+                    }, 120000);
+
+                    res.status(200).json("OTP SENT Successfully");
+
+                }
+            });
+        }
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ success: false, error: "Internal server error" });
+
+
+    }
+}
+
+const verifyOtp = async (req, res) => {
+    try {
+        const receivedOtp = req.body.otp;
+        console.log(receivedOtp, otp);
+        if (receivedOtp == otp) {
+
+            res.status(200).json("yes it works");
+        } else {
+            res.status(400).json("entered otp is expired");
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ success: false, error: "Internal server error" });
+    }
+}
+
+const resetPassword = async (req, res) => {
+    try {
+
+        const { email, password } = req.body;
+        const salt = await bcrypt.genSalt(10);
+
+        const hashedPassword = await bcrypt.hash(password, salt);
+
+        const updatePassword = await User.updateOne({ email }, { password: hashedPassword });
+        if (updatePassword) {
+            res.status(200).json({ message: "Password changed successfully" });
+        } else {
+            res.status(404).json({ message: "Password not changed" });
+        }
+
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ success: false, error: "Internal server error" });
+    }
+
+
+}
+
+module.exports = { signUpController, loginController, sendOtp, verifyOtp, resetPassword };

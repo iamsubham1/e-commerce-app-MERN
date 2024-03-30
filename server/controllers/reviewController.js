@@ -3,7 +3,7 @@ const User = require('../models/UserModel');
 const Product = require('../models/ProductModel');
 const redisClient = require('../redis');
 
-
+//added redis
 const addReview = async (req, res) => {
     try {
         const { productId, rating, comment } = req.body;
@@ -91,7 +91,24 @@ const deleteReview = async (req, res) => {
     }
 };
 
+const updateReview = async (req, res) => {
+
+    try {
+
+        const reviewId = req.params.id;
+
+        const { rating, comment } = req.body;
+
+        const review = await Review.findByIdAndUpdate(reviewId, { rating, comment }, { new: true });
+        if (!review) {
+            return res.status(400).json({ message: "review not found" });
+        }
+        res.status(200).json({ message: "Review updated successfully", review });
+    } catch (error) {
+        console.error("Error updating review:", error);
+        res.status(500).json({ message: "Internal server error" });
+    }
+};
 
 
-
-module.exports = { addReview, deleteReview };
+module.exports = { addReview, deleteReview, updateReview };

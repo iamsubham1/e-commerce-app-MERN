@@ -18,6 +18,7 @@ const addProduct = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 }
+
 //delete product from shop
 const deleteProduct = async (req, res) => {
     try {

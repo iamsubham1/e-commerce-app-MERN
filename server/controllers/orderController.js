@@ -121,7 +121,6 @@ const clearCart = async (req, res) => {
     }
 }
 
-//redis added
 const createOrder = async (req, res) => {
 
     const generateFakeTransactionId = () => {
@@ -167,7 +166,9 @@ const createOrder = async (req, res) => {
     }
 }
 
+const paymentHandler = async (req, res) => {
 
+}
 
 module.exports = { addtocart, getCartDetails, updateCart, clearCart, createOrder }
 
