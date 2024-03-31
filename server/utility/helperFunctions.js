@@ -35,12 +35,10 @@ const calculateTotalPrice = async (items) => {
             }
         };
 
-        // Iterate through each item in the cart
         for (const item of items) {
             // Get the product price using getProductPrice function
             const productPrice = await getProductPrice(item.productId);
 
-            // If the product price is available, calculate the total value
             if (productPrice !== null) {
                 totalValue += productPrice * item.quantity;
             }

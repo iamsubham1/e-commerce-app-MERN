@@ -9,7 +9,7 @@ const calculateTotalPrice = require('../utility/helperFunctions');
 
 const addtocart = async (req, res) => {
     try {
-        const { productId, quantity } = req.body;
+        const { productId, quantity } = req.body; // if no quantity given then 1 
         const userId = req.user._id;
 
         let shoppingCart = await Cart.findOne({ userId });

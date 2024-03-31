@@ -67,7 +67,7 @@ const editUserDetails = async (req, res) => {
     } catch (error) {
 
     }
-}
+};
 
 const addAddress = async (req, res) => {
     try {
@@ -154,7 +154,7 @@ const updateAddress = async (req, res) => {
         console.error(error);
         res.status(500).json({ message: "Internal Server Error", error });
     }
-}
+};
 
 const deleteAddress = async (req, res) => {
     try {
@@ -176,7 +176,7 @@ const deleteAddress = async (req, res) => {
         console.error(error);
         res.status(500).json({ message: "Internal Server Error" });
     }
-}
+};
 
 const uploadImg = async (req, res) => {
     try {
