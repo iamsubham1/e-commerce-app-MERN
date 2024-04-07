@@ -36,7 +36,7 @@ const calculateTotalPrice = async (items) => {
         };
 
         for (const item of items) {
-            // Get the product price using getProductPrice function
+
             const productPrice = await getProductPrice(item.productId);
 
             if (productPrice !== null) {

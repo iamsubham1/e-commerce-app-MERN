@@ -2,7 +2,9 @@ const Product = require('../models/ProductModel');
 const User = require('../models/UserModel');
 const Order = require('../models/OrderModel');
 const Cart = require('../models/CartModel');
-const calculateTotalPrice = require('../utility/helperFunctions');
+const { calculateTotalPrice } = require('../utility/helperFunctions');
+
+
 
 
 
@@ -121,6 +123,8 @@ const clearCart = async (req, res) => {
     }
 }
 
+
+//update product quantity in redis too
 const createOrder = async (req, res) => {
 
     const generateFakeTransactionId = () => {
@@ -136,10 +140,10 @@ const createOrder = async (req, res) => {
         if (!user) {
             return res.status(400).send("User not found");
         } else {
-            // Calculate total price based on the products' prices and quantities in the cart
+            // Calculate total price based on the product prices and quantities in the cart
             const totalPrice = await calculateTotalPrice(products);
 
-            // Make payment and get transaction ID (Fake transaction ID for testing)
+            // Make payment and get transaction ID
             const transactionId = generateFakeTransactionId();
 
             // Create the order
@@ -156,7 +160,18 @@ const createOrder = async (req, res) => {
             user.orders.push(order._id);
             await user.save();
 
-            // Return the created order
+            //reduce the quantity of products from the inventory according to the order quantity
+            for (let i = 0; i < products.length; i++) {
+                const { productId, quantity } = products[i];
+                const product = await Product.findById(productId, '_id quantity');
+                if (product) {
+                    product.quantity -= quantity;
+                    console.log(product.quantity);
+                    await product.save();
+                }
+            }
+
+
             res.status(201).json({ message: 'Order created successfully', order });
         }
 

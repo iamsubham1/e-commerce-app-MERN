@@ -9,9 +9,6 @@ const port = process.env.PORT;
 
 const startServer = async () => {
     try {
-
-
-
         app.use(express.json());
 
         app.get("/health", (req, res) => {
@@ -28,9 +25,7 @@ const startServer = async () => {
 
         app.use('/api/review', require('./routes/review.js'));
 
-
         app.use('/api/user', require('./routes/user.js'));
-
 
         app.listen(port, () => {
             console.log(`Server is running on port ${port}`);
