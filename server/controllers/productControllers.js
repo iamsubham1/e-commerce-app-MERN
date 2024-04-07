@@ -2,6 +2,7 @@ const Product = require('../models/ProductModel');
 
 const redisClient = require('../redis');
 
+// need to add redis in add product and delete products
 
 //add product to shop
 const addProduct = async (req, res) => {
@@ -56,7 +57,7 @@ const searchedProduct = async (req, res) => {
     }
 }
 
-//get all avalabile products
+//get all avalabile products(redis added)
 const getAllProducts = async (req, res) => {
     try {
         //check in redisCache

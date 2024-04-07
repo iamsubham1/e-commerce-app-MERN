@@ -3,7 +3,7 @@ const User = require('../models/UserModel');
 const Order = require('../models/OrderModel');
 const Cart = require('../models/CartModel');
 const { calculateTotalPrice } = require('../utility/helperFunctions');
-
+const redisClient = require('../redis');
 
 
 
@@ -123,10 +123,8 @@ const clearCart = async (req, res) => {
     }
 }
 
-
-//update product quantity in redis too
+// added redis to update products stock
 const createOrder = async (req, res) => {
-
     const generateFakeTransactionId = () => {
         return 'fake_txn_' + Math.random().toString(36);
     };
@@ -160,26 +158,50 @@ const createOrder = async (req, res) => {
             user.orders.push(order._id);
             await user.save();
 
-            //reduce the quantity of products from the inventory according to the order quantity
+            // Reduce the quantity of products from the inventory according to the order quantity
+
             for (let i = 0; i < products.length; i++) {
                 const { productId, quantity } = products[i];
                 const product = await Product.findById(productId, '_id quantity');
+
                 if (product) {
                     product.quantity -= quantity;
-                    console.log(product.quantity);
+
+                    // Save updated product quantity to MongoDB
                     await product.save();
+                    console.log(product);
+
+                    // Update Redis cache for product quantity
+                    try {
+                        const reply = await redisClient.get('products');
+                        const productsArray = JSON.parse(reply);
+                        console.log(productsArray);
+
+                        const updatedProducts = productsArray.map(product => {
+                            if (product._id === productId) {
+                                product.quantity -= quantity;
+                                console.log(`Updated quantity for product ${productId}: ${product.quantity}`);
+                            }
+                            return product;
+                        });
+
+                        await redisClient.set('products', JSON.stringify(updatedProducts));
+                        console.log('Products array updated in Redis');
+                    } catch (error) {
+                        console.error('Error updating products array in Redis:', error);
+                    }
+
+
                 }
+                return res.status(201).json({ message: 'Order created successfully', order });
             }
-
-
-            res.status(201).json({ message: 'Order created successfully', order });
         }
-
     } catch (error) {
         console.error('Error creating order:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
-}
+};
+
 
 const paymentHandler = async (req, res) => {
 
