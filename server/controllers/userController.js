@@ -145,6 +145,7 @@ const updateAddress = async (req, res) => {
         if (state) addressToUpdate.state = state;
         if (pincode) addressToUpdate.pincode = pincode;
         if (type) addressToUpdate.type = type;
+
         // Save the updated user object
         await user.save();
 

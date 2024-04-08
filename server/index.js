@@ -6,6 +6,15 @@ const connectToMongo = require('./db.js');
 const connectToRedis = require('./redis.js');
 require('dotenv').config()
 const port = process.env.PORT;
+const cors = require('cors');
+
+const corsOptions = {
+    origin: process.env.ORIGIN,
+    methods: "GET,POST,PUT,PATCH,DELETE,HEAD",
+    credentials: true
+};
+
+app.use(cors(corsOptions));
 
 const startServer = async () => {
     try {

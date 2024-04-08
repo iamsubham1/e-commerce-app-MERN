@@ -8,8 +8,8 @@ router.delete('/deleteproduct/:productId', deleteProduct);
 
 router.get('/allproducts', verifyUser, getAllProducts);
 
-router.post('/search/:keyword', searchedProduct);
-router.get('/brand/:brand', getProductsByBrand);
-router.get('/category/:category', getProductsByCategory);
+router.post('/search/:keyword', verifyUser, searchedProduct);
+router.get('/brand/:brand', verifyUser, getProductsByBrand);
+router.get('/category/:category', verifyUser, getProductsByCategory);
 
 module.exports = router;
