@@ -1,65 +1,85 @@
 import React, { useState } from 'react';
-
-
+import { FaRegEye } from "react-icons/fa";
+import { RiEyeCloseLine } from "react-icons/ri";
+import { FcGoogle } from "react-icons/fc";
 
 const Login = () => {
-    const [isSignUp, setIsSignUp] = useState(true);
+    const [formData, setFormData] = useState({
+        email: '',
+        password: '',
+        showPassword: false
+    });
 
-    const handleSignUpClick = () => {
-        setIsSignUp(true);
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prevState => ({
+            ...prevState,
+            [name]: value
+        }));
     };
 
-    const handleSignInClick = () => {
-        setIsSignUp(false);
+    const togglePasswordVisibility = () => {
+        setFormData(prevState => ({
+            ...prevState,
+            showPassword: !prevState.showPassword
+        }));
     };
+
+    const handleGoogleLogin = () => {
+        // Implement Google login logic
+        console.log("Login with Google");
+    };
+
     return (
-        <div className={`container ${isSignUp ? 'right-panel-active' : ''}`}>
-            <div className="form-container sign-up-container">
-                <form action="#">
-                    <h1>Create Account</h1>
-                    <div className="social-container">
-                        <a href="#" className="social"><i className="fab fa-facebook-f"></i></a>
-                        <a href="#" className="social"><i className="fab fa-google-plus-g"></i></a>
-                        <a href="#" className="social"><i className="fab fa-linkedin-in"></i></a>
+        <div className="flex justify-center items-center h-screen">
+            <div className="bg-white p-8 rounded shadow-lg w-full max-w-md">
+                <h2 className="text-2xl font-bold mb-4">Login</h2>
+                <form>
+                    <div className="mb-4">
+                        <input
+                            type="email"
+                            name="email"
+                            placeholder="Email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+                            required
+                        />
                     </div>
-                    <span>or use your email for registration</span>
-                    <input type="text" placeholder="Name" />
-                    <input type="email" placeholder="Email" />
-                    <input type="password" placeholder="Password" />
-                    <button>Sign Up</button>
+                    <div className="mb-4 relative">
+                        <input
+                            type={formData.showPassword ? "text" : "password"}
+                            name="password"
+                            placeholder="Password"
+                            value={formData.password}
+                            onChange={handleChange}
+                            className="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-blue-500"
+                            required
+                        />
+                        {formData.showPassword ? (
+                            <FaRegEye
+                                className="absolute top-0 right-0 mt-3 mr-4 cursor-pointer text-gray-500"
+                                onClick={togglePasswordVisibility}
+                            />
+                        ) : (
+                            <RiEyeCloseLine
+                                className="absolute top-0 right-0 mt-3 mr-4 cursor-pointer text-gray-500"
+                                onClick={togglePasswordVisibility}
+                            />
+                        )}
+                    </div>
+                    <button type="submit" className="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600">Login</button>
                 </form>
-            </div>
-            <div className="form-container sign-in-container">
-                <form action="#">
-                    <h1>Sign in</h1>
-                    <div className="social-container">
-                        <a href="#" className="social"><i className="fab fa-facebook-f"></i></a>
-                        <a href="#" className="social"><i className="fab fa-google-plus-g"></i></a>
-                        <a href="#" className="social"><i className="fab fa-linkedin-in"></i></a>
-                    </div>
-                    <span>or use your account</span>
-                    <input type="email" placeholder="Email" />
-                    <input type="password" placeholder="Password" />
-                    <a href="#">Forgot your password?</a>
-                    <button>Sign In</button>
-                </form>
-            </div>
-            <div className="overlay-container">
-                <div className="overlay">
-                    <div className="overlay-panel overlay-left">
-                        <h1>Welcome Back!</h1>
-                        <p>To keep connected with us please login with your personal info</p>
-                        <button className="ghost" onClick={handleSignInClick}>Sign In</button>
-                    </div>
-                    <div className="overlay-panel overlay-right">
-                        <h1>Hello, Friend!</h1>
-                        <p>Enter your personal details and start journey with us</p>
-                        <button className="ghost" onClick={handleSignUpClick}>Sign Up</button>
-                    </div>
+                <div className="mt-4 text-center">
+                    <button onClick={handleGoogleLogin} className="bg-[#000000] text-white py-2 px-4 rounded-md hover:bg-red-600 focus:outline-none focus:bg-red-600 flex items-center justify-center">
+                        <FcGoogle className="mr-2" />
+                        Login with Google
+                    </button>
                 </div>
+                <p className="mt-4 text-center">Don't have an account? <a href="/signup" className="text-blue-500 hover:underline">Sign Up</a></p>
             </div>
         </div>
-    )
+    );
 }
 
-export default Login
+export default Login;
