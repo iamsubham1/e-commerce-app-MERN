@@ -2,6 +2,7 @@ import React from 'react'
 import Navbar from './components/Navbar'
 import { BrowserRouter as Router, Route, Routes, } from 'react-router-dom';
 import Login from './pages/Login';
+import HomePage from './pages/HomePage';
 
 
 const App = () => {
@@ -10,6 +11,8 @@ const App = () => {
 
       <Navbar />
       <Routes>
+        <Route path="/" element={<HomePage />} />
+
 
         <Route path="/login" element={<Login />} />
 

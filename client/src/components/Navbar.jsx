@@ -32,9 +32,10 @@ const Navbar = () => {
         } catch (error) {
             console.error('Error fetching all chats:', error.message);
         }
-    }
+    };
 
     return (
+
         <div className='navbar w-full h-[8vh] mt-4 flex justify-end navbar-background border-t-2 border-b-2 border-black'>
             <div className='first-section flex items-center gap-8 w-[80%] ml-1 '>
                 <img src={logo} className='max-w-[70px]' alt='Logo' />
@@ -46,7 +47,7 @@ const Navbar = () => {
             <div className='w-[45%] flex justify-end mr-10 items-center gap-12'>
                 <ul className='flex justify-around items-center w-[35%]'>
                     <li>
-                        <NavLink to='/' activeClassName="active" className='flex items-center  h-full w-10'>
+                        <NavLink to='/' activeClassName="active" className='flex items-center h-full w-10'>
                             <img src='https://res.cloudinary.com/dmb0ooxo5/image/upload/v1707672594/vcqztf5l0iuwxay72twr.jpg' className='' alt='Profile' />
 
                         </NavLink>
