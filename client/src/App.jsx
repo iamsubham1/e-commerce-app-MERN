@@ -1,24 +1,23 @@
-import React from 'react'
-import Navbar from './components/Navbar'
-import { BrowserRouter as Router, Route, Routes, } from 'react-router-dom';
+import React from 'react';
+import { Provider } from 'react-redux';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import store from './store/store'; // Import your Redux store
+import Navbar from './components/Navbar';
 import Login from './pages/Login';
 import HomePage from './pages/HomePage';
 
-
 const App = () => {
   return (
-    <Router>
+    <Provider store={store}>
+      <Router>
+        <Navbar />
+        <Routes>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/login" element={<Login />} />
+        </Routes>
+      </Router>
+    </Provider>
+  );
+};
 
-      <Navbar />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-
-
-        <Route path="/login" element={<Login />} />
-
-      </Routes>
-    </Router>
-  )
-}
-
-export default App
+export default App;
