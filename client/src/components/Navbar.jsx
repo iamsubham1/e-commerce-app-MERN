@@ -47,7 +47,7 @@ const Navbar = () => {
             <div className='w-[45%] flex justify-end mr-10 items-center gap-12'>
                 <ul className='flex justify-around items-center w-[35%]'>
                     <li>
-                        <NavLink to='/' activeClassName="active" className='flex items-center h-full w-10'>
+                        <NavLink to='/' activeclassname="active" className='flex items-center h-full w-10'>
                             <img src='https://res.cloudinary.com/dmb0ooxo5/image/upload/v1707672594/vcqztf5l0iuwxay72twr.jpg' className='' alt='Profile' />
 
                         </NavLink>
