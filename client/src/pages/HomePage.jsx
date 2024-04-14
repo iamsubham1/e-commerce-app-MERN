@@ -1,12 +1,13 @@
 // HomePage.js
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProducts, addToCart } from '../store/cartslice';
+import { fetchProducts } from '../store/productslice';
 
 const HomePage = () => {
     const dispatch = useDispatch();
-    const products = useSelector(state => state.cart.items);
-    const loading = useSelector(state => state.cart.loading);
+    const products = useSelector(state => state.products.items);
+    console.log(products);
+    const loading = useSelector(state => state.products.loading);
 
     useEffect(() => {
         dispatch(fetchProducts());
