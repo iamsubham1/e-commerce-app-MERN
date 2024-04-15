@@ -22,6 +22,7 @@ export const productSlice = createSlice({
     },
 });
 
+
 export const { setProducts, setProductsLoading, setProductsError } = productSlice.actions;
 
 export const fetchProducts = () => async dispatch => {
