@@ -30,6 +30,7 @@ const Login = () => {
         );
     };
     const handleLogin = async (e) => {
+        console.log("triggered")
         e.preventDefault();
         const response = await login(formData);
 
@@ -38,8 +39,9 @@ const Login = () => {
 
         } else notify("Incorrect Credentials");
     }
-    const handleGoogleLogin = () => {
+    const handleGoogleLogin = (e) => {
         // Implement Google login logic
+        e.preventDefault();
         console.log("Login with Google");
     };
     const notify = (message) => toast(`${message}`);
@@ -61,7 +63,7 @@ const Login = () => {
                 />
                 <div className="bg-white p-8 rounded shadow-lg w-full max-w-md">
                     <h2 className="text-2xl font-bold mb-4">Login</h2>
-                    <form onSubmit={handleLogin}>
+                    <form>
                         <div className="mb-4">
                             <input
                                 type="email"
@@ -102,7 +104,7 @@ const Login = () => {
 
                                 Login with &nbsp;<FcGoogle className="mr-2" />
                             </button>
-                            <button type="submit" className="w-[50%] bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600">Login</button>
+                            <button type="submit" className="w-[50%] bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600" onClick={handleLogin}>Login</button>
 
                         </div>
                     </form>

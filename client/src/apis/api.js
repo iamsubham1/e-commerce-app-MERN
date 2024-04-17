@@ -1,4 +1,6 @@
 import { getCookie } from "../utility/getCookie";
+import Cookies from 'universal-cookie';
+
 const baseUrl = 'http://localhost:8080/api/'
 const cookieOptions = { httpOnly: false, secure: true, sameSite: 'none', maxAge: 60 * 60 * 24 };
 

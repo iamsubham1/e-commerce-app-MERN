@@ -3,6 +3,7 @@ import { NavLink, Link } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import { MdShoppingCart } from "react-icons/md";
 import { useSelector } from 'react-redux';
+import { getCookie } from '../utility/getCookie';
 
 
 const Navbar = () => {
@@ -19,7 +20,7 @@ const Navbar = () => {
             const response = await fetch(`http://localhost:8080/api/product/search/${newKeyword}`, {
                 method: 'POST',
                 headers: {
-                    JWT: token
+                    JWT: getCookie('JWT')
                 }
             });
 
