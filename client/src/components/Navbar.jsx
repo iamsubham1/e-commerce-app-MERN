@@ -65,7 +65,7 @@ const Navbar = () => {
 
                     <Link to="#" id='link' className=''><span data-hover="SIGN UP">Sign Up</span> </Link>
 
-                    <Link to="#" id='link'><span data-hover="LOGIN">Login</span> </Link>
+                    <Link to="/login" id='link'><span data-hover="LOGIN">Login</span> </Link>
                 </div>
             </div>
         </div>

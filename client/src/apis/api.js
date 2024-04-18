@@ -45,6 +45,7 @@ export const fetchAllProducts = async () => {
             }
         });
         const data = await response.json();
+        console.log(getCookie('JWT'));
         return data;
     } catch (error) {
         throw new Error(error.message);

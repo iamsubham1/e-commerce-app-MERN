@@ -1,5 +1,4 @@
 const jwt = require('jsonwebtoken');
-const { ObjectId } = require('mongodb');
 require('dotenv').config();
 
 const verifyUser = (req, res, next) => {

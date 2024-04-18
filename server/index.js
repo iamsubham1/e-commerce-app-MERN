@@ -1,5 +1,6 @@
 const express = require('express');
 const app = express();
+const passport = require('passport');
 
 const connectToMongo = require('./db.js');
 
@@ -7,6 +8,8 @@ const connectToRedis = require('./redis.js');
 require('dotenv').config()
 const port = process.env.PORT;
 const cors = require('cors');
+const session = require('express-session');
+const User = require('./models/UserModel.js');
 
 const corsOptions = {
     origin: process.env.ORIGIN,
@@ -15,6 +18,28 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.use(session({
+    secret: process.env.JWT_SECRET,
+    resave: false,
+    saveUninitialized: false,
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Passport configuration (serialization and deserialization)
+passport.serializeUser((user, done) => {
+    done(null, user.id);
+});
+
+passport.deserializeUser(async (id, done) => {
+    try {
+        const user = await User.findById(id);
+        done(null, user);
+    } catch (error) {
+        done(error);
+    }
+});
 
 const startServer = async () => {
     try {

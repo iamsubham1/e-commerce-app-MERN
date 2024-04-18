@@ -6,9 +6,12 @@ import { login } from '../apis/api'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Navbar from '../components/Navbar';
+import { Navigate, useNavigate } from 'react-router-dom';
+
 
 
 const Login = () => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -36,12 +39,16 @@ const Login = () => {
 
         if (response == true) {
             notify("Login Successfull");
+            setTimeout(() => {
+                navigate('/');
+            }, 1000);
 
         } else notify("Incorrect Credentials");
     }
     const handleGoogleLogin = (e) => {
-        // Implement Google login logic
         e.preventDefault();
+        window.open("http://localhost:8080/api/auth/google", "_self");
+
         console.log("Login with Google");
     };
     const notify = (message) => toast(`${message}`);
