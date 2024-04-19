@@ -1,5 +1,6 @@
 const redisClient = require('../redis')
 const Product = require('../models/ProductModel');
+const jwt = require('jsonwebtoken');
 
 const calculateTotalPrice = async (items) => {
     try {
@@ -51,8 +52,6 @@ const calculateTotalPrice = async (items) => {
     }
 };
 
-
-
 const generateUniqueOTP = (length = 6) => {
     const chars = '0123456789'; // Define the character set for OTP
     let otp = '';
@@ -70,5 +69,12 @@ const generateUniqueOTP = (length = 6) => {
     return otp;
 }
 
-
-module.exports = { calculateTotalPrice, generateUniqueOTP };
+const generateJWT = (user) => {
+    const payload = {
+        name: user.name,
+        _id: user._id,
+        email: user.email,
+    };
+    return jwt.sign(payload, process.env.JWT_SECRET);
+}
+module.exports = { calculateTotalPrice, generateUniqueOTP, generateJWT };

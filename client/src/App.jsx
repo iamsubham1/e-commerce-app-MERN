@@ -5,8 +5,12 @@ import store from './store/store';
 import Navbar from './components/Navbar';
 import Login from './pages/Login';
 import HomePage from './pages/HomePage';
+import { useNavigate } from 'react-router-dom';
+import SignUp from './pages/SignUp';
 
 const App = () => {
+
+
   return (
     <Provider store={store}>
       <Router>
@@ -14,6 +18,7 @@ const App = () => {
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
         </Routes>
       </Router>
     </Provider>

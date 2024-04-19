@@ -2,9 +2,14 @@ import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts } from '../store/productslice';
 import { addToCart } from '../store/cartslice';
+import { useNavigate } from 'react-router-dom';
+import { getCookie } from '../utility/getCookie';
 
 const HomePage = () => {
+    const navigate = useNavigate();
+
     const dispatch = useDispatch();
+
     const { products, loading, error } = useSelector((state) => state.products);
 
     useEffect(() => {
@@ -14,6 +19,17 @@ const HomePage = () => {
     const addToCartHandler = (product) => {
         dispatch(addToCart(product));
     };
+
+    useEffect(() => {
+        const cookie = getCookie('JWT');
+
+        if (cookie) {
+            navigate('/');
+        } else {
+            navigate('/login');
+        }
+    }, []);
+
 
     return (
         <div className="container mx-auto px-4 py-8">

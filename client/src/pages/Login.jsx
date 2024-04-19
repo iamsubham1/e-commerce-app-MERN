@@ -5,10 +5,8 @@ import { FcGoogle } from "react-icons/fc";
 import { login } from '../apis/api'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import Navbar from '../components/Navbar';
-import { Navigate, useNavigate } from 'react-router-dom';
-
-
+import { useNavigate } from 'react-router-dom';
+import { getCookie } from '../utility/getCookie';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -19,6 +17,7 @@ const Login = () => {
     });
     const [showPassword, setshowPassword] = useState(false);
 
+    //form change
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prevState => ({
@@ -32,12 +31,12 @@ const Login = () => {
         setshowPassword(prevState => !prevState
         );
     };
+
+    //normal login
     const handleLogin = async (e) => {
-        console.log("triggered")
         e.preventDefault();
         const response = await login(formData);
-
-        if (response == true) {
+        if (response) {
             notify("Login Successfull");
             setTimeout(() => {
                 navigate('/');
@@ -45,12 +44,17 @@ const Login = () => {
 
         } else notify("Incorrect Credentials");
     }
+
+    //google login
     const handleGoogleLogin = (e) => {
         e.preventDefault();
         window.open("http://localhost:8080/api/auth/google", "_self");
 
         console.log("Login with Google");
     };
+
+
+
     const notify = (message) => toast(`${message}`);
     return (
         <>

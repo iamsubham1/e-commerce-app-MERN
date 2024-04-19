@@ -2,7 +2,7 @@ const User = require("../models/UserModel");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
-const { generateUniqueOTP } = require("../utility/helperFunctions");
+const { generateUniqueOTP, generateJWT } = require("../utility/helperFunctions");
 
 require('dotenv').config();
 
@@ -61,13 +61,9 @@ const loginController = async (req, res) => {
 
             if (passwordCompare) {
                 console.log("Password is correct. Generating JWT...");
-                const data = {
-                    name: user.name,
-                    _id: user._id,
-                    email: user.email,
-                }
 
-                const JWT = jwt.sign(data, process.env.JWT_SECRET);
+
+                const JWT = generateJWT(user);
                 console.log("JWT generated successfully:", JWT);
                 return res.status(200).json({ success: true, JWT });
 
@@ -86,7 +82,6 @@ const loginController = async (req, res) => {
         return res.status(500).json({ success: false, error: "Internal server error" });
     }
 };
-
 
 const sendOtp = async (req, res) => {
     try {

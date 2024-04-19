@@ -3,9 +3,10 @@ const router = express.Router();
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const User = require('../models/UserModel');
-const jwt = require('jsonwebtoken');
 require('dotenv').config();
 const { signUpController, loginController, sendOtp, verifyOtp, resetPassword } = require('../controllers/authControllers');
+const { generateJWT } = require('../utility/helperFunctions');
+
 
 // Initialize Passport with Google OAuth strategy
 passport.use(new GoogleStrategy({
@@ -13,9 +14,10 @@ passport.use(new GoogleStrategy({
     clientSecret: process.env.GOOGLE_AUTH_CLIENT_SECRECT,
     callbackURL: process.env.GOOGLE_CALLBACK_URL
 },
-    async (accessToken, refreshToken, profile, done) => {
+    async (profile, done) => {
         try {
             // Check if user already exists in the database
+            console.log(profile);
             let user = await User.findOne({ email: profile.emails[0].value });
 
             if (!user) {
@@ -24,7 +26,7 @@ passport.use(new GoogleStrategy({
                     googleId: profile.id,
                     name: profile.displayName,
                     email: profile.emails[0].value,
-                    // You may want to add other fields here based on your User model
+
                 });
             }
 
@@ -36,15 +38,7 @@ passport.use(new GoogleStrategy({
     }
 ));
 
-// JWT generation function
-function generateJWT(user) {
-    const payload = {
-        name: user.name,
-        _id: user._id,
-        email: user.email,
-    };
-    return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' });
-}
+
 
 // Route for Google OAuth authentication
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
@@ -61,9 +55,6 @@ router.get('/google/callback', passport.authenticate('google', { failureRedirect
 
     }
 );
-
-
-// Other routes 
 router.post('/signup', signUpController);
 router.post('/login', loginController);
 router.post('/sendotp', sendOtp);

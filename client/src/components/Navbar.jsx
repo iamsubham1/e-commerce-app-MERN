@@ -63,7 +63,7 @@ const Navbar = () => {
                 </ul>
                 <div className='button-section px-4 flex gap-4 h-[100%] btn-section items-center border-l-2 border-r-2 border-black'>
 
-                    <Link to="#" id='link' className=''><span data-hover="SIGN UP">Sign Up</span> </Link>
+                    <Link to="/signup" id='link' className=''><span data-hover="SIGN UP">Sign Up</span> </Link>
 
                     <Link to="/login" id='link'><span data-hover="LOGIN">Login</span> </Link>
                 </div>
