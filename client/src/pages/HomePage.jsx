@@ -23,11 +23,11 @@ const HomePage = () => {
     useEffect(() => {
         const cookie = getCookie('JWT');
 
-        if (cookie) {
-            navigate('/');
-        } else {
+        if (!cookie) {
+
             navigate('/login');
         }
+
     }, []);
 
 

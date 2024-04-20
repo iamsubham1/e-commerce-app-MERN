@@ -63,9 +63,9 @@ const loginController = async (req, res) => {
                 console.log("Password is correct. Generating JWT...");
 
 
-                const JWT = generateJWT(user);
-                console.log("JWT generated successfully:", JWT);
-                return res.status(200).json({ success: true, JWT });
+                const token = generateJWT(user);
+                res.cookie('JWT', token, { httpOnly: false, secure: true, sameSite: 'none' });
+                return res.status(200).json({ success: true, token });
 
             } else {
                 console.log("Incorrect password");

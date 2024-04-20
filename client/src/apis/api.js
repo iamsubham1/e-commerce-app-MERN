@@ -17,8 +17,7 @@ export const login = async (formData) => {
 
         if (response.ok) {
             const data = await response.json();
-            const cookie = new Cookies();
-            cookie.set('JWT', data.JWT, cookieOptions);
+
             return true;
         }
         else if (response.status === 400) {

@@ -39,8 +39,8 @@ const Login = () => {
         if (response) {
             notify("Login Successfull");
             setTimeout(() => {
-                navigate('/');
-            }, 1000);
+                window.location.href = '/'
+            }, 1200);
 
         } else notify("Incorrect Credentials");
     }
@@ -59,7 +59,7 @@ const Login = () => {
     return (
         <>
 
-            <div className="flex justify-center items-center h-screen">
+            <div className="flex justify-center items-center h-[80vh]">
                 <ToastContainer position="top-right"
                     autoClose={5000}
                     hideProgressBar={false}
