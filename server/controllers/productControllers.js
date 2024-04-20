@@ -43,24 +43,51 @@ const deleteProduct = async (req, res) => {
 const searchedProduct = async (req, res) => {
     try {
         const { keyword } = req.params;
-        console.log(keyword);
-        const products = await Product.find({
-            $or: [
-                { name: { $regex: keyword, $options: 'i' } },
-                { description: { $regex: keyword, $options: 'i' } }
-            ]
-        });
-        res.status(200).json(products);
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.log("API hit");
+
+        // Check if the result is cached in Redis
+        const cache = await redisClient.get('products');
+
+        if (cache) {
+            console.log('Result found in cache');
+            const products = JSON.parse(cache);
+
+            // Filter products based on keyword
+            const filteredProducts = products.filter(product =>
+                product.name.toLowerCase().includes(keyword.toLowerCase()) ||
+                product.description.toLowerCase().includes(keyword.toLowerCase()) ||
+                product.category.toLowerCase().includes(keyword.toLowerCase())
+            );
+
+            if (filteredProducts.length !== 0) {
+                return res.status(200).json(filteredProducts);
+            } else {
+                return res.status(400).json({ message: "No products found" });
+            }
+        } else {
+            console.log('Cache miss, querying database');
+            const products = await Product.find({
+                $or: [
+                    { name: { $regex: keyword, $options: 'i' } },
+                    { description: { $regex: keyword, $options: 'i' } },
+                    { category: { $regex: keyword, $options: 'i' } }
+                ]
+            });
+            return res.status(200).json(products);
+        }
+    } catch (err) {
+        console.error('Error searching for products:', err);
+        return res.status(500).json({ error: 'Internal server error' });
     }
-}
+};
+
+
 
 //get all avalabile products(redis added)
 const getAllProducts = async (req, res) => {
     try {
         //check in redisCache
+
         const cache = await redisClient.get('products');
         if (cache) {
             const products = JSON.parse(cache);

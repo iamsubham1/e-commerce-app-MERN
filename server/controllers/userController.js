@@ -59,13 +59,16 @@ const getUserDetails = async (req, res) => {
 
 const editUserDetails = async (req, res) => {
     try {
-        const userId = req.params._id
+        const userId = req.user._id;
+        console.log(userId);
         const updatedUser = await User.findByIdAndUpdate(userId, req.body, { new: true });
-
-
+        console.log(updatedUser);
         return res.status(200).send(updatedUser);
-    } catch (error) {
 
+
+    } catch (error) {
+        console.log(error);
+        return res.status(500).send("Internal server error");
     }
 };
 

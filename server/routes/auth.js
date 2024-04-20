@@ -14,11 +14,12 @@ passport.use(new GoogleStrategy({
     clientSecret: process.env.GOOGLE_AUTH_CLIENT_SECRECT,
     callbackURL: process.env.GOOGLE_CALLBACK_URL
 },
-    async (profile, done) => {
+    async (accessToken, refreshToken, profile, done) => {
         try {
             // Check if user already exists in the database
             console.log(profile);
             let user = await User.findOne({ email: profile.emails[0].value });
+
 
             if (!user) {
                 // If user doesn't exist, create a new user
@@ -32,6 +33,7 @@ passport.use(new GoogleStrategy({
 
             // Pass user to the next middleware
             done(null, user);
+
         } catch (error) {
             done(error);
         }
@@ -48,9 +50,9 @@ router.get('/google/callback', passport.authenticate('google', { failureRedirect
     (req, res) => {
         // Successful authentication, generate JWT and send it back to the client
         const token = generateJWT(req.user);
-        res.cookie('JWT', token, { httpOnly: false, secure: true, sameSite: 'none', maxAge: 60 * 60 * 24 });
+        res.cookie('JWT', token, { httpOnly: false, secure: true, sameSite: 'none' });
 
-        res.redirect('http://localhost:5173/');
+        res.redirect('http://localhost:5173/googleloginnextstep');
 
 
     }

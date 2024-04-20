@@ -7,6 +7,7 @@ import Login from './pages/Login';
 import HomePage from './pages/HomePage';
 import { useNavigate } from 'react-router-dom';
 import SignUp from './pages/SignUp';
+import AccountSetup from './pages/AccountSetup';
 
 const App = () => {
 
@@ -19,6 +20,7 @@ const App = () => {
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/googleloginnextstep" element={<AccountSetup />} />
         </Routes>
       </Router>
     </Provider>

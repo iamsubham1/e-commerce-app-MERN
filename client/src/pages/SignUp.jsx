@@ -4,6 +4,7 @@ import { RiEyeCloseLine } from "react-icons/ri";
 import { signup } from '../apis/api';
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { getCookie } from '../utility/getCookie';
 
 
 const SignupForm = () => {
@@ -59,6 +60,15 @@ const SignupForm = () => {
         const isFormFilled = Object.values(formData).every((val) => val.trim() !== '');
         setFormValid(isFormFilled && passwordsMatch);
     }, [formData, passwordsMatch]);
+
+    // useEffect(() => {
+
+    //     const token = getCookie('JWT');
+    //     console.log(token);
+    //     if (token) {
+    //         navigate('/');
+    //     }
+    // }, [navigate]);
     return (
         <div className="flex justify-center items-center h-screen">
             <ToastContainer position="top-right"

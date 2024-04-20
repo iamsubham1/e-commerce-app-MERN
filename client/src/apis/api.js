@@ -51,7 +51,7 @@ export const signup = async (formData) => {
             return false;
         }
     } catch (error) {
-
+        throw new Error(error.message);
     }
 }
 
@@ -64,9 +64,55 @@ export const fetchAllProducts = async () => {
             }
         });
         const data = await response.json();
-        console.log(getCookie('JWT'));
+        // console.log(getCookie('JWT'));
         return data;
     } catch (error) {
         throw new Error(error.message);
+
     }
 };
+
+export const addPhNumber = async (phoneNumber) => {
+    try {
+        const response = await fetch(`${baseUrl}user/edituser`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                JWT: getCookie('JWT')
+            },
+            body: JSON.stringify({ phoneNumber })
+        });
+        if (response.ok) {
+            return true
+        } else {
+            return false;
+        }
+    } catch (error) {
+        throw new Error(error.message);
+
+    }
+}
+
+export const getUserDetails = async () => {
+    try {
+        console.log("Fetching user details... from api");
+        const response = await fetch(`${baseUrl}user/details`, {
+            headers: {
+                'Content-Type': 'application/json',
+                'JWT': getCookie('JWT') // Assuming getCookie is defined somewhere
+            }
+        });
+
+        if (response.ok) {
+            const userData = await response.json();
+            console.log("User details:", userData);
+            return userData;
+        } else {
+            console.log("Failed to fetch user details. Status:", response.status);
+            return null;
+        }
+    } catch (error) {
+        console.error("Error fetching user details:", error);
+        throw new Error(error.message);
+    }
+}
