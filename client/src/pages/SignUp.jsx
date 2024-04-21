@@ -61,14 +61,7 @@ const SignupForm = () => {
         setFormValid(isFormFilled && passwordsMatch);
     }, [formData, passwordsMatch]);
 
-    // useEffect(() => {
 
-    //     const token = getCookie('JWT');
-    //     console.log(token);
-    //     if (token) {
-    //         navigate('/');
-    //     }
-    // }, [navigate]);
     return (
         <div className="flex justify-center items-center h-[80vh]">
             <ToastContainer position="top-right"

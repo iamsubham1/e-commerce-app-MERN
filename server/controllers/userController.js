@@ -13,7 +13,6 @@ const bucketRegion = process.env.S3_BUCKET_REGION;
 const bucketAccessKey = process.env.S3_BUCKET_ACCESSKEY;
 const bucketSecretKey = process.env.S3_BUCKET_SECRETKEY;
 
-
 const s3 = new S3Client({
     credentials: {
         accessKeyId: bucketAccessKey,
@@ -22,30 +21,29 @@ const s3 = new S3Client({
     region: bucketRegion
 });
 
+
 const getUserDetails = async (req, res) => {
+
     try {
         const userId = req.user._id;
         const user = await User.findById(userId);
         if (user) {
-            await user.populate('orders');
+            await user.populate('cart');
 
-            //check profile name else aws will throw error
-            if (user.profilePic.name) {
+            //check profile name else aws will throws error
+            if (user.profilePic && user.profilePic.name && user.profilePic.name !== "Google") {
                 const getObjectParams = {
                     Bucket: bucketName,
                     Key: user.profilePic.name
-                }
+                };
                 const command = new GetObjectCommand(getObjectParams);
                 const url = await getSignedUrl(s3, command);
 
                 user.profilePic.url = url;
-
-
                 await user.save();
-
             }
-
             user.password = null;
+
 
             return res.status(200).send(user);
         }
@@ -183,6 +181,7 @@ const deleteAddress = async (req, res) => {
 };
 
 const uploadImg = async (req, res) => {
+
     try {
         const randomNumber = Math.floor(Math.random() * Math.pow(2, 40));
         const imageName = randomNumber.toString(16).padStart(10, '0');

@@ -22,12 +22,20 @@ passport.use(new GoogleStrategy({
 
 
             if (!user) {
+
                 // If user doesn't exist, create a new user
+                let profilePic = {
+                    name: 'Google',
+                    url: ''
+                }; if (profile.photos && profile.photos.length > 0) {
+                    profilePic.url = profile._json.picture
+                    console.log(profilePic);
+                }
                 user = await User.create({
-                    googleId: profile.id,
+
                     name: profile.displayName,
                     email: profile.emails[0].value,
-
+                    profilePic: profilePic
                 });
             }
 

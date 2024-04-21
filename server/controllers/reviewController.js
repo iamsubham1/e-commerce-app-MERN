@@ -2,13 +2,13 @@ const Review = require('../models/ReviewModel');
 const Product = require('../models/ProductModel');
 const redisClient = require('../redis');
 
-//added redis to update reviews not in update yet
+//added redis to add and delete reviews not in update yet
 const addReview = async (req, res) => {
     try {
         const { productId, rating, comment } = req.body;
         const userId = req.user._id;
 
-        // Find the product in the database
+
         const product = await Product.findById(productId, 'reviews');
 
         if (!product) {
@@ -30,13 +30,13 @@ const addReview = async (req, res) => {
             const updatedProducts = products.map((cachedProduct) => {
                 if (cachedProduct._id === productId) {
                     cachedProduct.reviews.push(review);
+
                 }
                 return cachedProduct;
             });
             await redisClient.set('products', JSON.stringify(updatedProducts));
         }
 
-        // Return the updated product document with populated reviews
         const populatedProduct = await product.populate('reviews');
         return res.status(200).json(populatedProduct);
     } catch (error) {

@@ -9,7 +9,7 @@ const verifyUser = (req, res, next) => {
 
 
         req.user = userData;
-        console.log((req.user._id));
+        // console.log((req.user._id));
 
         next();
     } catch (error) {

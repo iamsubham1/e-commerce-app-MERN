@@ -33,6 +33,6 @@ const shoppingCartSchema = new mongoose.Schema({
 
 
 // Create the ShoppingCart model
-const ShoppingCart = mongoose.model('ShoppingCart', shoppingCartSchema);
+const Cart = mongoose.model('Cart', shoppingCartSchema);
 
-module.exports = ShoppingCart;
+module.exports = Cart;

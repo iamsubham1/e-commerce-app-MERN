@@ -18,7 +18,10 @@ const userSchema = new mongoose.Schema({
         type: String,
 
     },
-
+    cart: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Cart'
+    },
     profilePic: {
         name: {
             type: String
@@ -39,12 +42,15 @@ const userSchema = new mongoose.Schema({
         }, pincode: {
             type: Number,
         },
+
         type: {
             type: String,
-            unique: true
+            unique: true,
+
         }
 
     }],
+
     orders: [
         {
             type: mongoose.Schema.Types.ObjectId,

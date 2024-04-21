@@ -10,14 +10,19 @@ const redisClient = require('../redis');
 
 
 const addtocart = async (req, res) => {
+
     try {
         const { productId, quantity } = req.body; // if no quantity given then 1 
         const userId = req.user._id;
-
+        const user = await User.findById(userId);
         let shoppingCart = await Cart.findOne({ userId });
 
         if (!shoppingCart) {
             shoppingCart = new Cart({ userId, items: [], totalValue: 0 });
+            await shoppingCart.save();
+
+            user.cart = shoppingCart._id;
+            await user.save();
         }
 
         const existingItem = shoppingCart.items.find(item => item.productId.toString() === productId);
@@ -38,6 +43,7 @@ const addtocart = async (req, res) => {
 
         // Save the updated cart
         await shoppingCart.save();
+
         res.status(200).json({ message: 'Product added to cart successfully', shoppingCart });
     } catch (error) {
         console.error(error);
