@@ -6,14 +6,32 @@ import { useSelector } from 'react-redux';
 import { getCookie } from '../utility/getCookie';
 import { logout } from '../utility/logout';
 
-
-
 const Navbar = () => {
     const cookie = getCookie('JWT');
-
-    console.log('JWT token:', cookie);
+    const [lastScrollTop, setLastScrollTop] = useState(0);
+    const [isNavbarVisible, setIsNavbarVisible] = useState(true);
+    const [searchResults, setSearchResults] = useState([]);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [keyword, setKeyword] = useState("");
     const { items } = useSelector((state) => state.cart);
+    const { userData } = useSelector((state) => state.user);
+
+    useEffect(() => {
+        const handleScroll = () => {
+            const currentScrollTop = window.scrollY || document.documentElement.scrollTop;
+
+            setIsNavbarVisible(currentScrollTop < lastScrollTop || currentScrollTop === 0);
+            setLastScrollTop(currentScrollTop);
+        };
+
+        window.addEventListener("scroll", handleScroll);
+        return () => {
+            window.removeEventListener("scroll", handleScroll);
+        };
+    }, [lastScrollTop]);
+
+
+    console.log(userData);
 
     const handleSearch = async (e) => {
         const newKeyword = e.target.value;
@@ -32,58 +50,70 @@ const Navbar = () => {
                 throw new Error('Network response was not ok');
             }
 
-            return response.json();
+            const searchData = await response.json();
+
+            // Set search results and open dropdown
+            setSearchResults(searchData);
+            setIsDropdownOpen(true);
+            console.log(searchResults);
 
         } catch (error) {
-            console.error('Error fetching all chats:', error.message);
+            console.error('Error fetching search results:', error.message);
+            setSearchResults([]);
+            setIsDropdownOpen(false);
         }
     };
+
     const handleLogout = () => {
         logout('JWT');
-
-
     };
 
     return (
+        <div className={`navbar w-full h-[7vh] mt-4 flex justify-end navbar-background border-t-2 border-b-2 border-black ${isNavbarVisible ? 'navbar-visible' : 'navbar-hidden'}`}>
+            <div className='first-section flex items-center gap-8 w-[80%] ml-1 justify-center '>
+                <img src={logo} className='max-w-[60px]' alt='Logo' />
+                {cookie && (
+                    <>
+                        <p className='flex items-center gap-2'>
+                            <i className="fa-solid fa-location-dot"></i> Berhampur
+                        </p>
+                        <input type='text' placeholder='Search name description or category..' className='min-h-[100%] min-w-[68%] px-2 bg-[#f7f6f6] border-l-2 border-r-2 border-black  text-black text-lg' onChange={handleSearch} />
+                    </>
+                )}
+                {/* Dropdown for search results */}
+                {isDropdownOpen && (
+                    <div className="dropdown mx-auto">
+                        {searchResults.map((result, index) => (
+                            <div key={index} className="dropdown-item text-black" onClick={() => console.log('Selected item:', result)}>
+                                <div>{result.name}</div>
 
-        <div className='navbar w-full h-[8vh] mt-4 flex justify-end navbar-background border-t-2 border-b-2 border-black'>
-            <div className='first-section flex items-center gap-8 w-[80%] ml-1 '>
-                <img src={logo} className='max-w-[70px]' alt='Logo' />
-                {cookie ? (<>
-                    <p className='flex items-center gap-2'>
-                        <i className="fa-solid fa-location-dot"></i> Berhampur
-                    </p>
-                    <input type='text' placeholder='Search' className='min-h-[100%] min-w-[68%] px-2  bg-[#eeeeee] border-l-2 border-r-2 border-black  text-black text-lg' onChange={handleSearch} />
 
-                </>) : (<></>)}
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
             <div className='w-[45%] flex justify-end mr-10 items-center gap-12'>
-                {cookie ? (<>
+                {cookie && (
                     <ul className='flex justify-around items-center w-[35%]'>
                         <li>
                             <NavLink to='/' activeclassname="active" className='flex items-center h-full w-10'>
-                                <img src='https://res.cloudinary.com/dmb0ooxo5/image/upload/v1707672594/vcqztf5l0iuwxay72twr.jpg' className='' alt='Profile' />
-
+                                <img src={userData.profilePic ? userData.profilePic.url : ""} className='' alt='Profile' />
                             </NavLink>
-
                         </li>
                         <Link className='over' id='link'><span data-hover="ORDERS">Orders</span></Link>
-
-                        <li><NavLink className='text-lg flex gap-1 items-center p-2'><MdShoppingCart className='text-[#1d1d1d] text-2xl ' />  <span>{items.length}</span>
-
-                        </NavLink></li>
-
+                        <li><NavLink className='text-lg text-[#6b6757] flex gap-1 items-center p-2 hover:scale-[1.1] hover:text-[#000000]'><MdShoppingCart className='text-2xl' /><span>{items.length}</span></NavLink></li>
                     </ul>
-                </>) : (<></>)}
+                )}
                 <div className='button-section px-4 flex gap-4 h-[100%] btn-section items-center border-l-2 border-r-2 border-black'>
-                    {!cookie ? (<>
-
-                        <Link to="/signup" id='link' className=''><span data-hover="SIGN UP">Sign Up</span> </Link>
-
-                        <Link to="/login" id='link'><span data-hover="LOGIN">Login</span> </Link>
-                    </>) : <>
+                    {!cookie ? (
+                        <>
+                            <Link to="/signup" id='link' className=''><span data-hover="SIGN UP">Sign Up</span> </Link>
+                            <Link to="/login" id='link'><span data-hover="LOGIN">Login</span> </Link>
+                        </>
+                    ) : (
                         <Link to="/login" id='link' className='' onClick={handleLogout}><span data-hover="LOGOUT">Logout</span> </Link>
-                    </>}
+                    )}
                 </div>
             </div>
         </div>
@@ -91,13 +121,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
-
-
-
-
-
-
-
-
-

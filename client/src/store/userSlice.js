@@ -1,0 +1,46 @@
+import { createSlice } from "@reduxjs/toolkit";
+import { getUserDetails } from "../apis/api";
+
+
+const userSlice = createSlice({
+    name: 'user',
+    initialState: {
+        userData: {},
+        loading: false,
+        errors: null
+    },
+    reducers: {
+        setUserData: (state, action) => {
+            state.userData = action.payload;
+            state.loading = false;
+            state.errors = null;
+        },
+        setUserDataloading: (state, action) => {
+            state.loading = action.payload;
+        },
+
+        setUserDataErrors: (state, action) => {
+            state.errors = action.payload;
+            state.loading = false;
+
+        }
+    }
+})
+
+export const { setUserData, setUserDataloading, setUserDataErrors } = userSlice.actions
+
+
+//thunk 
+export const getUserData = () => async (dispatch) => {
+    dispatch(setUserDataloading(true));
+    try {
+        const userData = await getUserDetails();
+        dispatch(setUserData(userData));
+    } catch (error) {
+        dispatch(setUserDataErrors(error.message));
+    } finally {
+        dispatch(setUserDataloading(false));
+    }
+}
+
+export default userSlice.reducer

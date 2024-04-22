@@ -6,7 +6,6 @@ import { login } from '../apis/api'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
-import { getCookie } from '../utility/getCookie';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -111,7 +110,7 @@ const Login = () => {
                             )}
                         </div>
                         <div className="mt-4 flex items-center gap-4">
-                            <button onClick={handleGoogleLogin} className="bg-[#000000] w-[50%] text-white py-2 px-4 rounded-md hover:bg-red-600 focus:outline-none focus:bg-red-600 flex items-center justify-center">
+                            <button onClick={handleGoogleLogin} className="bg-[#000000] w-[50%]  text-white py-2 px-4 rounded-md hover:bg-red-600 focus:outline-none focus:bg-red-600 flex items-center justify-center">
 
                                 Login with &nbsp;<FcGoogle className="mr-2" />
                             </button>

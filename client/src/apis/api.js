@@ -98,7 +98,7 @@ export const getUserDetails = async () => {
         const response = await fetch(`${baseUrl}user/details`, {
             headers: {
                 'Content-Type': 'application/json',
-                'JWT': getCookie('JWT') // Assuming getCookie is defined somewhere
+                'JWT': getCookie('JWT')
             }
         });
 

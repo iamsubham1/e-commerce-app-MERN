@@ -8,6 +8,8 @@ import { hasPhoneNumber } from '../utility/checkNumberAdded';
 
 const AccountSetup = () => {
     const navigate = useNavigate();
+
+    const notify = (message) => toast(`${message}`);
     const [phoneNumber, setPhoneNumber] = useState('');
     const [loading, setloading] = useState(false);
 
@@ -28,7 +30,6 @@ const AccountSetup = () => {
         } else notify("Something is wrong with google");
 
     };
-    const notify = (message) => toast(`${message}`);
 
     useEffect(() => {
         const checkPhoneNumber = async () => {
@@ -80,7 +81,7 @@ const AccountSetup = () => {
                     />
                     <button
                         onClick={handleDoneClick}
-                        className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
+                        className="w-full bg-blue-500  text-white py-2 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600"
                     >
                         Finish
                     </button>
