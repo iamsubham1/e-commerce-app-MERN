@@ -1,14 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { FaRegEye } from "react-icons/fa";
 import { RiEyeCloseLine } from "react-icons/ri";
 import { FcGoogle } from "react-icons/fc";
 import { login } from '../apis/api'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { useNavigate } from 'react-router-dom';
+import { logout } from '../utility/logout';
 
 const Login = () => {
-    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -51,7 +50,6 @@ const Login = () => {
 
         console.log("Login with Google");
     };
-
 
 
     const notify = (message) => toast(`${message}`);

@@ -11,6 +11,8 @@ import 'slick-carousel/slick/slick-theme.css';
 
 const HomePage = () => {
     const navigate = useNavigate();
+
+
     const dispatch = useDispatch();
     const { products, loading, error } = useSelector((state) => state.products);
 
@@ -73,13 +75,16 @@ const HomePage = () => {
         autoplaySpeed: 2000,
         pauseOnHover: true
     };
-
+    const handleProductClick = (productId) => {
+        // Navigate to the product details page with the product ID
+        navigate(`/product/${productId}`);
+    };
     return (
-        <div className='flex flex-col items-center'>
+        <div className='flex flex-col items-center '>
 
-            <div className='flex justify-center mt-5 self-center w-[80%] px-2'>
+            <div className="text-sm md:text-md lg:text-md xl:text-lg flex justify-evenly self-center mt-5 w-[90%]">
                 {/* Category Filter */}
-                <div className="font-medium flex w-full justify-evenly ">
+                <div className="flex w-full justify-evenly self-center">
                     <button className={selectedCategory === '' ? ' text-gray-700 px-3  border-b-2 border-[#000000] rounded' : ' categorybtn rounded text-black px-3 py-1  border-b-2'} onClick={() => setSelectedCategory('')}>All</button>
                     <button className={selectedCategory === 'electronics' ? ' text-gray-700 px-3  border-b-2 border-[#000000] rounded' : ' categorybtn rounded text-black px-3 py-1  border-b-2'} onClick={() => setSelectedCategory('electronics')}>Electronics</button>
                     <button className={selectedCategory === 'clothing' ? ' text-gray-700 px-3 border-b-2 border-[#000000] rounded' : ' categorybtn rounded text-black px-3 py-1  border-b-2'} onClick={() => setSelectedCategory('clothing')}>Clothing</button>
@@ -94,14 +99,15 @@ const HomePage = () => {
 
 
                 {/* Carousel */}
-                {selectedCategory == '' ? (<Slider {...settings} className=' w-[100%] mx-auto px-2'>
+                {selectedCategory == '' ? (<><Slider {...settings} className=' w-[100%] mx-auto px-2'>
                     {specificProducts.map((product) => (
                         <div key={product._id} className="text-center px-8">
                             <img src={product.pictures ? product.pictures[0] : "https://via.placeholder.com/300"} alt={product.name} className="carouselimg" />
 
                         </div>
                     ))}
-                </Slider>) : <></>}
+                </Slider>
+                    <div className='bg-red-200 w-[100vw] content'></div></>) : <></>}
 
                 {/* Product Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 mt-8 px-12">
@@ -111,13 +117,11 @@ const HomePage = () => {
                         <p>Error: {error}</p>
                     ) : filteredProducts.length > 0 ? (
                         filteredProducts.map((product) => (
-                            <div key={product._id} className="bg-white rounded-lg shadow-md overflow-hidden p-4">
+                            <div key={product._id} className="bg-white  shadow-md overflow-hidden p-4 card" onClick={() => handleProductClick(product._id)}>
                                 <img src={product.pictures ? product.pictures[0] : "https://via.placeholder.com/300"} alt={product.name} className="w-full h-48 object-cover" />
                                 <div className="p-4">
                                     <h2 className="text-xl font-semibold mb-2">{product.name}</h2>
-                                    <p className="text-gray-600 mb-2">{product.description}</p>
                                     <p className="text-gray-800 font-bold mb-2">Price: ${product.price}</p>
-                                    <p className="text-gray-700">Category: {product.category}</p>
                                     <button
                                         onClick={() => addToCartHandler(product)}
                                         className="mt-4 bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
@@ -128,7 +132,9 @@ const HomePage = () => {
                             </div>
                         ))
                     ) : (
-                        <p>No products found.</p>
+                        <div className='relative h-autoflex item text-center'><p className='inline'>No products found.</p>
+                        </div>
+
                     )}
                 </div>
             </div>

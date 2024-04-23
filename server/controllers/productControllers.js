@@ -81,8 +81,24 @@ const searchedProduct = async (req, res) => {
     }
 };
 
+const getProductDetails = async (req, res) => {
+    try {
 
+        const { productId } = req.params;
+        console.log("productId :", productId);
+        const details = await Product.findById(productId);
+        if (details) {
+            const data = await details.populate('reviews');
+            res.status(200).json(data);
+        } else {
+            res.status(400).json({ msg: "product not found" });
+        }
 
+    } catch (error) {
+        console.error('Error fetching products:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+}
 //get all avalabile products(redis added)
 const getAllProducts = async (req, res) => {
     try {
@@ -152,4 +168,4 @@ const getProductsByCategory = async (req, res) => {
     }
 }
 
-module.exports = { addProduct, deleteProduct, searchedProduct, getAllProducts, getProductsByBrand, getProductsByCategory };
+module.exports = { addProduct, deleteProduct, searchedProduct, getAllProducts, getProductsByBrand, getProductsByCategory, getProductDetails };

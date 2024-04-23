@@ -1,20 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import { MdShoppingCart } from "react-icons/md";
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { getCookie } from '../utility/getCookie';
 import { logout } from '../utility/logout';
+import { getUserData } from '../store/userSlice';
 
 const Navbar = () => {
+    const dispatch = useDispatch();
     const cookie = getCookie('JWT');
     const [lastScrollTop, setLastScrollTop] = useState(0);
     const [isNavbarVisible, setIsNavbarVisible] = useState(true);
     const [searchResults, setSearchResults] = useState([]);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [keyword, setKeyword] = useState("");
+    const [dropdownLeft, setDropdownLeft] = useState(0);
+    const [dropdownWidth, setDropdownWidth] = useState(0);
+    const searchInputRef = useRef(null);
     const { items } = useSelector((state) => state.cart);
     const { userData } = useSelector((state) => state.user);
+
+    useEffect(() => {
+
+        dispatch(getUserData());
+    }, [dispatch]);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -29,9 +39,6 @@ const Navbar = () => {
             window.removeEventListener("scroll", handleScroll);
         };
     }, [lastScrollTop]);
-
-
-    console.log(userData);
 
     const handleSearch = async (e) => {
         const newKeyword = e.target.value;
@@ -57,6 +64,11 @@ const Navbar = () => {
             setIsDropdownOpen(true);
             console.log(searchResults);
 
+            // Calculate and set dropdown position and width
+            const inputRect = searchInputRef.current.getBoundingClientRect();
+            setDropdownLeft(inputRect.left);
+            setDropdownWidth(inputRect.width);
+
         } catch (error) {
             console.error('Error fetching search results:', error.message);
             setSearchResults([]);
@@ -70,24 +82,24 @@ const Navbar = () => {
 
     return (
         <div className={`navbar w-full h-[7vh] mt-4 flex justify-end navbar-background border-t-2 border-b-2 border-black ${isNavbarVisible ? 'navbar-visible' : 'navbar-hidden'}`}>
-            <div className='first-section flex items-center gap-8 w-[80%] ml-1 justify-center '>
+            <div className='first-section flex items-center gap-8 w-[80%] ml-1 '>
                 <img src={logo} className='max-w-[60px]' alt='Logo' />
                 {cookie && (
                     <>
                         <p className='flex items-center gap-2'>
                             <i className="fa-solid fa-location-dot"></i> Berhampur
                         </p>
-                        <input type='text' placeholder='Search name description or category..' className='min-h-[100%] min-w-[68%] px-2 bg-[#f7f6f6] border-l-2 border-r-2 border-black  text-black text-lg' onChange={handleSearch} />
+                        <input type='text' ref={searchInputRef} placeholder='Search name description or category..' className='min-h-[100%] min-w-[68%] px-2 bg-[#f7f6f6] border-l-2 border-r-2 border-black  text-black text-lg' onChange={handleSearch} />
                     </>
                 )}
                 {/* Dropdown for search results */}
                 {isDropdownOpen && (
-                    <div className="dropdown mx-auto">
+                    <div className="dropdown" style={{ left: dropdownLeft, width: dropdownWidth }}>
                         {searchResults.map((result, index) => (
-                            <div key={index} className="dropdown-item text-black" onClick={() => console.log('Selected item:', result)}>
+                            <div key={index} className="dropdown-item text-black flex flex-row-reverse justify-end gap-2 items-center" onClick={() => console.log('Selected item:', result)}>
                                 <div>{result.name}</div>
-
-
+                                <img src={result.pictures[0]} className='w-[50px] h-[50px]'></img>
+                                {/* Render other properties as needed */}
                             </div>
                         ))}
                     </div>
@@ -102,7 +114,7 @@ const Navbar = () => {
                             </NavLink>
                         </li>
                         <Link className='over' id='link'><span data-hover="ORDERS">Orders</span></Link>
-                        <li><NavLink className='text-lg text-[#6b6757] flex gap-1 items-center p-2 hover:scale-[1.1] hover:text-[#000000]'><MdShoppingCart className='text-2xl' /><span>{items.length}</span></NavLink></li>
+                        <li><NavLink className='text-lg text-[#474640] flex gap-1 items-center p-2 hover:scale-[1.1] hover:text-[#000000]'><MdShoppingCart className='text-2xl' /><span>{items.length}</span></NavLink></li>
                     </ul>
                 )}
                 <div className='button-section px-4 flex gap-4 h-[100%] btn-section items-center border-l-2 border-r-2 border-black'>

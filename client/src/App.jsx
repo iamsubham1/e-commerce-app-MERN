@@ -5,9 +5,9 @@ import store from './store/store';
 import Navbar from './components/Navbar';
 import Login from './pages/Login';
 import HomePage from './pages/HomePage';
-import { useNavigate } from 'react-router-dom';
 import SignUp from './pages/SignUp';
 import AccountSetup from './pages/AccountSetup';
+import ProductPage from './pages/ProductPage';
 
 const App = () => {
 
@@ -21,6 +21,7 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/googleloginnextstep" element={<AccountSetup />} />
+          <Route path="/product/:productId" element={<ProductPage />} />
         </Routes>
       </Router>
     </Provider>
