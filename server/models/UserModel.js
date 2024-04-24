@@ -1,5 +1,26 @@
 const mongoose = require('mongoose');
 
+const addressSchema = new mongoose.Schema({
+    streetname: {
+        type: String,
+    },
+    landmark: {
+        type: String,
+    },
+    city: {
+        type: String,
+    },
+    state: {
+        type: String,
+    },
+    pincode: {
+        type: Number,
+    },
+    type: {
+        type: String,
+    }
+});
+
 const userSchema = new mongoose.Schema({
     name: {
         type: String,
@@ -12,11 +33,9 @@ const userSchema = new mongoose.Schema({
     },
     phoneNumber: {
         type: Number,
-
     },
     password: {
         type: String,
-
     },
     cart: {
         type: mongoose.Schema.Types.ObjectId,
@@ -30,34 +49,25 @@ const userSchema = new mongoose.Schema({
             type: String
         }
     },
-    address: [{
-        streetname: {
-            type: String,
-        }, landmark: {
-            type: String,
-        }, city: {
-            type: String,
-        }, state: {
-            type: String,
-        }, pincode: {
-            type: Number,
-        },
+    address: [addressSchema],
 
-        type: {
-            type: String,
+    orders: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Order'
+    }]
+});
 
+// Custom validation to ensure unique types within user addresses
+userSchema.path('address').validate((value) => {
+    const types = new Set();
+    for (const address of value) {
+        if (types.has(address.type)) {
+            return false;
         }
-
-    }],
-
-    orders: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Order'
-
-        }
-    ]
-})
+        types.add(address.type);
+    }
+    return true;
+}, 'Address types must be unique for each user.');
 
 const User = mongoose.model('User', userSchema);
 module.exports = User;

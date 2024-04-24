@@ -4,7 +4,7 @@ import { getCookie } from '../utility/getCookie';
 import StarRating from '../components/StarRating';
 
 const ProductPage = () => {
-    const { productId } = useParams(); // Extract productId from route parameters
+    const { productId } = useParams();
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -15,12 +15,14 @@ const ProductPage = () => {
                 const response = await fetch(`http://localhost:8080/api/product/productdetails/${productId}`, {
                     headers: {
                         'Content-Type': 'application/json',
-                        'JWT': getCookie('JWT')
-                    }
+                        'JWT': getCookie('JWT'),
+                    },
                 });
+
                 if (!response.ok) {
                     throw new Error('Failed to fetch product details');
                 }
+
                 const data = await response.json();
                 setProduct(data);
                 setLoading(false);
@@ -31,38 +33,52 @@ const ProductPage = () => {
         };
 
         fetchProduct();
-
-
-    }, [productId]); // Execute effect when productId changes
+    }, [productId]);
 
     if (loading) {
-        return <div>Loading...</div>;
+        return <div className="flex justify-center items-center h-screen">Loading...</div>;
     }
 
     if (error) {
-        return <div>Error: {error}</div>;
+        return <div className="flex justify-center items-center h-screen">Error: {error}</div>;
     }
 
     if (!product) {
-        return <div>Product not found</div>;
+        return <div className="flex justify-center items-center h-screen">Product not found</div>;
     }
 
     return (
-        <div>
-            <img src={product.pictures[0]} alt="product image" />
-            <h1>{product.name}</h1>
-            <p>{product.description}</p>
-            <p>{product.price}</p>
-            {product.reviews && product.reviews.map((review, index) => (
-                <div key={index}>
-
-                    <StarRating rating={review.rating} />
-                    <p>{review.comment}</p>
+        <div className="container mx-auto px-4 py-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                <div>
+                    <img
+                        src={product.pictures[0]}
+                        alt="product image"
+                        className="mx-auto md:mx-0 md:float-right mb-4 md:mb-0 rounded-lg shadow-lg"
+                        style={{ maxWidth: '100%', height: 'auto' }}
+                    />
                 </div>
-            ))}
-            {/* Render other product details */}
+                <div>
+                    <h1 className="text-3xl font-semibold mb-2">{product.name}</h1>
+                    <p className="text-gray-700 mb-4">{product.description}</p>
+                    <p className="text-2xl font-bold text-red-600 mb-4">${product.price}</p>
+                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md">
+                        Add to Cart
+                    </button>
+                </div>
+            </div>
+            <div className="mt-8">
+                <h2 className="text-2xl font-semibold mb-4">Reviews</h2>
+                {product.reviews.map((review, index) => (
+                    <div key={index} className="bg-gray-100 p-4 rounded-lg shadow-md mb-4">
+                        <div className="flex items-center mb-2">
+                            <StarRating rating={review.rating} />
+                        </div>
+                        <p className="text-gray-700">{review.comment}</p>
+                    </div>
+                ))}
+            </div>
         </div>
-
     );
 };
 

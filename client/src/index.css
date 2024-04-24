@@ -14,7 +14,7 @@ body {
   font-family: poppins;
 }
 
-.navbar-background {
+.navbar {
   font-family: "Raleway", sans-serif;
   font-optical-sizing: auto;
   font-weight: 600;
@@ -24,11 +24,12 @@ body {
   position: sticky;
   top: 0;
   z-index: 99;
-  background-color: #fafafa;
+  background-color: #f0f0f0;
   box-shadow: 0 14px 28px rgba(70, 69, 69, 0.25),
     0 10px 10px rgba(250, 249, 208, 0.22);
 
   transition: transform 0.5s;
+
 
 }
 
@@ -252,5 +253,127 @@ body {
 
   100% {
     transform: scale(1);
+
+  }
+}
+
+.wrapper {
+  background: #000;
+  width: 100vw;
+  height: 85vh;
+  margin-top: 0;
+  position: absolute;
+  color: #f1f1f1;
+}
+
+.mobile-menu {
+  position: absolute;
+  top: 103%;
+  right: 0%;
+  background-color: #ffffff69 !important;
+
+  backdrop-filter: blur(30px);
+  height: 100vh;
+  z-index: 1000;
+  animation-duration: 0.5s;
+  animation-timing-function: ease-in-out;
+
+
+}
+
+@keyframes slidein {
+  from {
+    transform: translateX(100%);
+  }
+
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideout {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.mobile-menu ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 2%;
+}
+
+.mobile-menu ul li {
+
+  border-bottom: 1px solid #0f0f0f;
+}
+
+.mobile-menu ul li a {
+  color: black;
+  text-decoration: none;
+}
+
+
+@media screen and (max-width: 431px) {
+  .mobile-menu {
+    width: 100vw !important;
+
+  }
+
+
+}
+
+/* Media Query for Mobile Menu */
+@media screen and (max-width: 768px) {
+  .mobile-menu-icon {
+    display: inline;
+  }
+
+  .navbar {
+    display: flex;
+    justify-content: center;
+  }
+
+  .hide-section {
+    display: none;
+  }
+
+  .searchwidth {
+    width: 60%;
+  }
+
+  .mobile-menu {
+    width: 36vw;
+    background-color: #ffffff;
+  }
+
+}
+
+@media screen and (max-width: 870px) {
+  .hide-location {
+    display: none;
+  }
+
+  .searchwidth {
+    min-width: 60%;
+  }
+}
+
+@media screen and (min-width: 769px) {
+
+  .hamburger {
+    display: none;
+  }
+
+  .mobile-menu {
+    display: none;
+  }
+
+  .searchwidth {
+    width: 45%;
   }
 }

@@ -1,11 +1,16 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { NavLink, Link } from 'react-router-dom';
 import logo from '../assets/logo.png';
-import { MdShoppingCart } from "react-icons/md";
+import { MdShoppingCart, MdMenu, MdOutlineClose } from "react-icons/md";
 import { useSelector, useDispatch } from 'react-redux';
 import { getCookie } from '../utility/getCookie';
 import { logout } from '../utility/logout';
 import { getUserData } from '../store/userSlice';
+import { FaBoxOpen } from "react-icons/fa";
+import { MdLogout } from "react-icons/md";
+import { IoIosHelpCircle } from "react-icons/io";
+import { MdAccountCircle } from "react-icons/md";
+import { RiLoginCircleFill } from "react-icons/ri";
 
 const Navbar = () => {
     const dispatch = useDispatch();
@@ -17,12 +22,12 @@ const Navbar = () => {
     const [keyword, setKeyword] = useState("");
     const [dropdownLeft, setDropdownLeft] = useState(0);
     const [dropdownWidth, setDropdownWidth] = useState(0);
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const searchInputRef = useRef(null);
     const { items } = useSelector((state) => state.cart);
     const { userData } = useSelector((state) => state.user);
 
     useEffect(() => {
-
         dispatch(getUserData());
     }, [dispatch]);
 
@@ -43,7 +48,6 @@ const Navbar = () => {
     const handleSearch = async (e) => {
         const newKeyword = e.target.value;
         setKeyword(newKeyword);
-        console.log(newKeyword);
 
         try {
             const response = await fetch(`http://localhost:8080/api/product/search/${newKeyword}`, {
@@ -59,12 +63,9 @@ const Navbar = () => {
 
             const searchData = await response.json();
 
-            // Set search results and open dropdown
             setSearchResults(searchData);
             setIsDropdownOpen(true);
-            console.log(searchResults);
 
-            // Calculate and set dropdown position and width
             const inputRect = searchInputRef.current.getBoundingClientRect();
             setDropdownLeft(inputRect.left);
             setDropdownWidth(inputRect.width);
@@ -80,16 +81,20 @@ const Navbar = () => {
         logout('JWT');
     };
 
+    const toggleMobileMenu = () => {
+        setIsMobileMenuOpen(!isMobileMenuOpen);
+    };
+
     return (
-        <div className={`navbar w-full h-[7vh] mt-4 flex justify-end navbar-background border-t-2 border-b-2 border-black ${isNavbarVisible ? 'navbar-visible' : 'navbar-hidden'}`}>
-            <div className='first-section flex items-center gap-8 w-[80%] ml-1 '>
-                <img src={logo} className='max-w-[60px]' alt='Logo' />
+        <div className={` w-full h-[7vh] mt-4 flex justify-end navbar border-t-2 border-b-2  border-black ${isNavbarVisible ? 'navbar-visible' : 'navbar-hidden'}`}>
+            <div className=' flex items-center gap-8 w-[80%] ml-1 '>
+                <img src={logo} className='w-[60px]' alt='Logo' />
                 {cookie && (
                     <>
-                        <p className='flex items-center gap-2'>
+                        <p className='flex items-center gap-2 hide-section hide-location'>
                             <i className="fa-solid fa-location-dot"></i> Berhampur
                         </p>
-                        <input type='text' ref={searchInputRef} placeholder='Search name description or category..' className='min-h-[100%] min-w-[68%] px-2 bg-[#f7f6f6] border-l-2 border-r-2 border-black  text-black text-lg' onChange={handleSearch} />
+                        <input type='text' ref={searchInputRef} placeholder='Search ' className='min-h-[100%] searchwidth px-2 bg-[#f7f6f6] border-l-2 border-r-2 border-black  text-black text-lg' onChange={handleSearch} />
                     </>
                 )}
                 {/* Dropdown for search results */}
@@ -105,29 +110,77 @@ const Navbar = () => {
                     </div>
                 )}
             </div>
-            <div className='w-[45%] flex justify-end mr-10 items-center gap-12'>
+            <div className='max-w-[10%] flex justify-end mr-10 items-center gap-12 hide-section '>
                 {cookie && (
-                    <ul className='flex justify-around items-center w-[35%]'>
+                    <ul className='flex justify-around items-center w-[]'>
                         <li>
-                            <NavLink to='/' activeclassname="active" className='flex items-center h-full w-10'>
-                                <img src={userData.profilePic ? userData.profilePic.url : ""} className='' alt='Profile' />
-                            </NavLink>
+
                         </li>
-                        <Link className='over' id='link'><span data-hover="ORDERS">Orders</span></Link>
-                        <li><NavLink className='text-lg text-[#474640] flex gap-1 items-center p-2 hover:scale-[1.1] hover:text-[#000000]'><MdShoppingCart className='text-2xl' /><span>{items.length}</span></NavLink></li>
+                        <Link className='over' id='link' to='/orders'><span data-hover="ORDERS">Orders</span></Link>
+                        <li><NavLink className='text-lg text-[#474640] flex gap-1 items-center p-2 hover:scale-[1.1] hover:text-[#000000]' to='/cart'><MdShoppingCart className='text-2xl' /><span>{items.length}</span></NavLink></li>
                     </ul>
                 )}
-                <div className='button-section px-4 flex gap-4 h-[100%] btn-section items-center border-l-2 border-r-2 border-black'>
-                    {!cookie ? (
-                        <>
-                            <Link to="/signup" id='link' className=''><span data-hover="SIGN UP">Sign Up</span> </Link>
-                            <Link to="/login" id='link'><span data-hover="LOGIN">Login</span> </Link>
-                        </>
-                    ) : (
-                        <Link to="/login" id='link' className='' onClick={handleLogout}><span data-hover="LOGOUT">Logout</span> </Link>
-                    )}
-                </div>
+
             </div>
+            <div className={`button-section px-4 flex gap-4 h-[100%] btn-section items-center mr-6 border-black hide-section border-l-2 border-r-2`}>
+                {!cookie ? (
+                    <>
+                        <Link to="/signup" id='link' className='nav-link'><span data-hover="SIGN UP">Sign Up</span> </Link>
+                        <Link to="/login" id='link' className='nav-link'><span data-hover="LOGIN">Login</span> </Link>
+                    </>
+                ) : (
+                    <Link to="/login" id='link' className='nav-link' onClick={handleLogout}><span data-hover="LOGOUT">Logout</span> </Link>
+                )}
+            </div>
+
+            {!isMobileMenuOpen ? <MdMenu className={'text-3xl cursor-pointer self-center hamburger'} onClick={toggleMobileMenu} /> : <MdOutlineClose className={'text-3xl cursor-pointer self-center hamburger'} onClick={toggleMobileMenu} />}
+
+            {
+                isMobileMenuOpen && (cookie ? (
+                    <div className="mobile-menu" style={{ animationName: isMobileMenuOpen ? 'slidein' : 'slideout' }}>
+                        <ul>
+                            <li className='flex items-center cursor-pointer w-full h-[6vh]'>
+                                <div className='flex items-center justify-start w-full gap-2 px-4'>
+                                    <NavLink to='/profile' activeclassname="active" className='flex items-center h-full w-10'>
+                                        <img src={userData.profilePic ? userData.profilePic.url : ""} className='' alt='Profile' />
+                                    </NavLink>
+                                    <p className='text-lg'>{userData.name}</p>
+                                </div>
+                                <div className='flex items-center justify-end'>
+                                    <NavLink className='text-lg text-[#474640] flex gap-2 items-center p-2 hover:text-[#5c8acf]' to='/cart'>
+                                        <MdShoppingCart className='text-2xl' />
+                                        <span>{items.length}</span>
+                                    </NavLink>
+                                </div>
+                            </li>
+
+                            <li><div className='w-full h-[6vh] text-4xl flex items-center p-4 gap-2'><FaBoxOpen />
+                                <span className='text-lg'> <p>Your Orders</p></span>
+                            </div></li>
+
+                            <li> <Link to="/login" className='flex w-full h-[6vh]  p-4 items-center gap-2 text-4xl' onClick={handleLogout}><MdLogout /><span className='text-lg'><p>Logout</p></span>
+                            </Link></li>
+                        </ul>
+                    </div>
+                ) : (<div className="mobile-menu" style={{ animationName: isMobileMenuOpen ? 'slidein' : 'slideout' }}>
+                    <ul>
+
+
+                        <li> <Link to="/signup" className='flex w-full h-[6vh]  p-4 items-center gap-2 text-4xl' onClick={handleLogout}><MdAccountCircle />
+                            <span className='text-lg'><p>Sign up</p></span>
+                        </Link></li>
+                        <li> <Link to="/login" className='flex w-full h-[6vh]  p-4 items-center gap-2 text-4xl' onClick={handleLogout}><RiLoginCircleFill />
+
+
+                            <span className='text-lg'><p>Login</p></span>
+                        </Link></li>
+                        <li> <Link to="/help" className='flex w-full h-[6vh]  p-4 items-center gap-2 text-4xl' onClick={handleLogout}><IoIosHelpCircle />
+                            <span className='text-lg'><p>Help</p></span>
+                        </Link></li>
+                    </ul>
+                </div>))
+            }
+
         </div>
     );
 };
