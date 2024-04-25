@@ -8,7 +8,7 @@
 body {
   font-weight: 500;
   overflow-x: hidden;
-  background: #ffffff;
+  background: #fffefa;
   margin: 0;
   padding: 0;
   font-family: poppins;
@@ -19,12 +19,12 @@ body {
   font-optical-sizing: auto;
   font-weight: 600;
   font-style: normal;
-  color: rgb(37, 37, 37);
+  color: rgb(255, 247, 230);
   font-style: normal;
   position: sticky;
   top: 0;
   z-index: 99;
-  background-color: #f0f0f0;
+  background-color: #1A1A1A;
   box-shadow: 0 14px 28px rgba(70, 69, 69, 0.25),
     0 10px 10px rgba(250, 249, 208, 0.22);
 
@@ -33,14 +33,32 @@ body {
 
 }
 
-.primary-button {
+.navbar input:focus {
+  background-color: #cfcfcf;
+  border: 0px black solid;
+  outline: #d10a0ad0;
+}
 
-  transition: .2s ease-in-out;
-  background-color: rgb(233, 232, 230);
+.navbar input::placeholder {
+  color: rgb(0, 0, 0);
+}
+
+.primary-button {
+  background-color: white;
+  color: black;
+
+  font-size: 17px;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+  border: 1px solid black;
+  box-shadow: 0 0 0 0 black;
 }
 
 .primary-button:hover {
-  background: linear-gradient(90deg, rgb(248, 240, 232) 0%, rgb(233, 228, 213) 100%);
+  transform: translateY(-4px) translateX(-2px);
+  box-shadow: 2px 5px 0 0 black;
 }
 
 
@@ -83,15 +101,13 @@ body {
 
 
 .container {
-  background-color: #e2e2e2;
 
-  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
-    0 10px 10px rgba(0, 0, 0, 0.22);
-  overflow: hidden;
+
 
   max-width: 100vw;
   min-height: 480px;
   margin: 50px auto;
+  padding-bottom: 2%;
 }
 
 .form-container {
@@ -111,9 +127,6 @@ body {
   opacity: 0;
   z-index: 1;
 }
-
-
-
 
 
 .loader {
@@ -153,7 +166,7 @@ body {
 .carouselimg {
 
   margin: auto;
-  max-height: 40vh;
+  max-height: 50vh;
   width: 100%;
   object-fit: cover;
   transition: .40s ease-in-out;
@@ -175,8 +188,7 @@ body {
   padding: 0px 20px 0px 20px;
 }
 
-
-.navbar-visible {
+.primary-button .navbar-visible {
   display: flex;
 }
 
@@ -232,7 +244,7 @@ body {
   margin: auto;
   content: "";
   width: 70vw;
-  height: .3vh;
+  height: .2vh;
   background: rgb(171, 171, 171);
   background: linear-gradient(270deg, rgba(171, 171, 171, 0.9136904761904762) 0%, rgba(43, 43, 43, 1) 30%, rgba(0, 0, 0, 1) 50%, rgba(50, 50, 50, 1) 70%, rgba(171, 171, 171, 1) 100%);
   margin-top: 1%;
@@ -324,6 +336,10 @@ body {
 
   }
 
+  .carouselimg {
+    max-height: 20vh !important;
+
+  }
 
 }
 
@@ -351,6 +367,9 @@ body {
     background-color: #ffffff;
   }
 
+  .carouselimg {
+    max-height: 30vh;
+  }
 }
 
 @media screen and (max-width: 870px) {

@@ -23,6 +23,7 @@ const App = () => {
           <Route path="/googleloginnextstep" element={<AccountSetup />} />
           <Route path="/product/:productId" element={<ProductPage />} />
         </Routes>
+
       </Router>
     </Provider>
   );

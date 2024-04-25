@@ -1,7 +1,5 @@
 import { getCookie } from "../utility/getCookie";
-import Cookies from 'universal-cookie';
 const baseUrl = 'http://localhost:8080/api/'
-const cookieOptions = { httpOnly: false, secure: true, sameSite: 'none', maxAge: 60 * 60 * 24 };
 
 export const login = async (formData) => {
 
@@ -113,5 +111,30 @@ export const getUserDetails = async () => {
     } catch (error) {
         console.error("Error fetching user details:", error);
         throw new Error(error.message);
+    }
+}
+
+export const getSearchResults = async (keyword) => {
+    try {
+
+
+        const response = await fetch(`${baseUrl}product/search/${keyword}`, {
+            method: 'POST',
+            headers: {
+                JWT: getCookie('JWT')
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+
+        const searchData = await response.json();
+
+        return searchData;
+    } catch (error) {
+        console.error('Error fetching search results:', error.message);
+        return false;
+
     }
 }

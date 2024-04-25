@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { NavLink, Link } from 'react-router-dom';
+import { NavLink, Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import { MdShoppingCart, MdMenu, MdOutlineClose } from "react-icons/md";
 import { useSelector, useDispatch } from 'react-redux';
@@ -11,15 +11,16 @@ import { MdLogout } from "react-icons/md";
 import { IoIosHelpCircle } from "react-icons/io";
 import { MdAccountCircle } from "react-icons/md";
 import { RiLoginCircleFill } from "react-icons/ri";
+import { getSearchResults } from '../apis/api';
 
 const Navbar = () => {
-    const dispatch = useDispatch();
     const cookie = getCookie('JWT');
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [lastScrollTop, setLastScrollTop] = useState(0);
     const [isNavbarVisible, setIsNavbarVisible] = useState(true);
     const [searchResults, setSearchResults] = useState([]);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [keyword, setKeyword] = useState("");
     const [dropdownLeft, setDropdownLeft] = useState(0);
     const [dropdownWidth, setDropdownWidth] = useState(0);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -46,35 +47,20 @@ const Navbar = () => {
     }, [lastScrollTop]);
 
     const handleSearch = async (e) => {
-        const newKeyword = e.target.value;
-        setKeyword(newKeyword);
-
-        try {
-            const response = await fetch(`http://localhost:8080/api/product/search/${newKeyword}`, {
-                method: 'POST',
-                headers: {
-                    JWT: getCookie('JWT')
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-
-            const searchData = await response.json();
-
-            setSearchResults(searchData);
+        const response = await getSearchResults(e.target.value);
+        if (response) {
+            setSearchResults(response);
             setIsDropdownOpen(true);
 
             const inputRect = searchInputRef.current.getBoundingClientRect();
             setDropdownLeft(inputRect.left);
             setDropdownWidth(inputRect.width);
-
-        } catch (error) {
-            console.error('Error fetching search results:', error.message);
+        }
+        else {
             setSearchResults([]);
             setIsDropdownOpen(false);
         }
+
     };
 
     const handleLogout = () => {
@@ -88,40 +74,55 @@ const Navbar = () => {
     return (
         <div className={` w-full h-[7vh] mt-4 flex justify-end navbar border-t-2 border-b-2  border-black ${isNavbarVisible ? 'navbar-visible' : 'navbar-hidden'}`}>
             <div className=' flex items-center gap-8 w-[80%] ml-1 '>
+
+
                 <img src={logo} className='w-[60px]' alt='Logo' />
                 {cookie && (
                     <>
                         <p className='flex items-center gap-2 hide-section hide-location'>
                             <i className="fa-solid fa-location-dot"></i> Berhampur
                         </p>
-                        <input type='text' ref={searchInputRef} placeholder='Search ' className='min-h-[100%] searchwidth px-2 bg-[#f7f6f6] border-l-2 border-r-2 border-black  text-black text-lg' onChange={handleSearch} />
+                        <input type='text' ref={searchInputRef} placeholder='Search ' className='min-h-[100%] searchwidth px-2 bg-[#ececec] border-l-2 border-r-2 border-black  text-black text-lg' onChange={handleSearch} />
                     </>
                 )}
                 {/* Dropdown for search results */}
                 {isDropdownOpen && (
                     <div className="dropdown" style={{ left: dropdownLeft, width: dropdownWidth }}>
                         {searchResults.map((result, index) => (
-                            <div key={index} className="dropdown-item text-black flex flex-row-reverse justify-end gap-2 items-center" onClick={() => console.log('Selected item:', result)}>
+                            <div key={index} className="dropdown-item text-black flex flex-row-reverse justify-end gap-2 items-center"
+                                onClick={() => {
+
+                                    navigate(`/product/${result._id}`);
+                                    setIsDropdownOpen(false);
+                                }}>
                                 <div>{result.name}</div>
                                 <img src={result.pictures[0]} className='w-[50px] h-[50px]'></img>
-                                {/* Render other properties as needed */}
+
                             </div>
                         ))}
                     </div>
                 )}
             </div>
+
+
             <div className='max-w-[10%] flex justify-end mr-10 items-center gap-12 hide-section '>
                 {cookie && (
                     <ul className='flex justify-around items-center w-[]'>
                         <li>
-
+                            <NavLink to='/profile' activeclassname="active" className='flex items-center h-full w-10'>
+                                <img src={userData.profilePic ? userData.profilePic.url : ""} className='' alt='Profile' />
+                            </NavLink>
                         </li>
                         <Link className='over' id='link' to='/orders'><span data-hover="ORDERS">Orders</span></Link>
-                        <li><NavLink className='text-lg text-[#474640] flex gap-1 items-center p-2 hover:scale-[1.1] hover:text-[#000000]' to='/cart'><MdShoppingCart className='text-2xl' /><span>{items.length}</span></NavLink></li>
+                        <li><NavLink className='text-lg text-[#a09676] flex gap-1 items-center p-2 hover:scale-[1.1] hover:text-[#dfcba7]' to='/cart'><MdShoppingCart className='text-2xl' /><span>{items.length}</span></NavLink></li>
                     </ul>
                 )}
 
             </div>
+
+
+            {/* normal nav-bar auth buttons*/}
+
             <div className={`button-section px-4 flex gap-4 h-[100%] btn-section items-center mr-6 border-black hide-section border-l-2 border-r-2`}>
                 {!cookie ? (
                     <>
@@ -132,6 +133,8 @@ const Navbar = () => {
                     <Link to="/login" id='link' className='nav-link' onClick={handleLogout}><span data-hover="LOGOUT">Logout</span> </Link>
                 )}
             </div>
+
+            {/*mobile hambuger menu section*/}
 
             {!isMobileMenuOpen ? <MdMenu className={'text-3xl cursor-pointer self-center hamburger'} onClick={toggleMobileMenu} /> : <MdOutlineClose className={'text-3xl cursor-pointer self-center hamburger'} onClick={toggleMobileMenu} />}
 
