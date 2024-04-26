@@ -49,22 +49,25 @@ const ProductPage = () => {
 
     return (
         <div className="container mx-auto px-4 py-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                <div>
+            <div className="grid grid-cols-1 md:grid-cols-2 justify-items-start shadow-lg">
+                <div className="max-w-full md:max-w-[50%] overflow-hidden ">
+
                     <img
                         src={product.pictures[0]}
                         alt="product image"
-                        className="mx-auto md:mx-0 md:float-right mb-4 md:mb-0 rounded-lg shadow-lg"
-                        style={{ maxWidth: '100%', height: 'auto' }}
+                        className="object-contain w-full h-full aspect-square "
                     />
+
                 </div>
-                <div>
-                    <h1 className="text-3xl font-semibold mb-2">{product.name}</h1>
-                    <p className="text-gray-700 mb-4">{product.description}</p>
-                    <p className="text-2xl font-bold text-red-600 mb-4">${product.price}</p>
-                    <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md">
-                        Add to Cart
-                    </button>
+                <div className="max-w-full md:max-w-[50%] ">
+                    <div className="flex flex-col justify-center h-full">
+                        <h1 className="text-3xl font-semibold mb-2">{product.name}</h1>
+                        <p className="text-gray-700 mb-4">{product.description}</p>
+                        <p className="text-2xl font-bold text-red-600 mb-4">${product.price}</p>
+                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg shadow-md">
+                            Add to Cart
+                        </button>
+                    </div>
                 </div>
             </div>
             <div className="mt-8">

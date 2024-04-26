@@ -76,11 +76,11 @@ const Footer = () => {
                                 <input
                                     type="email"
                                     placeholder="Enter your email"
-                                    className="bg-gray-700 text-white py-2 px-4 rounded-l-lg focus:outline-none"
+                                    className="bg-gray-700 text-white py-2 px-4 rounded-l-lg focus:outline-none w-[60%]"
                                 />
                                 <button
                                     type="submit"
-                                    className="bg-[#0c0c0c] hover:bg-[#fff3d1] hover:text-black text-white py-2 px-4 rounded-r-lg focus:outline-none"
+                                    className="bg-[#0c0c0c] hover:bg-[#fff3d1] hover:text-black text-white py-2 px-4 rounded-r-lg focus:outline-none w-[40%]"
                                 >
                                     Subscribe
                                 </button>

@@ -13,7 +13,13 @@ import Footer from '../components/Footer';
 const HomePage = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
+
+
     const { products, loading, error } = useSelector((state) => state.products);
+    const [selectedCategory, setSelectedCategory] = useState('');
+    const [currentPage, setCurrentPage] = useState(1);
+    const perPage = 10; // Number of items per page
+
 
     useEffect(() => {
         dispatch(fetchProducts());
@@ -26,8 +32,6 @@ const HomePage = () => {
             navigate('/login');
         }
     }, []);
-
-    const [selectedCategory, setSelectedCategory] = useState('');
 
     const addToCartHandler = (product) => {
         dispatch(addToCart(product));
@@ -75,63 +79,81 @@ const HomePage = () => {
         autoplaySpeed: 2000,
         pauseOnHover: true
     };
+
+    // Function to handle click on a product
     const handleProductClick = (productId) => {
         // Navigate to the product details page with the product ID
         navigate(`/product/${productId}`);
     };
+
+    // Calculate total number of pages
+    const totalPages = Math.ceil(filteredProducts.length / perPage);
+
+    // Pagination Controls
+    const nextPage = () => {
+        setCurrentPage(currentPage + 1);
+    };
+
+    const prevPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    // Get products for current page
+    const startIndex = (currentPage - 1) * perPage;
+    const endIndex = startIndex + perPage;
+    const currentProducts = filteredProducts.slice(startIndex, endIndex);
+
+
     return (
         <div className='flex flex-col items-center'>
 
             <div className="text-sm md:text-md lg:text-md xl:text-lg flex justify-evenly self-center mt-5 w-[90%] ">
-
-
                 {/* Category Filter */}
                 <div className="flex w-full justify-evenly self-center gap-[3px] ">
-                    <button className={selectedCategory === '' ? ' text - gray - 700 px - 3  border - b - 2 border - [#000000] rounded' : ' categorybtn rounded text - black px - 3 py - 1  border - b - 2'} onClick={() => setSelectedCategory('')}>All</button>
-                    <button button className={selectedCategory === 'electronics' ? ' text-gray-700 px-3  border-b-2 border-[#000000] rounded' : ' categorybtn rounded text-black px-3 py-1  border-b-2'
-                    } onClick={() => setSelectedCategory('electronics')}> Electronics</button>
-                    <button className={selectedCategory === 'clothing' ? ' text-gray-700 px-3 border-b-2 border-[#000000] rounded' : ' categorybtn rounded text-black px-3 py-1  border-b-2'} onClick={() => setSelectedCategory('clothing')}>Clothing</button>
-                    <button className={selectedCategory === 'home decor' ? ' text-gray-700 px-3  border-b-2 border-[#000000] rounded' : ' categorybtn rounded text-black px-3 py-1  border-b-2'} onClick={() => setSelectedCategory('home decor')}>Home</button>
-                    <button className={selectedCategory === 'phone' ? ' text-gray-700 px-3  border-b-2 border-[#000000] rounded' : ' categorybtn rounded text-black px-3 py-1  border-b-2'} onClick={() => setSelectedCategory('phone')}>Phones</button>
+                    <button className={selectedCategory === '' ? 'text-gray-700 px-3 border-b-2 border-[#000000] rounded' : 'categorybtn rounded text-black px-3 py-1 border-b-2'} onClick={() => setSelectedCategory('')}>All</button>
+                    <button className={selectedCategory === 'electronics' ? 'text-gray-700 px-3 border-b-2 border-[#000000] rounded' : 'categorybtn rounded text-black px-3 py-1 border-b-2'} onClick={() => setSelectedCategory('electronics')}>Electronics</button>
+                    <button className={selectedCategory === 'laptop' ? 'text-gray-700 px-3 border-b-2 border-[#000000] rounded' : 'categorybtn rounded text-black px-3 py-1 border-b-2'} onClick={() => setSelectedCategory('laptop')}>Laptops</button>
+                    <button className={selectedCategory === 'headphone' ? 'text-gray-700 px-3 border-b-2 border-[#000000] rounded' : 'categorybtn rounded text-black px-3 py-1 border-b-2'} onClick={() => setSelectedCategory('headphone')}>Audio</button>
+                    <button className={selectedCategory === 'phone' ? 'text-gray-700 px-3 border-b-2 border-[#000000] rounded' : 'categorybtn rounded text-black px-3 py-1 border-b-2'} onClick={() => setSelectedCategory('phone')}>Phones</button>
+                </div>
+            </div>
 
-                </div></div>
+            {selectedCategory === "phone" && (
+                <div className='w-full h-[9vh] mt-7 grid place-content-center bannerBg text-white'><h1 className='mx-auto'>Top in Smartphones</h1></div>
+            )}
 
             <div className="container mx-auto">
-
-
-
-
                 {/* Carousel */}
-                {selectedCategory == '' ? (<><Slider {...settings} className=' w-[100%] mx-auto px-2 slider-img'>
-                    {specificProducts.map((product) => (
-                        <div key={product._id} className="text-center px-8" onClick={() => handleProductClick(product._id)}>
-                            <img src={product.banner ? product.banner : "https://via.placeholder.com/300"} alt={product.name} className="carouselimg" />
-
-                        </div>
-                    ))}
-                </Slider>
-
-
-                    <div className=' w-[100vw] content'></div></>) : <></>}
+                {selectedCategory === '' && (
+                    <><Slider {...settings} className=' w-[100%] mx-auto px-2 slider-img'>
+                        {specificProducts.map((product) => (
+                            <div key={product._id} className="text-center px-8" onClick={() => handleProductClick(product._id)}>
+                                <img src={product.banner ? product.banner : "https://via.placeholder.com/300"} alt={product.name} className="carouselimg" />
+                            </div>
+                        ))}
+                    </Slider>
+                        <div className=' w-[100vw] content'></div>
+                    </>
+                )}
 
                 {/* Product Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-10 mt-8 px-12">
+                {selectedCategory == "" ? (<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-10 mt-8 px-12">
                     {loading ? (
                         <p>Loading products...</p>
                     ) : error ? (
                         <p>Error: {error}</p>
-                    ) : filteredProducts.length > 0 ? (
-                        filteredProducts.map((product) => (
-                            <div key={product._id} className="shadow-md overflow-hidden p-4 card " onClick={() => handleProductClick(product._id)}>
+                    ) : currentProducts.length > 0 ? (
+                        currentProducts.map((product) => (
+                            <div key={product._id} className="shadow-md overflow-hidden p-4 card" onClick={() => handleProductClick(product._id)}>
                                 <img src={product.pictures ? product.pictures[0] : "https://via.placeholder.com/300"} alt={product.name} className="w-48 h-48 object-contain" />
                                 <div className="p-4">
                                     <h2 className="text-xl font-semibold mb-2 overflow-hidden whitespace-nowrap">{product.name}</h2>
-
                                     <p className="text-gray-800 font-bold mb-2">{product.price}</p>
-
                                     <button
                                         onClick={(e) => {
-                                            e.stopPropagation()
+                                            e.stopPropagation();
                                             addToCartHandler(product);
                                         }}
                                         className="mt-4 text-white font-bold py-2 px-4 rounded primary-button"
@@ -142,9 +164,66 @@ const HomePage = () => {
                             </div>
                         ))
                     ) : (
-                        <div className='relative h-autoflex item text-center'><p className='inline'>No products found.</p></div>
+                        <div className="relative h-autoflex item text-center"><p className="inline">No products found.</p></div>
                     )}
                 </div>
+                ) : (<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-10 mt-8 px-12">
+                    {loading ? (
+                        <p>Loading products...</p>
+                    ) : error ? (
+                        <p>Error: {error}</p>
+                    ) : (
+                        filteredProducts.length > 0 ? (
+
+                            // If a specific category is selected, render only the first 5 products for that category
+                            filteredProducts.slice(0, 5).map((product) => (
+                                <div key={product._id} className="shadow-md overflow-hidden p-4 card" onClick={() => handleProductClick(product._id)}>
+                                    <img src={product.pictures ? product.pictures[0] : "https://via.placeholder.com/300"} alt={product.name} className="w-48 h-48 object-contain" />
+                                    <div className="p-4">
+                                        <h2 className="text-xl font-semibold mb-2 overflow-hidden whitespace-nowrap">{product.name}</h2>
+                                        <p className="text-gray-800 font-bold mb-2">{product.price}</p>
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                addToCartHandler(product);
+                                            }}
+                                            className="mt-4 text-white font-bold py-2 px-4 rounded primary-button"
+                                        >
+                                            Add to Cart
+                                        </button>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="relative h-autoflex item text-center"><p className="inline">No products found.</p></div>
+                        )
+                    )}
+                </div>)}
+
+                {/* Pagination Controls for all products and redirect for categories */}
+
+                {selectedCategory == "" ? (<div className="flex justify-center mt-8">
+                    <button onClick={prevPage} className="pagination-arrow" disabled={currentPage === 1}>
+                        &lt; Prev  &nbsp; &nbsp;&nbsp;
+                    </button>
+                    {[...Array(totalPages).keys()].map((num) => (
+                        <button key={num + 1} onClick={() => setCurrentPage(num + 1)} className={currentPage === num + 1 ? "pagination-number active" : "pagination-number"}>
+                            {num + 1}
+                        </button>
+                    ))}
+                    <button onClick={nextPage} className="pagination-arrow" disabled={currentPage === totalPages}>
+                        &nbsp; &nbsp;&nbsp;   Next &gt;
+                    </button>
+                </div>) : (<div className='w-full h-[9vh] mt-[5%] grid place-content-center text-black '>
+                    <button className="shine-btn rounded-md" onClick={() => {
+                        navigate(`/${selectedCategory}`)
+                    }}>
+                        See more..
+                        <svg fill="currentColor" viewBox="0 0 24 24" className="icon">
+                            <path clipRule="evenodd" d="M12 2.25c-5.385 0-9.75 4.365-9.75 9.75s4.365 9.75 9.75 9.75 9.75-4.365 9.75-9.75S17.385 2.25 12 2.25zm4.28 10.28a.75.75 0 000-1.06l-3-3a.75.75 0 10-1.06 1.06l1.72 1.72H8.25a.75.75 0 000 1.5h5.69l-1.72 1.72a.75.75 0 101.06 1.06l3-3z" fillRule="evenodd"></path>
+                        </svg>
+                    </button>
+                </div>)}
 
 
             </div>

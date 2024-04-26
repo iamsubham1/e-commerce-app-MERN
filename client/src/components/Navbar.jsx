@@ -110,7 +110,7 @@ const Navbar = () => {
                     <ul className='flex justify-around items-center w-[]'>
                         <li>
                             <NavLink to='/profile' activeclassname="active" className='flex items-center h-full w-10'>
-                                <img src={userData.profilePic ? userData.profilePic.url : ""} className='' alt='Profile' />
+                                <img src={userData.profilePic ? userData.profilePic.url : "https://res.cloudinary.com/dmb0ooxo5/image/upload/v1706984465/ftfdy0ic7ftz2awihjts.jpg"} className='rounded-full' alt='Profile' />
                             </NavLink>
                         </li>
                         <Link className='over' id='link' to='/orders'><span data-hover="ORDERS">Orders</span></Link>
@@ -136,16 +136,16 @@ const Navbar = () => {
 
             {/*mobile hambuger menu section*/}
 
-            {!isMobileMenuOpen ? <MdMenu className={'text-3xl cursor-pointer self-center hamburger'} onClick={toggleMobileMenu} /> : <MdOutlineClose className={'text-3xl cursor-pointer self-center hamburger'} onClick={toggleMobileMenu} />}
+            {!isMobileMenuOpen ? <MdMenu className={'text-3xl cursor-pointer self-center hamburger '} onClick={toggleMobileMenu} /> : <MdOutlineClose className={'text-3xl cursor-pointer self-center hamburger'} onClick={toggleMobileMenu} />}
 
             {
                 isMobileMenuOpen && (cookie ? (
-                    <div className="mobile-menu" style={{ animationName: isMobileMenuOpen ? 'slidein' : 'slideout' }}>
+                    <div className="mobile-menu text-black" style={{ animationName: isMobileMenuOpen ? 'slidein' : 'slideout' }}>
                         <ul>
                             <li className='flex items-center cursor-pointer w-full h-[6vh]'>
                                 <div className='flex items-center justify-start w-full gap-2 px-4'>
                                     <NavLink to='/profile' activeclassname="active" className='flex items-center h-full w-10'>
-                                        <img src={userData.profilePic ? userData.profilePic.url : ""} className='' alt='Profile' />
+                                        <img src={userData.profilePic ? userData.profilePic.url : "https://res.cloudinary.com/dmb0ooxo5/image/upload/v1706984465/ftfdy0ic7ftz2awihjts.jpg"} className='rounded-full' alt='Profile' />
                                     </NavLink>
                                     <p className='text-lg'>{userData.name}</p>
                                 </div>

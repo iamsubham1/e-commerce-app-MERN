@@ -8,6 +8,7 @@ import HomePage from './pages/HomePage';
 import SignUp from './pages/SignUp';
 import AccountSetup from './pages/AccountSetup';
 import ProductPage from './pages/ProductPage';
+import Phones from './pages/PhonesPage';
 
 const App = () => {
 
@@ -22,6 +23,7 @@ const App = () => {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/googleloginnextstep" element={<AccountSetup />} />
           <Route path="/product/:productId" element={<ProductPage />} />
+          <Route path="/phone" element={<Phones />} />
         </Routes>
 
       </Router>
