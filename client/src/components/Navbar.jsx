@@ -5,7 +5,7 @@ import { MdShoppingCart, MdMenu, MdOutlineClose } from "react-icons/md";
 import { useSelector, useDispatch } from 'react-redux';
 import { getCookie } from '../utility/getCookie';
 import { logout } from '../utility/logout';
-import { getUserData } from '../store/userSlice';
+import { getUserData } from '../reducers/userSlice';
 import { FaBoxOpen } from "react-icons/fa";
 import { MdLogout } from "react-icons/md";
 import { IoIosHelpCircle } from "react-icons/io";
@@ -25,8 +25,12 @@ const Navbar = () => {
     const [dropdownWidth, setDropdownWidth] = useState(0);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const searchInputRef = useRef(null);
+
+
     const { items } = useSelector((state) => state.cart);
     const { userData } = useSelector((state) => state.user);
+    console.log(items);
+
 
     useEffect(() => {
         dispatch(getUserData());
@@ -45,6 +49,8 @@ const Navbar = () => {
             window.removeEventListener("scroll", handleScroll);
         };
     }, [lastScrollTop]);
+
+
 
     const handleSearch = async (e) => {
         const response = await getSearchResults(e.target.value);
@@ -114,7 +120,7 @@ const Navbar = () => {
                             </NavLink>
                         </li>
                         <Link className='over' id='link' to='/orders'><span data-hover="ORDERS">Orders</span></Link>
-                        <li><NavLink className='text-lg text-[#a09676] flex gap-1 items-center p-2 hover:scale-[1.1] hover:text-[#dfcba7]' to='/cart'><MdShoppingCart className='text-2xl' /><span>{items.length}</span></NavLink></li>
+                        <li><NavLink className='text-lg text-[#a09676] flex gap-1 items-center p-2 hover:scale-[1.1] hover:text-[#dfcba7]' to='/cart'><MdShoppingCart className='text-2xl' /><span>{userData.cart ? userData.cart.items.length : "0"}</span></NavLink></li>
                     </ul>
                 )}
 
@@ -152,7 +158,7 @@ const Navbar = () => {
                                 <div className='flex items-center justify-end'>
                                     <NavLink className='text-lg text-[#474640] flex gap-2 items-center p-2 hover:text-[#5c8acf]' to='/cart'>
                                         <MdShoppingCart className='text-2xl' />
-                                        <span>{items.length}</span>
+                                        <span>{userData.cart.items.length}</span>
                                     </NavLink>
                                 </div>
                             </li>

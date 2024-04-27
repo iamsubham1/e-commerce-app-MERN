@@ -1,5 +1,6 @@
 import { getCookie } from "../utility/getCookie";
 const baseUrl = 'http://localhost:8080/api/'
+const token = getCookie('JWT');
 
 export const login = async (formData) => {
 
@@ -57,7 +58,7 @@ export const fetchAllProducts = async () => {
         const response = await fetch(`${baseUrl}product/allproducts`, {
             headers: {
                 'Content-Type': 'application/json',
-                JWT: getCookie('JWT'),
+                JWT: token
             }
         });
         const data = await response.json();
@@ -75,7 +76,7 @@ export const addPhNumber = async (phoneNumber) => {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
-                JWT: getCookie('JWT')
+                JWT: token
             },
             body: JSON.stringify({ phoneNumber })
         });
@@ -96,7 +97,7 @@ export const getUserDetails = async () => {
         const response = await fetch(`${baseUrl}user/details`, {
             headers: {
                 'Content-Type': 'application/json',
-                'JWT': getCookie('JWT')
+                'JWT': token
             }
         });
 
@@ -121,7 +122,7 @@ export const getSearchResults = async (keyword) => {
         const response = await fetch(`${baseUrl}product/search/${keyword}`, {
             method: 'POST',
             headers: {
-                JWT: getCookie('JWT')
+                JWT: token
             }
         });
 
@@ -136,5 +137,30 @@ export const getSearchResults = async (keyword) => {
         console.error('Error fetching search results:', error.message);
         return false;
 
+    }
+}
+
+export const addToCartApi = async (data) => {
+    try {
+        console.log("triggered api", data);
+        const response = await fetch(`${baseUrl}order/addtocart`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                JWT: token
+            },
+            body: JSON.stringify(data)
+        })
+        if (!response.ok) {
+            throw new Error('response was not ok');
+        }
+
+        const cartData = await response.json();
+        console.log(cartData);
+        return cartData;
+
+    } catch (error) {
+        console.error('Error fetching search results:', error.message);
+        return false;
     }
 }

@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProducts } from '../store/productslice';
-import { addToCart } from '../store/cartslice';
+import { fetchProducts } from '../reducers/productslice';
+import { handleAddToCart } from '../reducers/cartslice';
 import { useNavigate } from 'react-router-dom';
 import { getCookie } from '../utility/getCookie';
-import { getUserData } from '../store/userSlice';
+import { getUserData } from '../reducers/userSlice';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
@@ -16,17 +16,20 @@ const HomePage = () => {
 
 
     const { products, loading, error } = useSelector((state) => state.products);
+    const { items } = useSelector((state) => state.cart);
+
     const [selectedCategory, setSelectedCategory] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
     const perPage = 10; // Number of items per page
 
 
     useEffect(() => {
-        dispatch(fetchProducts());
+
         dispatch(getUserData());
-    }, [dispatch]);
+    }, [items]);
 
     useEffect(() => {
+        dispatch(fetchProducts());
         const cookie = getCookie('JWT');
         if (!cookie) {
             navigate('/login');
@@ -34,7 +37,13 @@ const HomePage = () => {
     }, []);
 
     const addToCartHandler = (product) => {
-        dispatch(addToCart(product));
+        const params = {
+            "productId": product,
+            "quantity": 1
+        }
+        dispatch(handleAddToCart(params));
+        console.log('triggered', params);
+
     };
 
     // Filtered products based on search query and selected category
@@ -154,7 +163,7 @@ const HomePage = () => {
                                     <button
                                         onClick={(e) => {
                                             e.stopPropagation();
-                                            addToCartHandler(product);
+                                            addToCartHandler(product._id);
                                         }}
                                         className="mt-4 text-white font-bold py-2 px-4 rounded primary-button"
                                     >

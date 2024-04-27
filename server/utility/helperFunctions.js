@@ -38,7 +38,7 @@ const calculateTotalPrice = async (items) => {
 
         for (const item of items) {
 
-            const productPrice = await getProductPrice(item.productId);
+            const productPrice = await getProductPrice(item.product);
 
             if (productPrice !== null) {
                 totalValue += productPrice * item.quantity;
