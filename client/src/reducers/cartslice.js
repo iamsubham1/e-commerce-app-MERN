@@ -1,6 +1,6 @@
-// cartSlice.js
 import { createSlice } from '@reduxjs/toolkit';
-import { addToCartApi } from '../apis/api';
+import { fetchCartApi, addToCartApi } from '../apis/api'; // Assuming there's an API for fetching cart data
+
 
 export const cartSlice = createSlice({
     name: 'cart',
@@ -11,7 +11,7 @@ export const cartSlice = createSlice({
         error: null,
     },
     reducers: {
-        addToCart: (state, action) => {
+        setCart: (state, action) => {
             const { items, totalValue } = action.payload;
             state.items = items;
             state.totalValue = totalValue;
@@ -24,8 +24,7 @@ export const cartSlice = createSlice({
         clearCart: (state) => {
             state.items = [];
             state.totalValue = 0;
-        },
-        setLoading: (state, action) => {
+        }, setLoading: (state, action) => {
             state.loading = action.payload;
         },
         setError: (state, action) => {
@@ -34,25 +33,36 @@ export const cartSlice = createSlice({
     },
 });
 
+export const { setCart, setLoading, setError } = cartSlice.actions;
 
 
 
-export const { addToCart, removeFromCart, clearCart, setLoading, setError } = cartSlice.actions;
-
-
-export const handleAddToCart = (product) => async (dispatch) => {
-    console.log("redux triggered")
-    dispatch(setLoading(true))
+// Action to fetch initial cart state
+export const fetchInitialCartState = (id) => async (dispatch) => {
+    dispatch(setLoading(true));
     try {
-        const cart = await addToCartApi(product);
-        dispatch(addToCart(cart));
-
+        const cart = await fetchCartApi(id);
+        dispatch(setCart(cart)); // Update Redux store with initial cart state
+        dispatch(setLoading(false));
+        console.log("set cart");
     } catch (error) {
         dispatch(setError(error.message));
         dispatch(setLoading(false));
     }
+};
 
-}
-
+// Action to handle adding to cart
+export const handleAddToCart = (product) => async (dispatch) => {
+    console.log("redux triggered");
+    dispatch(setLoading(true));
+    try {
+        const cart = await addToCartApi(product);
+        dispatch(setCart(cart)); // Update Redux store with updated cart state
+        dispatch(setLoading(false));
+    } catch (error) {
+        dispatch(setError(error.message));
+        dispatch(setLoading(false));
+    }
+};
 
 export default cartSlice.reducer;

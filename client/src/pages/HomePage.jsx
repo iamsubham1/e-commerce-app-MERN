@@ -4,29 +4,19 @@ import { fetchProducts } from '../reducers/productslice';
 import { handleAddToCart } from '../reducers/cartslice';
 import { useNavigate } from 'react-router-dom';
 import { getCookie } from '../utility/getCookie';
-import { getUserData } from '../reducers/userSlice';
 import Slider from 'react-slick';
 import 'slick-carousel/slick/slick.css';
 import 'slick-carousel/slick/slick-theme.css';
-import Footer from '../components/Footer';
+import { ToastContainer, toast } from 'react-toastify';
 
 const HomePage = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-
-
     const { products, loading, error } = useSelector((state) => state.products);
-    const { items } = useSelector((state) => state.cart);
-
     const [selectedCategory, setSelectedCategory] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const perPage = 10; // Number of items per page
+    const perPage = 10;
 
-
-    useEffect(() => {
-
-        dispatch(getUserData());
-    }, [items]);
 
     useEffect(() => {
         dispatch(fetchProducts());
@@ -37,12 +27,19 @@ const HomePage = () => {
     }, []);
 
     const addToCartHandler = (product) => {
-        const params = {
+        const payload = {
             "productId": product,
             "quantity": 1
         }
-        dispatch(handleAddToCart(params));
-        console.log('triggered', params);
+        dispatch(handleAddToCart(payload));
+        console.log('triggered', payload);
+
+
+
+        notify("item added to cart");
+
+
+
 
     };
 
@@ -63,7 +60,7 @@ const HomePage = () => {
     let headphoneFound = false;
     let samsungFound = false;
 
-    const specificProducts = filteredProducts.filter(product => {
+    const carouselProducts = filteredProducts.filter(product => {
         const productName = product.name.toLowerCase();
         if (productName.includes('iphone') && !iphoneFound) {
             iphoneFound = true;
@@ -89,7 +86,6 @@ const HomePage = () => {
         pauseOnHover: true
     };
 
-    // Function to handle click on a product
     const handleProductClick = (productId) => {
         // Navigate to the product details page with the product ID
         navigate(`/product/${productId}`);
@@ -114,10 +110,26 @@ const HomePage = () => {
     const endIndex = startIndex + perPage;
     const currentProducts = filteredProducts.slice(startIndex, endIndex);
 
+    const notify = (message) => toast.success(`${message}`);
+
 
     return (
         <div className='flex flex-col items-center'>
 
+            {/* toast */}
+            <ToastContainer position="top-right"
+                autoClose={1500}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+
+
+
+            />
             <div className="text-sm md:text-md lg:text-md xl:text-lg flex justify-evenly self-center mt-5 w-[90%] ">
                 {/* Category Filter */}
                 <div className="flex w-full justify-evenly self-center gap-[3px] ">
@@ -137,13 +149,13 @@ const HomePage = () => {
                 {/* Carousel */}
                 {selectedCategory === '' && (
                     <><Slider {...settings} className=' w-[100%] mx-auto px-2 slider-img'>
-                        {specificProducts.map((product) => (
+                        {carouselProducts.map((product) => (
                             <div key={product._id} className="text-center px-8" onClick={() => handleProductClick(product._id)}>
                                 <img src={product.banner ? product.banner : "https://via.placeholder.com/300"} alt={product.name} className="carouselimg" />
                             </div>
                         ))}
                     </Slider>
-                        <div className=' w-[100vw] content'></div>
+                        <div className=' max-w-[80vw] mx-auto content'></div>
                     </>
                 )}
 
@@ -236,7 +248,7 @@ const HomePage = () => {
 
 
             </div>
-            <Footer />
+
         </div>
     );
 };

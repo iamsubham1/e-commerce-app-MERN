@@ -2,6 +2,7 @@ import { getCookie } from "../utility/getCookie";
 const baseUrl = 'http://localhost:8080/api/'
 const token = getCookie('JWT');
 
+
 export const login = async (formData) => {
 
     try {
@@ -122,6 +123,8 @@ export const getSearchResults = async (keyword) => {
         const response = await fetch(`${baseUrl}product/search/${keyword}`, {
             method: 'POST',
             headers: {
+                'Content-Type': 'application/json',
+
                 JWT: token
             }
         });
@@ -164,3 +167,27 @@ export const addToCartApi = async (data) => {
         return false;
     }
 }
+
+
+export const fetchCartApi = async (id) => {
+    try {
+        const response = await fetch(`${baseUrl}order/cartdetails`, {
+            headers: {
+                'Content-Type': 'application/json',
+                JWT: token
+
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch cart details');
+        }
+
+        const cartDetails = await response.json();
+        return cartDetails;
+    } catch (error) {
+        console.error('Error fetching cart details:', error);
+
+        return false
+    }
+};

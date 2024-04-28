@@ -6,7 +6,7 @@ const verifyUser = require('../middleware/verifyUser')
 
 router.post('/addtocart', verifyUser, addtocart);
 
-router.get('/cartdetails/:id', verifyUser, getCartDetails);
+router.get('/cartdetails', verifyUser, getCartDetails);
 
 router.patch('/updatecart', verifyUser, updateCart);
 router.delete('/clearcart', verifyUser, clearCart);

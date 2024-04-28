@@ -12,6 +12,8 @@ import { IoIosHelpCircle } from "react-icons/io";
 import { MdAccountCircle } from "react-icons/md";
 import { RiLoginCircleFill } from "react-icons/ri";
 import { getSearchResults } from '../apis/api';
+import { fetchInitialCartState } from '../reducers/cartslice';
+
 
 const Navbar = () => {
     const cookie = getCookie('JWT');
@@ -29,12 +31,19 @@ const Navbar = () => {
 
     const { items } = useSelector((state) => state.cart);
     const { userData } = useSelector((state) => state.user);
-    console.log(items);
+
+    // console.log("dsdsd", items);
+
 
 
     useEffect(() => {
         dispatch(getUserData());
-    }, [dispatch]);
+
+        dispatch(fetchInitialCartState());
+
+    }, []);
+
+    const totalQuantity = items && items.reduce((total, item) => total + item.quantity, 0);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -79,10 +88,8 @@ const Navbar = () => {
 
     return (
         <div className={` w-full h-[7vh] mt-4 flex justify-end navbar border-t-2 border-b-2  border-black ${isNavbarVisible ? 'navbar-visible' : 'navbar-hidden'}`}>
-            <div className=' flex items-center gap-8 w-[80%] ml-1 '>
-
-
-                <img src={logo} className='w-[60px]' alt='Logo' />
+            <div className=' flex items-center gap-8 w-[85%] ml-1 '>
+                <img src={logo} className='w-[60px] hover:cursor-pointer' alt='Logo' onClick={() => navigate('/')} />
                 {cookie && (
                     <>
                         <p className='flex items-center gap-2 hide-section hide-location'>
@@ -91,6 +98,8 @@ const Navbar = () => {
                         <input type='text' ref={searchInputRef} placeholder='Search ' className='min-h-[100%] searchwidth px-2 bg-[#ececec] border-l-2 border-r-2 border-black  text-black text-lg' onChange={handleSearch} />
                     </>
                 )}
+
+
                 {/* Dropdown for search results */}
                 {isDropdownOpen && (
                     <div className="dropdown" style={{ left: dropdownLeft, width: dropdownWidth }}>
@@ -112,15 +121,17 @@ const Navbar = () => {
 
 
             <div className='max-w-[10%] flex justify-end mr-10 items-center gap-12 hide-section '>
+
+
                 {cookie && (
                     <ul className='flex justify-around items-center w-[]'>
                         <li>
-                            <NavLink to='/profile' activeclassname="active" className='flex items-center h-full w-10'>
+                            <Link to='/profile' activeclassname="active" className='flex items-center h-full w-10 hover:w-[2.4rem]'>
                                 <img src={userData.profilePic ? userData.profilePic.url : "https://res.cloudinary.com/dmb0ooxo5/image/upload/v1706984465/ftfdy0ic7ftz2awihjts.jpg"} className='rounded-full' alt='Profile' />
-                            </NavLink>
+                            </Link>
                         </li>
                         <Link className='over' id='link' to='/orders'><span data-hover="ORDERS">Orders</span></Link>
-                        <li><NavLink className='text-lg text-[#a09676] flex gap-1 items-center p-2 hover:scale-[1.1] hover:text-[#dfcba7]' to='/cart'><MdShoppingCart className='text-2xl' /><span>{userData.cart ? userData.cart.items.length : "0"}</span></NavLink></li>
+                        <li><Link className='text-lg text-[#a09676] flex gap-1 items-center p-2 hover:scale-[1.1] hover:text-[#dfcba7]' to='/cart'><MdShoppingCart className='text-2xl' /><span>{totalQuantity || "0"}</span></Link></li>
                     </ul>
                 )}
 
@@ -156,10 +167,10 @@ const Navbar = () => {
                                     <p className='text-lg'>{userData.name}</p>
                                 </div>
                                 <div className='flex items-center justify-end'>
-                                    <NavLink className='text-lg text-[#474640] flex gap-2 items-center p-2 hover:text-[#5c8acf]' to='/cart'>
+                                    <Link className='text-lg text-[#474640] flex gap-2 items-center p-2 hover:text-[#1d1d1d]' to='/cart' onClick={() => isMobileMenuOpen(false)}>
                                         <MdShoppingCart className='text-2xl' />
-                                        <span>{userData.cart.items.length}</span>
-                                    </NavLink>
+                                        <span>{totalQuantity || "0"}</span>
+                                    </Link>
                                 </div>
                             </li>
 
@@ -175,15 +186,15 @@ const Navbar = () => {
                     <ul>
 
 
-                        <li> <Link to="/signup" className='flex w-full h-[6vh]  p-4 items-center gap-2 text-4xl' onClick={handleLogout}><MdAccountCircle />
+                        <li> <Link to="/signup" className='flex w-full h-[6vh]  p-4 items-center gap-2 text-4xl' onClick={() => isMobileMenuOpen(false)} ><MdAccountCircle />
                             <span className='text-lg'><p>Sign up</p></span>
                         </Link></li>
-                        <li> <Link to="/login" className='flex w-full h-[6vh]  p-4 items-center gap-2 text-4xl' onClick={handleLogout}><RiLoginCircleFill />
+                        <li> <Link to="/login" className='flex w-full h-[6vh]  p-4 items-center gap-2 text-4xl' onClick={() => isMobileMenuOpen(false)} ><RiLoginCircleFill />
 
 
                             <span className='text-lg'><p>Login</p></span>
                         </Link></li>
-                        <li> <Link to="/help" className='flex w-full h-[6vh]  p-4 items-center gap-2 text-4xl' onClick={handleLogout}><IoIosHelpCircle />
+                        <li> <Link to="/help" className='flex w-full h-[6vh]  p-4 items-center gap-2 text-4xl' onClick={() => isMobileMenuOpen(false)}><IoIosHelpCircle />
                             <span className='text-lg'><p>Help</p></span>
                         </Link></li>
                     </ul>

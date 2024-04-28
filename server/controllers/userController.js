@@ -28,7 +28,7 @@ const getUserDetails = async (req, res) => {
         const userId = req.user._id;
         const user = await User.findById(userId);
         if (user) {
-            await user.populate('cart');
+
 
             //check profile name else aws will throws error
             if (user.profilePic && user.profilePic.name && user.profilePic.name !== "Google") {

@@ -245,15 +245,13 @@ body {
 }
 
 .content {
-  margin: auto;
+
   content: "";
-  width: 70vw;
+
   height: .2vh;
-  background: rgb(171, 171, 171);
-  background: linear-gradient(270deg, rgba(171, 171, 171, 0.9136904761904762) 0%, rgba(43, 43, 43, 1) 30%, rgba(0, 0, 0, 1) 50%, rgba(50, 50, 50, 1) 70%, rgba(171, 171, 171, 1) 100%);
+  background: rgb(0, 0, 0);
   margin-top: 1%;
   border-radius: 100%;
-  animation: scales infinite 5s ease-in-out;
 
 
 }
@@ -362,13 +360,18 @@ body {
 
 }
 
+.shadowStyle {
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.25),
+    0 10px 10px rgba(0, 0, 0, 0.22);
+}
+
 .shine-btn {
   position: relative;
   transition: all 0.3s ease-in-out;
-  box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.2);
+
   padding-block: 0.5rem;
   padding-inline: 1.25rem;
-  background-color: rgb(0, 0, 0);
+  background-color: rgb(5, 5, 5);
   font-family: "Alegreya Sans SC", sans-serif;
   display: flex;
   align-items: center;
@@ -376,7 +379,6 @@ body {
   color: #ffff;
   gap: 10px;
   font-weight: bold;
-  border: 3px solid #ffffff;
   outline: none;
   overflow: hidden;
   font-size: 15px;
@@ -390,7 +392,6 @@ body {
 
 .shine-btn:hover {
   transform: scale(1.05);
-
 }
 
 .shine-btn:hover .icon {

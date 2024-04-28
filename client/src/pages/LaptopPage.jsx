@@ -2,35 +2,36 @@ import React, { useState, useEffect } from 'react';
 import { getCookie } from '../utility/getCookie';
 import { useNavigate } from 'react-router-dom';
 
-const Phones = () => {
+const LaptopPage = () => {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-
     useEffect(() => {
         const fetchProducts = async () => {
             try {
-                const response = await fetch('http://localhost:8080/api/product/category/electronics phone', {
+                const response = await fetch('http://localhost:8080/api/product/category/laptop', {
                     headers: {
                         JWT: getCookie('JWT')
                     }
                 });
 
-                const data = await response.json()
+                if (!response.ok) {
+                    throw new Error('Failed to fetch products');
+                }
 
+                const data = await response.json();
                 setProducts(data);
-                setLoading(false);
             } catch (error) {
                 setError('Error fetching products');
+            } finally {
                 setLoading(false);
             }
         };
 
         fetchProducts();
     }, []);
-
 
     if (loading) {
         return <p>Loading products...</p>;
@@ -39,9 +40,10 @@ const Phones = () => {
     if (error) {
         return <p>{error}</p>;
     }
+
     return (
         <div className="container mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold mb-6">Mobile Phones</h1>
+            <h1 className="text-3xl font-bold mb-6">Laptops</h1>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
                 {products.map(product => (
@@ -57,9 +59,8 @@ const Phones = () => {
                     </div>
                 ))}
             </div>
-
         </div>
     );
-};
+}
 
-export default Phones;
+export default LaptopPage;

@@ -9,6 +9,10 @@ import SignUp from './pages/SignUp';
 import AccountSetup from './pages/AccountSetup';
 import ProductPage from './pages/ProductPage';
 import Phones from './pages/PhonesPage';
+import Cart from './pages/CartPage';
+import Footer from './components/Footer';
+import OrdersPage from './pages/OrdersPage';
+import LaptopPage from './pages/LaptopPage';
 
 const App = () => {
 
@@ -23,9 +27,12 @@ const App = () => {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/googleloginnextstep" element={<AccountSetup />} />
           <Route path="/product/:productId" element={<ProductPage />} />
-          <Route path="/phone" element={<Phones />} />
+          <Route path="/:selectedCategory" element={<Phones />} />
+          <Route path="/laptop" element={<LaptopPage />} />
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/orders" element={<OrdersPage />} />
         </Routes>
-
+        <Footer />
       </Router>
     </Provider>
   );

@@ -5,7 +5,6 @@ import { FcGoogle } from "react-icons/fc";
 import { login } from '../apis/api'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { logout } from '../utility/logout';
 
 const Login = () => {
     const [formData, setFormData] = useState({

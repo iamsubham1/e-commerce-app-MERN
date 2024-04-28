@@ -59,12 +59,16 @@ const addtocart = async (req, res) => {
 
 const getCartDetails = async (req, res) => {
     try {
-        const cartId = req.params.id;
+        const userId = req.user._id;
+        const user = await User.findById(userId);
 
-        const cartDetails = await Cart.findById(cartId);
+
+        const cartDetails = await Cart.findById(user.cart._id);
 
         if (cartDetails) {
             //console.log(cartDetails);
+            await cartDetails.populate('items.product', 'name reviews pictures price'); // Populate product info
+
             return res.status(200).json(cartDetails);
         } else {
             return res.status(404).json({ message: "Cart not found" });
@@ -87,7 +91,7 @@ const updateCart = async (req, res) => {
         }
 
         // Find the item in the cart
-        const cartItem = shoppingCart.items.find(item => item.productId.toString() === productId);
+        const cartItem = shoppingCart.items.find(item => item.product.toString() === productId);
 
         if (!cartItem) {
             return res.status(404).json({ message: "Item not found in cart" });
@@ -98,7 +102,7 @@ const updateCart = async (req, res) => {
             cartItem.quantity -= 1;
         } else {
             // If quantity is already 1, remove the item from the cart
-            shoppingCart.items = shoppingCart.items.filter(item => item.productId.toString() !== productId);
+            shoppingCart.items = shoppingCart.items.filter(item => item.product.toString() !== productId);
         }
 
 
@@ -107,7 +111,7 @@ const updateCart = async (req, res) => {
         // Update the totalValue field of the cart
         shoppingCart.totalValue = totalValue;
 
-        // Save the updated cart
+
         await shoppingCart.save();
 
 
