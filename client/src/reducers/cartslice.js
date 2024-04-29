@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchCartApi, addToCartApi } from '../apis/api'; // Assuming there's an API for fetching cart data
+import { fetchCartApi, addToCartApi, removeItemApi, decreaseItemCountApi, clearCartApi } from '../apis/api'; // Assuming there's an API for fetching cart data
 
 
 export const cartSlice = createSlice({
@@ -57,6 +57,47 @@ export const handleAddToCart = (product) => async (dispatch) => {
     dispatch(setLoading(true));
     try {
         const cart = await addToCartApi(product);
+        dispatch(setCart(cart)); // Update Redux store with updated cart state
+        dispatch(setLoading(false));
+    } catch (error) {
+        dispatch(setError(error.message));
+        dispatch(setLoading(false));
+    }
+};
+
+// Action to clear cart
+export const handleRemoveItem = (product) => async (dispatch) => {
+    console.log("redux triggered");
+    dispatch(setLoading(true));
+    try {
+        const cart = await removeItemApi(product);
+        dispatch(setCart(cart)); // Update Redux store with updated cart state
+        dispatch(setLoading(false));
+    } catch (error) {
+        dispatch(setError(error.message));
+        dispatch(setLoading(false));
+    }
+};
+
+
+export const handleDecreaseItem = (product) => async (dispatch) => {
+    console.log("redux triggered");
+    dispatch(setLoading(true));
+    try {
+        const cart = await decreaseItemCountApi(product);
+        dispatch(setCart(cart)); // Update Redux store with updated cart state
+        dispatch(setLoading(false));
+    } catch (error) {
+        dispatch(setError(error.message));
+        dispatch(setLoading(false));
+    }
+};
+
+export const clearCart = () => async (dispatch) => {
+    console.log("redux triggered");
+    dispatch(setLoading(true));
+    try {
+        const cart = await clearCartApi();
         dispatch(setCart(cart)); // Update Redux store with updated cart state
         dispatch(setLoading(false));
     } catch (error) {

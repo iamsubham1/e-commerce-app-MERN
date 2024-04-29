@@ -88,8 +88,9 @@ const Navbar = () => {
 
     return (
         <div className={` w-full h-[7vh] mt-4 flex justify-end navbar border-t-2 border-b-2  border-black ${isNavbarVisible ? 'navbar-visible' : 'navbar-hidden'}`}>
-            <div className=' flex items-center gap-8 w-[85%] ml-1 '>
+            <div className=' flex items-center  gap-2 w-[85%] ml-1 '>
                 <img src={logo} className='w-[60px] hover:cursor-pointer' alt='Logo' onClick={() => navigate('/')} />
+
                 {cookie && (
                     <>
                         <p className='flex items-center gap-2 hide-section hide-location'>
@@ -127,7 +128,7 @@ const Navbar = () => {
                     <ul className='flex justify-around items-center w-[]'>
                         <li>
                             <Link to='/profile' activeclassname="active" className='flex items-center h-full w-10 hover:w-[2.4rem]'>
-                                <img src={userData.profilePic ? userData.profilePic.url : "https://res.cloudinary.com/dmb0ooxo5/image/upload/v1706984465/ftfdy0ic7ftz2awihjts.jpg"} className='rounded-full' alt='Profile' />
+                                <img src={userData && userData.profilePic ? userData.profilePic.url : "https://res.cloudinary.com/dmb0ooxo5/image/upload/v1706984465/ftfdy0ic7ftz2awihjts.jpg"} className='rounded-full' alt='Profile' />
                             </Link>
                         </li>
                         <Link className='over' id='link' to='/orders'><span data-hover="ORDERS">Orders</span></Link>

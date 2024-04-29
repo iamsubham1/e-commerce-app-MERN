@@ -13,6 +13,8 @@ import Cart from './pages/CartPage';
 import Footer from './components/Footer';
 import OrdersPage from './pages/OrdersPage';
 import LaptopPage from './pages/LaptopPage';
+import ElectronicsPage from './pages/ElectronicsPage';
+import AudioPage from './pages/AudioPage';
 
 const App = () => {
 
@@ -27,7 +29,9 @@ const App = () => {
           <Route path="/signup" element={<SignUp />} />
           <Route path="/googleloginnextstep" element={<AccountSetup />} />
           <Route path="/product/:productId" element={<ProductPage />} />
-          <Route path="/:selectedCategory" element={<Phones />} />
+          <Route path="/mobile" element={<Phones />} />
+          <Route path="/electronics" element={<ElectronicsPage />} />
+          <Route path="/headphone" element={<AudioPage />} />
           <Route path="/laptop" element={<LaptopPage />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/orders" element={<OrdersPage />} />

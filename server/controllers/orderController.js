@@ -60,15 +60,11 @@ const addtocart = async (req, res) => {
 const getCartDetails = async (req, res) => {
     try {
         const userId = req.user._id;
-        const user = await User.findById(userId);
 
 
-        const cartDetails = await Cart.findById(user.cart._id);
+        const cartDetails = await Cart.findOne({ userId }).populate('items.product', 'name reviews pictures price');
 
         if (cartDetails) {
-            //console.log(cartDetails);
-            await cartDetails.populate('items.product', 'name reviews pictures price'); // Populate product info
-
             return res.status(200).json(cartDetails);
         } else {
             return res.status(404).json({ message: "Cart not found" });
@@ -77,12 +73,13 @@ const getCartDetails = async (req, res) => {
         console.error(error);
         return res.status(500).json({ message: 'Internal server error' });
     }
-}
+};
+
 
 const updateCart = async (req, res) => {
     try {
         const userId = req.user._id;
-        const { productId } = req.body;
+        const { productId, quantity } = req.body;
 
         let shoppingCart = await Cart.findOne({ userId });
 
@@ -97,33 +94,39 @@ const updateCart = async (req, res) => {
             return res.status(404).json({ message: "Item not found in cart" });
         }
 
-        // Decrease the quantity of the item by 1
-        if (cartItem.quantity > 1) {
-            cartItem.quantity -= 1;
-        } else {
-            // If quantity is already 1, remove the item from the cart
+        if (quantity == 0) {
+            // Remove the item from the cart
             shoppingCart.items = shoppingCart.items.filter(item => item.product.toString() !== productId);
+        } else {
+            // Decrease the quantity of the item
+            if (cartItem.quantity > 1) {
+                cartItem.quantity -= 1;
+            } else {
+                // If quantity is already 1, remove the item from the cart
+                shoppingCart.items = shoppingCart.items.filter(item => item.product.toString() !== productId);
+            }
         }
-
 
         const totalValue = await calculateTotalPrice(shoppingCart.items);
 
         // Update the totalValue field of the cart
         shoppingCart.totalValue = totalValue;
 
-
         await shoppingCart.save();
+        const response = await shoppingCart.populate('items.product', 'name reviews pictures price'); // Populate product info
+        return res.status(200).send(response);
 
-
-        return res.status(200).json({ message: "Product count decreased successfully", shoppingCart });
     } catch (error) {
         console.error(error);
         return res.status(500).json({ message: 'Internal server error' });
     }
 }
 
+
 const clearCart = async (req, res) => {
     try {
+
+        console.log("triggered clear cart");
         const userId = req.user._id;
 
         let cart = await Cart.findOne({ userId });

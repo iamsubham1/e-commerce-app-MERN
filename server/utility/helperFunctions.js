@@ -21,8 +21,8 @@ const calculateTotalPrice = async (items) => {
                     const product = await Product.findById(productId);
 
                     if (product) {
-                        // If the product is found in the database, cache its price in Redis
-                        await redisClient.set(`product:${productId}:price`, product.price);
+
+
                         return product.price;
                     } else {
 

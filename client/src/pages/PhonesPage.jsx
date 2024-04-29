@@ -4,15 +4,16 @@ import { useNavigate } from 'react-router-dom';
 
 const Phones = () => {
     const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
 
     useEffect(() => {
         const fetchProducts = async () => {
+            setLoading(true);
             try {
-                const response = await fetch('http://localhost:8080/api/product/category/electronics phone', {
+                const response = await fetch('http://localhost:8080/api/product/category/mobile', {
                     headers: {
                         JWT: getCookie('JWT')
                     }
@@ -24,6 +25,9 @@ const Phones = () => {
                 setLoading(false);
             } catch (error) {
                 setError('Error fetching products');
+                console.log(error);
+
+            } finally {
                 setLoading(false);
             }
         };
@@ -31,11 +35,12 @@ const Phones = () => {
         fetchProducts();
     }, []);
 
-
     if (loading) {
-        return <p>Loading products...</p>;
+        return (
+            <div className="w-[100vw] h-[80vh] overflow flex justify-center items-center">
+                <span class="loader"></span>
+            </div>)
     }
-
     if (error) {
         return <p>{error}</p>;
     }

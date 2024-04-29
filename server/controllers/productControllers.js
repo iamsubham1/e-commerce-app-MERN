@@ -155,17 +155,33 @@ const getProductsByCategory = async (req, res) => {
     try {
         const { category } = req.params;
 
-        const products = await Product.find({ category: { $regex: new RegExp(category, 'i') } });
+        // Check if products exist in Redis cache
+        const cachedProducts = await redisClient.get('products:' + category);
 
-        if (!products || products.length === 0) {
-            return res.status(404).json({ error: 'No products found for the given category' });
+        if (cachedProducts) {
+            console.log('Products found in Redis cache');
+            const parsedCachedProducts = JSON.parse(cachedProducts);
+            const filteredProducts = parsedCachedProducts.filter(product => product.category.toLowerCase().includes(category.toLowerCase()));
+            return res.status(200).json(filteredProducts);
+        } else {
+            console.log('Cache miss, querying database');
+            const products = await Product.find({ category: { $regex: new RegExp(category, 'i') } });
+
+            if (!products || products.length === 0) {
+                return res.status(404).json({ error: 'No products found for the given category' });
+            }
+
+            // Cache the fetched products in Redis
+            await redisClient.set('products:' + category, JSON.stringify(products));
+
+            console.log('Products fetched from database and cached in Redis');
+            return res.status(200).json(products);
         }
-
-        res.status(200).json(products);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Internal server error' });
+        console.error('Error searching for products by category:', error);
+        return res.status(500).json({ error: 'Internal server error' });
     }
-}
+};
+
 
 module.exports = { addProduct, deleteProduct, searchedProduct, getAllProducts, getProductsByBrand, getProductsByCategory, getProductDetails };

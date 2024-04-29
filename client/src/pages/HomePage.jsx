@@ -137,7 +137,7 @@ const HomePage = () => {
                     <button className={selectedCategory === 'electronics' ? 'text-gray-700 px-3 border-b-2 border-[#000000] rounded' : 'categorybtn rounded text-black px-3 py-1 border-b-2'} onClick={() => setSelectedCategory('electronics')}>Electronics</button>
                     <button className={selectedCategory === 'laptop' ? 'text-gray-700 px-3 border-b-2 border-[#000000] rounded' : 'categorybtn rounded text-black px-3 py-1 border-b-2'} onClick={() => setSelectedCategory('laptop')}>Laptops</button>
                     <button className={selectedCategory === 'headphone' ? 'text-gray-700 px-3 border-b-2 border-[#000000] rounded' : 'categorybtn rounded text-black px-3 py-1 border-b-2'} onClick={() => setSelectedCategory('headphone')}>Audio</button>
-                    <button className={selectedCategory === 'phone' ? 'text-gray-700 px-3 border-b-2 border-[#000000] rounded' : 'categorybtn rounded text-black px-3 py-1 border-b-2'} onClick={() => setSelectedCategory('phone')}>Phones</button>
+                    <button className={selectedCategory === 'mobile' ? 'text-gray-700 px-3 border-b-2 border-[#000000] rounded' : 'categorybtn rounded text-black px-3 py-1 border-b-2'} onClick={() => setSelectedCategory('mobile')}>Phones</button>
                 </div>
             </div>
 
@@ -148,7 +148,7 @@ const HomePage = () => {
             <div className="container mx-auto">
                 {/* Carousel */}
                 {selectedCategory === '' && (
-                    <><Slider {...settings} className=' w-[100%] mx-auto px-2 slider-img'>
+                    <><Slider {...settings} className='w-[100%] mx-auto px-2 '>
                         {carouselProducts.map((product) => (
                             <div key={product._id} className="text-center px-8" onClick={() => handleProductClick(product._id)}>
                                 <img src={product.banner ? product.banner : "https://via.placeholder.com/300"} alt={product.name} className="carouselimg" />
