@@ -115,7 +115,6 @@ const HomePage = () => {
 
     return (
         <div className='flex flex-col items-center'>
-
             {/* toast */}
             <ToastContainer position="top-right"
                 autoClose={1500}
@@ -125,11 +124,8 @@ const HomePage = () => {
                 rtl={false}
                 pauseOnFocusLoss
                 draggable
-                pauseOnHover
-
-
-
-            />
+                pauseOnHover />
+            mobile
             <div className="text-sm md:text-md lg:text-md xl:text-lg flex justify-evenly self-center mt-5 w-[90%] ">
                 {/* Category Filter */}
                 <div className="flex w-full justify-evenly self-center gap-[3px] ">
@@ -141,7 +137,7 @@ const HomePage = () => {
                 </div>
             </div>
 
-            {selectedCategory === "phone" && (
+            {selectedCategory === "mobile" && (
                 <div className='w-full h-[9vh] mt-7 grid place-content-center bannerBg text-white'><h1 className='mx-auto'>Top in Smartphones</h1></div>
             )}
 

@@ -32,8 +32,6 @@ const Navbar = () => {
     const { items } = useSelector((state) => state.cart);
     const { userData } = useSelector((state) => state.user);
 
-    // console.log("dsdsd", items);
-
 
 
     useEffect(() => {
