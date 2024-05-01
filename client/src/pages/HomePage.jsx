@@ -125,7 +125,7 @@ const HomePage = () => {
                 pauseOnFocusLoss
                 draggable
                 pauseOnHover />
-            mobile
+
             <div className="text-sm md:text-md lg:text-md xl:text-lg flex justify-evenly self-center mt-5 w-[90%] ">
                 {/* Category Filter */}
                 <div className="flex w-full justify-evenly self-center gap-[3px] ">

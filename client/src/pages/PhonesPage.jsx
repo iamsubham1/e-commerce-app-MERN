@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { getCookie } from '../utility/getCookie';
 import { useNavigate } from 'react-router-dom';
+import Slider from 'react-slick';
+import 'slick-carousel/slick/slick.css';
+import 'slick-carousel/slick/slick-theme.css';
 
 const Phones = () => {
-    const [products, setProducts] = useState([]);
+    const [appleProducts, setAppleProducts] = useState([]);
+    const [samsungProducts, setSamsungProducts] = useState([]);
+    const [budgetProducts, setBudgetProducts] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const navigate = useNavigate();
-
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -18,15 +22,19 @@ const Phones = () => {
                         JWT: getCookie('JWT')
                     }
                 });
+                const data = await response.json();
+                // Filter products into Apple, Samsung, and Budget categories
+                const apple = data.filter(product => product.brand === 'Apple');
+                const samsung = data.filter(product => product.brand === 'Samsung');
+                const budget = data.filter(product => product.brand !== 'Apple' && product.brand !== 'Samsung');
 
-                const data = await response.json()
-
-                setProducts(data);
+                setAppleProducts(apple);
+                setSamsungProducts(samsung);
+                setBudgetProducts(budget);
                 setLoading(false);
             } catch (error) {
                 setError('Error fetching products');
                 console.log(error);
-
             } finally {
                 setLoading(false);
             }
@@ -38,31 +46,82 @@ const Phones = () => {
     if (loading) {
         return (
             <div className="w-[100vw] h-[80vh] overflow flex justify-center items-center">
-                <span class="loader"></span>
-            </div>)
+                <span className="loader"></span>
+            </div>
+        );
     }
     if (error) {
         return <p>{error}</p>;
     }
+
+    const productCard = (product) => (
+        <div key={product._id} className='w-full h-full p-4 ' onClick={() => {
+            navigate(`/product/${product._id}`);
+        }}>
+            <img src={product.pictures ? product.pictures[0] : "https://via.placeholder.com/300"} alt={product.name} className="w-full aspect-square h-full object-contain " />
+        </div>
+    );
+
+    const sliderSettings = {
+        arrows: false,
+        infinite: true,
+        slidesToShow: 2,
+        slidesToScroll: 1,
+        autoplay: true,
+        autoplaySpeed: 2000,
+        pauseOnHover: true,
+        responsive: [
+            {
+                breakpoint: 1024,
+                settings: {
+                    slidesToShow: 2,
+                }
+            },
+            {
+                breakpoint: 768,
+                settings: {
+                    slidesToShow: 1,
+                }
+            }
+        ]
+    };
+
     return (
-        <div className="container mx-auto px-4 py-8">
-            <h1 className="text-3xl font-bold mb-6">Mobile Phones</h1>
+        <div className="mx-auto px-4 py-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-2 gap-6 ">
+                <div>
+                    <h2 className="text-2xl font-bold mb-4">Apple</h2>
+                    <div className="grid grid-cols-2  h-[50%] gap-2">
+                        {appleProducts.map(product => (
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
-                {products.map(product => (
-                    <div key={product._id} className="rounded-lg shadow-md overflow-hidden flex flex-col justify-center items-center text-center card" onClick={() => {
-                        navigate(`/product/${product._id}`);
-                    }}>
-                        <img src={product.pictures ? product.pictures[0] : "https://via.placeholder.com/300"} alt={product.name} className="w-full h-48 object-contain" />
-                        <div className="p-4">
-                            <h3 className="text-lg font-semibold mb-2">{product.name}</h3>
-                            <p className="text-gray-600">{product.description}</p>
-                            <p className="text-gray-800 font-bold mt-2">${product.price}</p>
-                        </div>
+                            <div key={product._id} className='w-full h-full' onClick={() => {
+                                navigate(`/product/${product._id}`);
+                            }}>
+                                <img src={product.pictures ? product.pictures[0] : "https://via.placeholder.com/300"} alt={product.name} className="w-full h-full object-contain" />
+                            </div>
+
+                        ))}
                     </div>
-                ))}
+                </div>
+                <div>
+                    <div>
+                        <h2 className="text-2xl font-bold mb-4">Samsung</h2>
+                        <Slider {...sliderSettings}>
+                            {samsungProducts.map(product => (
+                                <div key={product._id}>{productCard(product)}</div>
+                            ))}
+                        </Slider>
+                    </div>
+                    <div className="mt-8">
+                        <h2 className="text-2xl font-bold mb-4">Budget</h2>
+                        <Slider {...sliderSettings}>
+                            {budgetProducts.map(product => (
+                                <div key={product._id}>{productCard(product)}</div>
+                            ))}
+                        </Slider>
+                    </div>
+                </div>
             </div>
-
         </div>
     );
 };
