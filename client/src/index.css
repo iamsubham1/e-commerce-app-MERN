@@ -19,41 +19,6 @@ body {
 
 }
 
-.navbar {
-  font-family: "Raleway", sans-serif;
-  font-optical-sizing: auto;
-  font-weight: 600;
-  font-style: normal;
-  color: rgb(255, 247, 230);
-  font-style: normal;
-  position: sticky;
-  top: 0;
-  z-index: 99;
-  background-color: #1A1A1A;
-  box-shadow: 0 14px 28px rgba(70, 69, 69, 0.25),
-    0 10px 10px rgba(250, 249, 208, 0.22);
-
-  transition: transform 0.5s;
-
-
-}
-
-.navbar h1 {
-  font-family: "Jersey 15", sans-serif;
-  font-weight: 400;
-  font-style: normal;
-}
-
-.navbar input:focus {
-  background-color: #cfcfcf;
-  border: 0px black solid;
-  outline: #d10a0ad0;
-}
-
-.navbar input::placeholder {
-  color: rgb(0, 0, 0);
-}
-
 .primary-button {
   background-color: white;
   color: black;
@@ -72,43 +37,6 @@ body {
   box-shadow: 2px 5px 0 0 black;
 }
 
-
-#link {
-  height: 25px;
-  line-height: 25px;
-  padding: 0 15px;
-  margin-right: 10px;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-#link span {
-  display: inline-block;
-  position: relative;
-
-  -webkit-transition: -webkit-transform 0.3s;
-  -moz-transition: -moz-transform 0.3s;
-  transition: transform 0.3s;
-}
-
-#link span::before {
-  display: inline-block;
-  width: 100%;
-  height: 100%;
-  content: attr(data-hover);
-  position: absolute;
-  left: 0;
-  top: 100%;
-  font-weight: 700;
-  -webkit-transform: translate3d(0, 0, 0, );
-  -moz-transform: translate3d(0, 0, 0, );
-  transform: translate3d(0, 0, 0, );
-}
-
-#link:hover span {
-  -webkit-transform: translateY(-100%);
-  transform: translateY(-100%);
-}
 
 
 .container {
@@ -199,7 +127,7 @@ body {
   padding: 0px 20px 0px 20px;
 }
 
-.primary-button .navbar-visible {
+.primary-button {
   display: flex;
 }
 
@@ -304,41 +232,6 @@ body {
 
 }
 
-@keyframes slidein {
-  from {
-    transform: translateX(100%);
-  }
-
-  to {
-    transform: translateX(0);
-  }
-}
-
-@keyframes slideout {
-  from {
-    transform: translateX(0);
-  }
-
-  to {
-    transform: translateX(100%);
-  }
-}
-
-.mobile-menu ul {
-  list-style: none;
-  padding: 0;
-  margin-top: 2%;
-}
-
-.mobile-menu ul li {
-
-  border-bottom: 1px solid #0f0f0f;
-}
-
-.mobile-menu ul li a {
-  color: black;
-  text-decoration: none;
-}
 
 .bannerBg {
   font-family: "Alegreya Sans SC", sans-serif;
@@ -352,10 +245,7 @@ body {
 }
 
 @media screen and (max-width: 431px) {
-  .mobile-menu {
-    width: 100vw !important;
 
-  }
 
   .carouselimg {
     max-height: 20vh !important;
@@ -425,7 +315,7 @@ body {
   opacity: 0.6;
 }
 
-/* Add this CSS to your stylesheets */
+
 .pagination-arrow {
   cursor: pointer;
   transition: .2s ease-in-out;
@@ -482,14 +372,8 @@ body {
 
 /* Media Query for Mobile Menu */
 @media screen and (max-width: 768px) {
-  .mobile-menu-icon {
-    display: inline;
-  }
 
-  .navbar {
-    display: flex;
-    justify-content: center;
-  }
+
 
   .hide-section {
     display: none;
@@ -499,10 +383,7 @@ body {
     width: 60%;
   }
 
-  .mobile-menu {
-    width: 36vw;
-    background-color: #ffffff;
-  }
+
 
   .carouselimg {
     max-height: 30vh;
@@ -526,13 +407,7 @@ body {
 
 @media screen and (min-width: 769px) {
 
-  .hamburger {
-    display: none;
-  }
 
-  .mobile-menu {
-    display: none;
-  }
 
   .searchwidth {
     width: 45%;

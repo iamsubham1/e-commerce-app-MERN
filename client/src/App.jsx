@@ -15,6 +15,8 @@ import OrdersPage from './pages/OrdersPage';
 import LaptopPage from './pages/LaptopPage';
 import ElectronicsPage from './pages/ElectronicsPage';
 import AudioPage from './pages/AudioPage';
+import Checkout from './pages/Checkout';
+import './components/css/navbar.css'
 
 const App = () => {
 
@@ -35,6 +37,7 @@ const App = () => {
           <Route path="/laptop" element={<LaptopPage />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/orders" element={<OrdersPage />} />
+          <Route path="/checkout" element={<Checkout />} />
         </Routes>
         <Footer />
       </Router>

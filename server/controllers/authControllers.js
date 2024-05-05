@@ -86,59 +86,57 @@ const loginController = async (req, res) => {
 const sendOtp = async (req, res) => {
     try {
         const user = await User.findOne({ email: req.body.email });
-        if (user) {
-            otp = generateUniqueOTP();
-
-            const mailOptions = {
-                from: `Gadgets Grab <${process.env.GOOGLE_EMAIL}>`,
-                to: req.body.email,
-                subject: "Password Reset OTP",
-                html: `
-                <div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
-                <div style="margin:50px auto;width:70%;padding:20px 0">
-                  <div style="border-bottom:1px solid #eee">
-                    <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">Gadgets Grab</a>
-                  </div>
-                  <p style="font-size:1.1em">Hi,</p>
-                  <p>Thank you for choosing Gadgets Grab. Use the following OTP to Reset your password OTP is valid for 2 minutes</p>
-                  <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${otp}</h2>
-                  <p style="font-size:0.9em;">Regards,<br />Gadgets Grab</p>
-                  <hr style="border:none;border-top:1px solid #eee" />
-                  <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
-                    <p>Gadgets Grab Inc</p>
-                    <p>Berhampur</p>
-                    <p>Odisha</p>
-                  </div>
-                </div>
-              </div>`
-            };
-
-            transporter.sendMail(mailOptions, (error, info) => {
-                if (error) {
-                    console.log("Error:", error);
-                    res.status(500).json({ error: "An error occurred while sending the email" });
-
-
-                } else {
-                    console.log("Email sent:", info.response);
-
-                    setTimeout(() => {
-                        otp = null;
-                    }, 120000);
-
-                    res.status(200).json("OTP SENT Successfully");
-
-                }
-            });
+        if (!user) {
+            return res.status(400).json("No user found");
         }
-        return res.status(400).json({ msg: "account not found" })
+
+
+
+        otp = generateUniqueOTP();
+        const mailOptions = {
+            from: `Gadgets Grab <${process.env.GOOGLE_EMAIL}>`,
+            to: req.body.email,
+            subject: "Password Reset OTP",
+            html: `
+                <div style="font-family: Helvetica,Arial,sans-serif;min-width:1000px;overflow:auto;line-height:2">
+                    <div style="margin:50px auto;width:70%;padding:20px 0">
+                        <div style="border-bottom:1px solid #eee">
+                            <a href="" style="font-size:1.4em;color: #00466a;text-decoration:none;font-weight:600">Gadgets Grab</a>
+                        </div>
+                        <p style="font-size:1.1em">Hi,</p>
+                        <p>Thank you for choosing Gadgets Grab. Use the following OTP to Reset your password. OTP is valid for 2 minutes</p>
+                        <h2 style="background: #00466a;margin: 0 auto;width: max-content;padding: 0 10px;color: #fff;border-radius: 4px;">${otp}</h2>
+                        <p style="font-size:0.9em;">Regards,<br />Gadgets Grab</p>
+                        <hr style="border:none;border-top:1px solid #eee" />
+                        <div style="float:right;padding:8px 0;color:#aaa;font-size:0.8em;line-height:1;font-weight:300">
+                            <p>Gadgets Grab Inc</p>
+                            <p>Berhampur</p>
+                            <p>Odisha</p>
+                        </div>
+                    </div>
+                </div>`
+        };
+
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error("Error sending email:", error);
+                return res.status(500).json({ error: "An error occurred while sending the email" });
+            }
+            console.log("Email sent:", info.response);
+
+            // Reset otp after 2 minutes
+            setTimeout(() => {
+                otp = null;
+            }, 120000);
+        });
+
+        return res.status(200).json({ message: "OTP sent successfully to", email: req.body.email });
     } catch (error) {
-        console.log(error);
+        console.error("Error:", error);
         return res.status(500).json({ success: false, error: "Internal server error" });
-
-
     }
-}
+};
+
 
 const verifyOtp = async (req, res) => {
     try {

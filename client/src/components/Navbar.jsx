@@ -13,7 +13,7 @@ import { MdAccountCircle } from "react-icons/md";
 import { RiLoginCircleFill } from "react-icons/ri";
 import { getSearchResults } from '../apis/api';
 import { fetchInitialCartState } from '../reducers/cartslice';
-
+import '../components/css/navbar.css'
 
 const Navbar = () => {
     const cookie = getCookie('JWT');
