@@ -179,3 +179,10 @@ const resetPassword = async (req, res) => {
 }
 
 module.exports = { signUpController, loginController, sendOtp, verifyOtp, resetPassword };
+
+
+
+
+
+
+

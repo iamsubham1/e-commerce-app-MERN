@@ -4,6 +4,10 @@
 @import url('https://fonts.googleapis.com/css2?family=Alegreya+Sans+SC:ital,wght@0,100;0,300;0,400;0,500;0,700;0,800;0,900;1,100;1,300;1,400;1,500;1,700;1,800;1,900&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Jersey+15&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Jersey+15&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+
+
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -17,6 +21,11 @@ body {
   font-family: poppins;
 
 
+}
+
+.heading-font {
+  font-family: "Alegreya Sans SC", sans-serif;
+  color: rgb(20, 20, 20)
 }
 
 .primary-button {
@@ -37,7 +46,32 @@ body {
   box-shadow: 2px 5px 0 0 black;
 }
 
+.google-btn {
+  background-color: #ededed;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-top: 2%;
+  padding-bottom: 2%;
+  font-family: "Alegreya Sans SC", sans-serif;
+  font-weight: 600;
+  transition: all 0.3s ease-in-out;
 
+}
+
+.google-btn:hover {
+  transform: scale(1.05);
+  background-color: #f0f0f0;
+  border: 2px solid blackdada
+}
+
+.line {
+  display: inline-block;
+  width: 100%;
+  background-color: rgb(209, 209, 209);
+  height: 1.5px;
+}
 
 .container {
 
@@ -267,7 +301,6 @@ body {
 .shine-btn {
   position: relative;
   transition: all 0.3s ease-in-out;
-
   padding-block: 0.5rem;
   padding-inline: 1.25rem;
   background-color: rgb(5, 5, 5);

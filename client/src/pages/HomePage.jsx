@@ -15,6 +15,7 @@ const HomePage = () => {
     const { products, loading, error } = useSelector((state) => state.products);
     const [selectedCategory, setSelectedCategory] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
+
     const perPage = 10;
 
 

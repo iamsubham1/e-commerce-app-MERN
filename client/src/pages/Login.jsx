@@ -55,7 +55,7 @@ const Login = () => {
     return (
         <>
 
-            <div className="flex justify-center items-center h-[80vh]">
+            <div className="flex justify-center items-center h-[90vh] ">
                 <ToastContainer position="top-right"
                     autoClose={5000}
                     hideProgressBar={false}
@@ -68,8 +68,8 @@ const Login = () => {
                     theme="dark"
                     className='mt-14'
                 />
-                <div className="bg-white p-8 rounded shadow-lg w-full max-w-md">
-                    <h2 className="text-2xl font-bold mb-4">Login</h2>
+                <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md border-2 border-[#eeeeee]">
+                    <h2 className="text-5xl font-bold mb-4 heading-font">Welcome Back !</h2>
                     <form>
                         <div className="mb-4">
                             <input
@@ -92,7 +92,7 @@ const Login = () => {
                                 className="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-blue-500"
                                 required
                             />
-                            <p className="mt-4">Forgot Password ? <a href="/signup" className="text-blue-500 hover:underline">Reset</a></p>
+                            <p className="mt-4">Forgot Password ? <a href="/signup" className="text-slate-400 hover:">Reset</a></p>
 
                             {showPassword ? (
                                 <FaRegEye
@@ -106,17 +106,26 @@ const Login = () => {
                                 />
                             )}
                         </div>
-                        <div className="mt-4 flex items-center gap-4">
-                            <button onClick={handleGoogleLogin} className="bg-[#000000] w-[50%]  text-white py-2 px-4 rounded-md hover:bg-red-600 focus:outline-none focus:bg-red-600 flex items-center justify-center">
 
-                                Login with &nbsp;<FcGoogle className="mr-2" />
+                        <div className="mt-4 flex items-center gap-4 flex-col-reverse ">
+                            <button onClick={handleGoogleLogin} className="google-btn rounded">
+
+                                <FcGoogle className="mr-2" />Continue with Google
                             </button>
-                            <button type="submit" className="w-[50%] bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600" onClick={handleLogin}>Login</button>
+                            <div class="flex w-full items-center justify-center mb-3 mt-3">
+                                <span class="line"></span>
+                                <p>&nbsp;&nbsp;&nbsp;&nbsp;or&nbsp;&nbsp;&nbsp;&nbsp;</p>
+                                <span class="line"></span>
+                            </div>
+
+
+                            <button type="submit" className="w-[100%] shine-btn rounded-md" onClick={handleLogin}>Login</button>
+
 
                         </div>
                     </form>
+                    <p className="text-center mt-4">Don't have an account? <a href="/signup" className="text-slate-500  hover:text-black">Sign Up</a></p>
 
-                    <p className="mt-4 text-center">Don't have an account? <a href="/signup" className="text-blue-500 hover:underline">Sign Up</a></p>
                 </div>
             </div>
         </>

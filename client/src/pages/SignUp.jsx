@@ -76,8 +76,8 @@ const SignupForm = () => {
                 theme="dark"
                 className='mt-14'
             />
-            <div className="bg-white p-8 rounded shadow-lg w-full max-w-md">
-                <h2 className="text-2xl font-bold mb-4">Sign Up</h2>
+            <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md border-2 border-[#eeeeee] mt-[5%]">
+                <h2 className="text-4xl font-bold mb-4 heading-font">Create Your Account</h2>
                 <form>
                     <div className="mb-4">
                         <input type="text" name="name" placeholder="Name" value={formData.name} onChange={handleChange} className="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-blue-500" required />
@@ -119,13 +119,13 @@ const SignupForm = () => {
                     </div>
                     <button
                         type="submit"
-                        className={`w-full py-2 px-4 rounded-md focus:outline-none ${!formValid ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-600 text-white'}`}
+                        className={`w-full shine-btn  rounded-md  ${!formValid ? 'bg-gray-300 text-gray-600 cursor-not-allowed' : ''}`}
                         disabled={!formValid}
                         onClick={handleSubmit}
                     >
                         Sign Up
                     </button>                </form>
-                <p className="mt-4 text-center">Already have an account? <a href="/login" className="text-blue-500 hover:underline">Login</a></p>
+                <p className="mt-4 text-center">Already have an account? <a href="/login" className="text-slate-500  hover:text-black">Login</a></p>
             </div>
         </div>
     );

@@ -214,7 +214,6 @@ export const removeItemApi = async (data) => {
     }
 }
 
-
 export const decreaseItemCountApi = async (data) => {
     try {
         const response = await fetch(`${baseUrl}order/updatecart`, {
@@ -258,5 +257,48 @@ export const clearCartApi = async () => {
     } catch (error) {
         console.error('Error fetching search results:', error.message);
         return false;
+    }
+}
+
+export const addAddress = async (address) => {
+    try {
+        const response = await fetch(`${baseUrl}user/addaddress`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                JWT: token
+            },
+            body: JSON.stringify({ ...address })
+        });
+        if (response.ok) {
+            return true
+        } else {
+            return false;
+        }
+    } catch (error) {
+        throw new Error(error.message);
+
+    }
+}
+
+
+export const deleteAddress = async (id) => {
+    try {
+        const response = await fetch(`${baseUrl}user/deleteaddress/${id}`, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json',
+                JWT: token
+            },
+
+        });
+        if (response.ok) {
+            return true
+        } else {
+            return false;
+        }
+    } catch (error) {
+        throw new Error(error.message);
+
     }
 }
