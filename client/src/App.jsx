@@ -17,6 +17,7 @@ import ElectronicsPage from './pages/ElectronicsPage';
 import AudioPage from './pages/AudioPage';
 import Checkout from './pages/Checkout';
 import './components/css/navbar.css'
+import Profile from './pages/ProfilePage';
 
 const App = () => {
 
@@ -38,6 +39,7 @@ const App = () => {
           <Route path="/cart" element={<Cart />} />
           <Route path="/orders" element={<OrdersPage />} />
           <Route path="/checkout" element={<Checkout />} />
+          <Route path="/profile" element={<Profile />} />
         </Routes>
         <Footer />
       </Router>
