@@ -94,7 +94,7 @@ export const addPhNumber = async (phoneNumber) => {
 
 export const getUserDetails = async () => {
     try {
-        console.log("Fetching user details... from api");
+        // console.log("Fetching user details... from api");
         const response = await fetch(`${baseUrl}user/details`, {
             headers: {
                 'Content-Type': 'application/json',

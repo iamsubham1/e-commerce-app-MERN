@@ -1,11 +1,18 @@
-import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
+import React, { useState, useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { getUserData } from '../reducers/userSlice';
 
 const Profile = () => {
+    const dispatch = useDispatch();
     const { userData } = useSelector(state => state.user);
+
     const [isEditing, setIsEditing] = useState(false);
     const [editedData, setEditedData] = useState(userData);
-    const [activeSection, setActiveSection] = useState('personalInfo');
+    const [selectedCategory, setSelectedCategory] = useState('personalInfo');
+
+    useEffect(() => {
+        dispatch(getUserData());
+    }, [dispatch]);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -26,61 +33,112 @@ const Profile = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Here you can dispatch an action to update the user data in the Redux store
-        // For simplicity, I'm just logging the edited data
         console.log("Edited Data:", editedData);
         setIsEditing(false);
     };
 
-    const handleSectionClick = (section) => {
-        setActiveSection(section);
-    };
-
-    return (
-        <div className="max-w-xl mx-auto px-4 py-8">
-            <div className="flex flex-col lg:flex-row lg:items-start mb-4">
-                <div className="lg:w-48 flex flex-col mr-4">
-                    <button className={`mb-2 ${activeSection === 'personalInfo' ? 'font-bold' : ''}`} onClick={() => handleSectionClick('personalInfo')}>Personal Info</button>
-                    <button className={`mb-2 ${activeSection === 'address' ? 'font-bold' : ''}`} onClick={() => handleSectionClick('address')}>Address</button>
-                    <button className={`mb-2 ${activeSection === 'payments' ? 'font-bold' : ''}`} onClick={() => handleSectionClick('payments')}>Payments</button>
-                </div>
-                <div className="lg:flex-grow">
-                    <h2 className="text-2xl font-bold mb-2">{userData.name}</h2>
-                    {!isEditing && (
-                        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleEditClick}>Edit</button>
-                    )}
-                </div>
-            </div>
-
-            <div className="border border-gray-300 p-4">
-                <h3 className="text-lg font-bold mb-4">Details</h3>
-                {activeSection === 'personalInfo' && (
-                    <div>
-                        <h3 className="text-lg font-bold mb-2">Personal Info</h3>
+    const renderContent = () => {
+        switch (selectedCategory) {
+            case 'personalInfo':
+                return (
+                    <div className='h-[50vh] overflow-y-scroll'>
                         {!isEditing ? (
-                            <div>
-                                <p className="text-gray-800">Email: {userData.email}</p>
-                                <p className="text-gray-800">Phone Number: {userData.phoneNumber}</p>
-                            </div>
+                            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2" onClick={handleEditClick}>Edit</button>
                         ) : (
-                            <form onSubmit={handleSubmit}>
-                                <div className="mb-4">
-                                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">Email:</label>
+                            <div>
+                                <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2" onClick={handleSubmit}>Save</button>
+                                <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" onClick={handleCancelEdit}>Cancel</button>
+                            </div>
+                        )}
+                        <h3 className="text-lg font-bold mb-4">Personal Info</h3>
+
+                        <form onSubmit={handleSubmit}>
+                            <div className="mb-4">
+                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">Email:</label>
+                                {!isEditing ? (
+                                    <p className="text-gray-800">{userData.email}</p>
+                                ) : (
                                     <input type="email" id="email" name="email" value={editedData.email} onChange={handleInputChange} className="w-full border border-gray-300 px-3 py-2 rounded" />
-                                </div>
-                                <div className="mb-4">
-                                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="phoneNumber">Phone Number:</label>
+                                )}
+                            </div>
+                            <div className="mb-4 ">
+                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="phoneNumber">Phone Number:</label>
+                                {!isEditing ? (
+                                    <p className="text-gray-800">{userData.phoneNumber}</p>
+                                ) : (
                                     <input type="tel" id="phoneNumber" name="phoneNumber" value={editedData.phoneNumber} onChange={handleInputChange} className="w-full border border-gray-300 px-3 py-2 rounded" />
-                                </div>
-                                <div className="flex justify-between">
-                                    <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded" onClick={handleSubmit}>Save</button>
-                                    <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" onClick={handleCancelEdit}>Cancel</button>
-                                </div>
-                            </form>
+                                )}
+                            </div>
+                        </form>
+                    </div>
+                );
+            case 'addresses':
+                return (
+                    <div className='max-h-[50vh] h-[50vh] overflow-y-scroll'>
+                        <h3 className="text-lg font-bold mb-2">Addresses</h3>
+                        {userData.address?.length === 0 ? (
+                            <p className="text-gray-800">No addresses yet</p>
+                        ) : (
+                            <div className="flex flex-col gap-3">
+                                {userData.address?.map((address, index) => (
+                                    <div key={index} className="bg-white border border-gray-200 rounded-lg p-4 mr-4">
+                                        <p className="text-gray-800 mb-2"><span className="font-semibold">Street Name:</span> {address.streetname}</p>
+                                        <p className="text-gray-800 mb-2"><span className="font-semibold">Landmark:</span> {address.landmark}</p>
+                                        <p className="text-gray-800 mb-2"><span className="font-semibold">City:</span> {address.city}</p>
+                                        <p className="text-gray-800 mb-2"><span className="font-semibold">State:</span> {address.state}</p>
+                                        <p className="text-gray-800 mb-2"><span className="font-semibold">Pincode:</span> {address.pincode}</p>
+                                    </div>
+                                ))}
+                            </div>
                         )}
                     </div>
-                )}
-                {/* Add similar sections for address and payments */}
+                );
+            case 'orders':
+                return (
+                    <div className='h-[50vh] overflow-y-scroll'>
+                        <h3 className="text-lg font-bold mb-2">Orders</h3>
+                        {userData.orders?.length === 0 ? (
+                            <p className="text-gray-800">No orders yet</p>
+                        ) : (
+                            <ul className="list-disc ml-4">
+                                {userData.orders?.map(orderId => (
+                                    <li key={orderId}>Order ID: {orderId}</li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+                );
+            default:
+                return null;
+        }
+    };
+
+
+    return (
+        <div className="max-w-6xl mx-auto px-4 py-8 flex min-h-[100vh]">
+            <div className="mr-8">
+                <div className="mb-4 flex flex-col items-center justify-center h-full">
+                    <button className={`block text-left w-full py-2 px-4 mb-2 ${selectedCategory === 'personalInfo' && 'bg-gray-200'}`} onClick={() => setSelectedCategory('personalInfo')}>Personal Info</button>
+                    <button className={`block text-left w-full py-2 px-4 mb-2 ${selectedCategory === 'addresses' && 'bg-gray-200'}`} onClick={() => setSelectedCategory('addresses')}>Addresses</button>
+                    <button className={`block text-left w-full py-2 px-4 mb-2 ${selectedCategory === 'orders' && 'bg-gray-200'}`} onClick={() => setSelectedCategory('orders')}>Orders</button>
+                </div>
+            </div>
+            <div className="flex-grow">
+                <div className="mb-4 flex flex-col items-center">
+                    {userData && userData.profilePic ? (
+                        <>
+                            <img className="w-24 h-24 rounded-full mb-2" src={userData.profilePic.url} alt={userData.profilePic.name} />
+
+                        </>
+                    ) : <>
+                        <img className="w-24 h-24 rounded-full mb-2" src="https://res.cloudinary.com/dmb0ooxo5/image/upload/v1706984465/ftfdy0ic7ftz2awihjts.jpg" />
+
+                    </>}
+                    <h2 className="text-2xl font-bold">{userData.name}</h2>
+                </div>
+                <div className="border border-gray-300 p-4">
+                    {renderContent()}
+                </div>
             </div>
         </div>
     );

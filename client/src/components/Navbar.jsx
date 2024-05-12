@@ -77,6 +77,7 @@ const Navbar = () => {
     };
 
     const handleLogout = () => {
+        setIsMobileMenuOpen(!isMobileMenuOpen);
         logout('JWT');
     };
 
@@ -126,7 +127,7 @@ const Navbar = () => {
                     <ul className='flex justify-around items-center w-[]'>
                         <li>
                             <Link to='/profile' activeclassname="active" className='flex items-center h-full w-10 hover:w-[2.4rem]'>
-                                <img src={userData && userData.profilePic ? userData.profilePic.url : "https://res.cloudinary.com/dmb0ooxo5/image/upload/v1706984465/ftfdy0ic7ftz2awihjts.jpg"} className='rounded-full' alt='Profile' />
+                                <img src={userData.profilePic ? userData.profilePic.url : "https://res.cloudinary.com/dmb0ooxo5/image/upload/v1706984465/ftfdy0ic7ftz2awihjts.jpg"} className='rounded-full' alt='Profile' />
                             </Link>
                         </li>
                         <Link className='over' id='link' to='/orders'><span data-hover="ORDERS">Orders</span></Link>
@@ -157,24 +158,24 @@ const Navbar = () => {
             {
                 isMobileMenuOpen && (cookie ? (
                     <div className="mobile-menu text-black" style={{ animationName: isMobileMenuOpen ? 'slidein' : 'slideout' }}>
-                        <ul>
+                        <ul >
                             <li className='flex items-center cursor-pointer w-full h-[6vh]'>
                                 <div className='flex items-center justify-start w-full gap-2 px-4'>
-                                    <NavLink to='/profile' activeclassname="active" className='flex items-center h-full w-10'>
+                                    <NavLink to='/profile' activeclassname="active" className='flex items-center h-full w-10' onClick={toggleMobileMenu} >
                                         <img src={userData.profilePic ? userData.profilePic.url : "https://res.cloudinary.com/dmb0ooxo5/image/upload/v1706984465/ftfdy0ic7ftz2awihjts.jpg"} className='rounded-full' alt='Profile' />
                                     </NavLink>
                                     <p className='text-lg'>{userData.name}</p>
                                 </div>
                                 <div className='flex items-center justify-end'>
-                                    <Link className='text-lg text-[#474640] flex gap-2 items-center p-2 hover:text-[#1d1d1d]' to='/cart' onClick={() => isMobileMenuOpen(false)}>
+                                    <Link className='text-lg text-[#474640] flex gap-2 items-center p-2 hover:text-[#1d1d1d]' to='/cart' onClick={toggleMobileMenu}>
                                         <MdShoppingCart className='text-2xl' />
                                         <span>{totalQuantity || "0"}</span>
                                     </Link>
                                 </div>
                             </li>
 
-                            <li><div className='w-full h-[6vh] text-4xl flex items-center p-4 gap-2'><FaBoxOpen />
-                                <span className='text-lg'> <p>Your Orders</p></span>
+                            <li><div className='w-full h-[6vh] text-4xl flex items-center p-4 gap-2 ' onClick={toggleMobileMenu}><FaBoxOpen />
+                                <span className='text-lg '  > <p >Your Orders</p></span>
                             </div></li>
 
                             <li> <Link to="/login" className='flex w-full h-[6vh]  p-4 items-center gap-2 text-4xl' onClick={handleLogout}><MdLogout /><span className='text-lg'><p>Logout</p></span>
@@ -185,15 +186,15 @@ const Navbar = () => {
                     <ul>
 
 
-                        <li> <Link to="/signup" className='flex w-full h-[6vh]  p-4 items-center gap-2 text-4xl' onClick={() => isMobileMenuOpen(false)} ><MdAccountCircle />
+                        <li> <Link to="/signup" className='flex w-full h-[6vh]  p-4 items-center gap-2 text-4xl' onClick={toggleMobileMenu} ><MdAccountCircle />
                             <span className='text-lg'><p>Sign up</p></span>
                         </Link></li>
-                        <li> <Link to="/login" className='flex w-full h-[6vh]  p-4 items-center gap-2 text-4xl' onClick={() => isMobileMenuOpen(false)} ><RiLoginCircleFill />
+                        <li> <Link to="/login" className='flex w-full h-[6vh]  p-4 items-center gap-2 text-4xl' onClick={toggleMobileMenu} ><RiLoginCircleFill />
 
 
                             <span className='text-lg'><p>Login</p></span>
                         </Link></li>
-                        <li> <Link to="/help" className='flex w-full h-[6vh]  p-4 items-center gap-2 text-4xl' onClick={() => isMobileMenuOpen(false)}><IoIosHelpCircle />
+                        <li> <Link to="/help" className='flex w-full h-[6vh]  p-4 items-center gap-2 text-4xl' onClick={toggleMobileMenu}><IoIosHelpCircle />
                             <span className='text-lg'><p>Help</p></span>
                         </Link></li>
                     </ul>

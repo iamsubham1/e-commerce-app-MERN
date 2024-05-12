@@ -44,7 +44,6 @@ export const fetchInitialCartState = (id) => async (dispatch) => {
         const cart = await fetchCartApi(id);
         dispatch(setCart(cart)); // Update Redux store with initial cart state
         dispatch(setLoading(false));
-        console.log("set cart");
     } catch (error) {
         dispatch(setError(error.message));
         dispatch(setLoading(false));
