@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getUserData } from '../reducers/userSlice';
-
+import { getCookie } from "../utility/getCookie";
+const token = getCookie('JWT');
 const Profile = () => {
     const dispatch = useDispatch();
     const { userData } = useSelector(state => state.user);
@@ -9,10 +10,36 @@ const Profile = () => {
     const [isEditing, setIsEditing] = useState(false);
     const [editedData, setEditedData] = useState(userData);
     const [selectedCategory, setSelectedCategory] = useState('personalInfo');
+    const [editedAddress, setEditedAddress] = useState(null);
+    const [editedAddressIndex, setEditedAddressIndex] = useState(null);
+    const [orders, setOrders] = useState([]);
 
-    useEffect(() => {
-        dispatch(getUserData());
-    }, [dispatch]);
+    const handleEditAddressClick = (address, index) => {
+        setEditedAddress({ ...address });
+        setEditedAddressIndex(index);
+        setIsEditing(true);
+    };
+
+    const handleCancelAddressEdit = () => {
+        setEditedAddress(null);
+        setEditedAddressIndex(null);
+        setIsEditing(false);
+    };
+
+    const handleSaveAddress = () => {
+        // Logic to save edited address
+        setIsEditing(false);
+    };
+
+    const handleAddressInputChange = (e) => {
+        const { name, value } = e.target;
+        setEditedAddress(prevAddress => ({
+            ...prevAddress,
+            [name]: value
+        }));
+    };
+
+
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -37,21 +64,50 @@ const Profile = () => {
         setIsEditing(false);
     };
 
+
+    useEffect(() => {
+        const fetchOrderDetails = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/api/order/orderDetails', {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        JWT: token
+                    }
+                });
+                if (!response.ok) {
+                    throw new Error('Failed to fetch order details');
+                }
+                const data = await response.json();
+                setOrders(data);
+            } catch (error) {
+                console.error('Error fetching order details:', error);
+            }
+        };
+
+        // Fetch user data
+        dispatch(getUserData());
+        // Fetch order details
+        fetchOrderDetails();
+    }, [dispatch]);
+
+
+
     const renderContent = () => {
         switch (selectedCategory) {
             case 'personalInfo':
                 return (
                     <div className='h-[50vh] overflow-y-scroll'>
-                        {!isEditing ? (
-                            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2" onClick={handleEditClick}>Edit</button>
-                        ) : (
-                            <div>
-                                <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2" onClick={handleSubmit}>Save</button>
-                                <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" onClick={handleCancelEdit}>Cancel</button>
-                            </div>
-                        )}
-                        <h3 className="text-lg font-bold mb-4">Personal Info</h3>
-
+                        <div className='flex justify-between items-baseline'>
+                            <h3 className="text-lg font-bold mb-4">Personal Info</h3>
+                            {!isEditing ? (
+                                <button className="shine-btn text-white rounded mr-5 " onClick={handleEditClick}>Edit</button>
+                            ) : (
+                                <div>
+                                    <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2" onClick={handleSubmit}>Save</button>
+                                    <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" onClick={handleCancelEdit}>Cancel</button>
+                                </div>
+                            )}
+                        </div>
                         <form onSubmit={handleSubmit}>
                             <div className="mb-4">
                                 <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">Email:</label>
@@ -82,11 +138,45 @@ const Profile = () => {
                             <div className="flex flex-col gap-3">
                                 {userData.address?.map((address, index) => (
                                     <div key={index} className="bg-white border border-gray-200 rounded-lg p-4 mr-4">
-                                        <p className="text-gray-800 mb-2"><span className="font-semibold">Street Name:</span> {address.streetname}</p>
-                                        <p className="text-gray-800 mb-2"><span className="font-semibold">Landmark:</span> {address.landmark}</p>
-                                        <p className="text-gray-800 mb-2"><span className="font-semibold">City:</span> {address.city}</p>
-                                        <p className="text-gray-800 mb-2"><span className="font-semibold">State:</span> {address.state}</p>
-                                        <p className="text-gray-800 mb-2"><span className="font-semibold">Pincode:</span> {address.pincode}</p>
+                                        {editedAddressIndex === index ? (
+                                            <form onSubmit={handleSaveAddress}>
+                                                <div className="mb-4">
+                                                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`streetname_${index}`}>Street Name:</label>
+                                                    <input type="text" id={`streetname_${index}`} name={`streetname_${index}`} value={editedAddress.streetname} onChange={handleAddressInputChange} className="w-full border border-gray-300 px-3 py-2 rounded" />
+                                                </div>
+                                                <div className="mb-4">
+                                                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`landmark_${index}`}>Landmark:</label>
+                                                    <input type="text" id={`landmark_${index}`} name={`landmark_${index}`} value={editedAddress.landmark} onChange={handleAddressInputChange} className="w-full border border-gray-300 px-3 py-2 rounded" />
+                                                </div>
+                                                <div className="mb-4">
+                                                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`city_${index}`}>City:</label>
+                                                    <input type="text" id={`city_${index}`} name={`city_${index}`} value={editedAddress.city} onChange={handleAddressInputChange} className="w-full border border-gray-300 px-3 py-2 rounded" />
+                                                </div>
+                                                <div className="mb-4">
+                                                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`state_${index}`}>State:</label>
+                                                    <input type="text" id={`state_${index}`} name={`state_${index}`} value={editedAddress.state} onChange={handleAddressInputChange} className="w-full border border-gray-300 px-3 py-2 rounded" />
+                                                </div>
+                                                <div className="mb-4">
+                                                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`pincode_${index}`}>Pincode:</label>
+                                                    <input type="text" id={`pincode_${index}`} name={`pincode_${index}`} value={editedAddress.pincode} onChange={handleAddressInputChange} className="w-full border border-gray-300 px-3 py-2 rounded" />
+                                                </div>
+                                                <div>
+                                                    <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2" type="submit">Save Address</button>
+                                                    <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" onClick={handleCancelAddressEdit}>Cancel</button>
+                                                </div>
+                                            </form>
+                                        ) : (
+                                            <>
+                                                <p className="text-gray-800 mb-2"><span className="font-semibold">Street Name:</span> {address.streetname}</p>
+                                                <p className="text-gray-800 mb-2"><span className="font-semibold">Landmark:</span> {address.landmark}</p>
+                                                <p className="text-gray-800 mb-2"><span className="font-semibold">City:</span> {address.city}</p>
+                                                <p className="text-gray-800 mb-2"><span className="font-semibold">State:</span> {address.state}</p>
+                                                <p className="text-gray-800 mb-2"><span className="font-semibold">Pincode:</span> {address.pincode}</p>
+                                                <button className="shine-btn text-white rounded" onClick={() => handleEditAddressClick(address, index)}>Edit Address</button>
+                                            </>
+                                        )}
+
+
                                     </div>
                                 ))}
                             </div>
@@ -95,19 +185,28 @@ const Profile = () => {
                 );
             case 'orders':
                 return (
-                    <div className='h-[50vh] overflow-y-scroll'>
-                        <h3 className="text-lg font-bold mb-2">Orders</h3>
-                        {userData.orders?.length === 0 ? (
-                            <p className="text-gray-800">No orders yet</p>
-                        ) : (
-                            <ul className="list-disc ml-4">
-                                {userData.orders?.map(orderId => (
-                                    <li key={orderId}>Order ID: {orderId}</li>
-                                ))}
-                            </ul>
-                        )}
+                    <div>
+                        {orders.map(order => (
+                            <div key={order._id} className="mb-4">
+                                <p>Order Placed on: {new Date(order.createdAt).toLocaleString()}</p>
+                                <ul className="list-disc ml-4">
+                                    {order.products.map(product => (
+                                        <li key={product.productId._id}>
+                                            <div className="flex items-center">
+                                                <img src={product.productId.pictures[0]} alt={product.productId.name} className="w-10 h-10 mr-2" />
+                                                <div>
+                                                    <p>{product.productId.name}</p>
+                                                    <p>${product.productId.price.toFixed(2)}</p>
+                                                </div>
+                                            </div>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        ))}
                     </div>
                 );
+
             default:
                 return null;
         }

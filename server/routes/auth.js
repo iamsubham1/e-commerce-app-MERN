@@ -56,6 +56,7 @@ router.get('/google', passport.authenticate('google', { scope: ['profile', 'emai
 // Callback route after successful Google OAuth authentication
 router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login-failure' }),
     (req, res) => {
+
         const token = generateJWT(req.user);
         res.cookie('JWT', token, { httpOnly: false, secure: true, sameSite: 'none' });
 

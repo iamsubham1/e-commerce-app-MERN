@@ -60,7 +60,7 @@ const addtocart = async (req, res) => {
 const getCartDetails = async (req, res) => {
     try {
         const userId = req.user._id;
-
+        console.log(userId);
 
         const cartDetails = await Cart.findOne({ userId }).populate('items.product', 'name reviews pictures price');
 
@@ -158,6 +158,7 @@ const createOrder = async (req, res) => {
     try {
         const userId = req.user._id;
         const products = req.body.products;
+        console.log(products);
 
         const user = await User.findById(userId);
 
@@ -229,9 +230,29 @@ const createOrder = async (req, res) => {
 };
 
 
+const orderDetails = async (req, res) => {
+
+    try {
+        const userId = req.user._id;
+        const orders = await Order.find({ userId: userId }).populate('products.productId', 'name pictures price');
+
+        console.log(orders, userId);
+        if (orders !== null) {
+            return res.status(200).send(orders);
+        } else {
+            return res.status(404).json({ message: "Cart not found" });
+        }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Internal server error' });
+    }
+
+}
+
+
 const paymentHandler = async (req, res) => {
 
 }
 
-module.exports = { addtocart, getCartDetails, updateCart, clearCart, createOrder }
+module.exports = { addtocart, getCartDetails, updateCart, clearCart, createOrder, orderDetails }
 
