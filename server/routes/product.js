@@ -1,7 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const { addProduct, deleteProduct, searchedProduct, getAllProducts, getProductsByBrand, getProductsByCategory, getProductDetails } = require('../controllers/productControllers');
+
+
+
+
 const verifyUser = require('../middleware/verifyUser')
+
+
+
+
+
 router.post('/addproduct', addProduct);
 
 router.delete('/deleteproduct/:productId', deleteProduct);
