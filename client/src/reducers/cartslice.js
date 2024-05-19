@@ -4,12 +4,14 @@ import { fetchCartApi, addToCartApi, removeItemApi, decreaseItemCountApi, clearC
 
 export const cartSlice = createSlice({
     name: 'cart',
+
     initialState: {
         items: [],
         totalValue: 0,
         loading: false,
         error: null,
     },
+
     reducers: {
         setCart: (state, action) => {
             const { items, totalValue } = action.payload;
@@ -77,7 +79,6 @@ export const handleRemoveItem = (product) => async (dispatch) => {
         dispatch(setLoading(false));
     }
 };
-
 
 export const handleDecreaseItem = (product) => async (dispatch) => {
     console.log("redux triggered");

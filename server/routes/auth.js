@@ -31,6 +31,7 @@ passport.use(new GoogleStrategy({
                     profilePic.url = profile._json.picture
                     console.log(profilePic);
                 }
+
                 user = await User.create({
 
                     name: profile.displayName,
@@ -48,8 +49,6 @@ passport.use(new GoogleStrategy({
     }
 ));
 
-
-
 // Route for Google OAuth authentication
 router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
 
@@ -65,6 +64,7 @@ router.get('/google/callback', passport.authenticate('google', { failureRedirect
 
     }
 );
+
 router.post('/signup', signUpController);
 router.post('/login', loginController);
 router.post('/sendotp', sendOtp);
