@@ -3,10 +3,11 @@ import { useSelector, useDispatch } from 'react-redux';
 import { getUserData } from '../reducers/userSlice';
 import { getCookie } from "../utility/getCookie";
 const token = getCookie('JWT');
+
 const Profile = () => {
+
     const dispatch = useDispatch();
     const { userData } = useSelector(state => state.user);
-
     const [isEditing, setIsEditing] = useState(false);
     const [editedData, setEditedData] = useState(userData);
     const [selectedCategory, setSelectedCategory] = useState('personalInfo');
@@ -38,8 +39,6 @@ const Profile = () => {
             [name]: value
         }));
     };
-
-
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -89,8 +88,6 @@ const Profile = () => {
         // Fetch order details
         fetchOrderDetails();
     }, [dispatch]);
-
-
 
     const renderContent = () => {
         switch (selectedCategory) {
@@ -212,7 +209,6 @@ const Profile = () => {
         }
     };
 
-
     return (
         <div className="max-w-6xl mx-auto px-4 py-8 flex min-h-[100vh]">
             <div className="mr-8">
@@ -241,6 +237,7 @@ const Profile = () => {
             </div>
         </div>
     );
+
 };
 
 export default Profile;

@@ -27,6 +27,7 @@ const Navbar = () => {
     const [dropdownWidth, setDropdownWidth] = useState(0);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const searchInputRef = useRef(null);
+    const debounceTimer = useRef(null);
 
 
     const { items } = useSelector((state) => state.cart);
@@ -59,23 +60,28 @@ const Navbar = () => {
 
 
 
-    const handleSearch = async (e) => {
-        const response = await getSearchResults(e.target.value);
+    const handleSearch = async (value) => {
+        const response = await getSearchResults(value);
         if (response) {
             setSearchResults(response);
             setIsDropdownOpen(true);
-
             const inputRect = searchInputRef.current.getBoundingClientRect();
             setDropdownLeft(inputRect.left);
             setDropdownWidth(inputRect.width);
-        }
-        else {
+        } else {
             setSearchResults([]);
             setIsDropdownOpen(false);
         }
-
     };
 
+    const debounceSearch = (value) => {
+        if (debounceTimer.current) {
+            clearTimeout(debounceTimer.current);
+        }
+        debounceTimer.current = setTimeout(() => {
+            handleSearch(value);
+        }, 300); // Adjust the delay as needed
+    };
     const handleLogout = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
         logout('JWT');
@@ -95,7 +101,7 @@ const Navbar = () => {
                         <p className='flex items-center gap-2 hide-section hide-location'>
                             <i className="fa-solid fa-location-dot"></i> Berhampur
                         </p>
-                        <input type='text' ref={searchInputRef} placeholder='Search ' className='min-h-[100%] searchwidth px-2 bg-[#ececec] border-l-2 border-r-2 border-black  text-black text-lg' onChange={handleSearch} />
+                        <input type='text' ref={searchInputRef} placeholder='Search ' className='min-h-[100%] searchwidth px-2 bg-[#ececec] border-l-2 border-r-2 border-black  text-black text-lg' onChange={(e) => debounceSearch(e.target.value)} />
                     </>
                 )}
 
