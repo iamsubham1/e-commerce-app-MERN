@@ -3,11 +3,13 @@ import { addPhNumber } from '../apis/api';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
-import { hasPhoneNumber } from '../utility/checkNumberAdded';
+import { useSelector } from 'react-redux';
+
 
 
 const AccountSetup = () => {
     const navigate = useNavigate();
+    const { userData } = useSelector((state) => state.user);
 
     const notify = (message) => toast(`${message}`);
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -32,21 +34,27 @@ const AccountSetup = () => {
     };
 
     useEffect(() => {
-        const checkPhoneNumber = async () => {
+        const checkPhoneNumber = () => {
             setloading(true);
-            try {
-                const result = await hasPhoneNumber();
-                if (result) {
-                    navigate('/');
-                }
+
+            console.log("User details:", userData);
+
+            if (userData && userData.phoneNumber) {
+                console.log("User has a phone number");
+
+
+                navigate('/');
+
+
+
+            } else {
+                console.log("User does not have a phone number");
                 setloading(false);
-            } catch (error) {
-                console.error("Error checking phone number:", error);
             }
         };
 
         checkPhoneNumber();
-    }, []);
+    }, [userData]);
 
 
     if (loading) {

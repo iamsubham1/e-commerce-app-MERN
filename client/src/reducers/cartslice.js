@@ -38,7 +38,6 @@ export const cartSlice = createSlice({
 export const { setCart, setLoading, setError } = cartSlice.actions;
 
 
-
 // Action to fetch initial cart state
 export const fetchInitialCartState = (id) => async (dispatch) => {
     dispatch(setLoading(true));
@@ -72,7 +71,7 @@ export const handleRemoveItem = (product) => async (dispatch) => {
     dispatch(setLoading(true));
     try {
         const cart = await removeItemApi(product);
-        dispatch(setCart(cart)); // Update Redux store with updated cart state
+        dispatch(setCart(cart));
         dispatch(setLoading(false));
     } catch (error) {
         dispatch(setError(error.message));
@@ -85,7 +84,7 @@ export const handleDecreaseItem = (product) => async (dispatch) => {
     dispatch(setLoading(true));
     try {
         const cart = await decreaseItemCountApi(product);
-        dispatch(setCart(cart)); // Update Redux store with updated cart state
+        dispatch(setCart(cart));
         dispatch(setLoading(false));
     } catch (error) {
         dispatch(setError(error.message));
@@ -98,7 +97,7 @@ export const clearCart = () => async (dispatch) => {
     dispatch(setLoading(true));
     try {
         const cart = await clearCartApi();
-        dispatch(setCart(cart)); // Update Redux store with updated cart state
+        dispatch(setCart(cart));
         dispatch(setLoading(false));
     } catch (error) {
         dispatch(setError(error.message));
