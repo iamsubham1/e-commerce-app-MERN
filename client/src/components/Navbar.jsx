@@ -18,6 +18,8 @@ import '../components/css/navbar.css'
 import Loader from './Loader';
 import BeatLoader from "react-spinners/BeatLoader";
 
+
+
 const Navbar = () => {
     const cookie = getCookie('JWT');
     const dispatch = useDispatch();
@@ -38,11 +40,11 @@ const Navbar = () => {
     const searchInputRef = useRef(null);
     const debounceTimer = useRef(null);
 
-
     const { items } = useSelector((state) => state.cart);
     const { userData } = useSelector((state) => state.user);
 
-    console.log(userData);
+    const apiUrl = process.env.REACT_APP_API_URL;
+    console.log(apiUrl);
 
     useEffect(() => {
         dispatch(getUserData());
@@ -64,7 +66,7 @@ const Navbar = () => {
                         const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json`, {
                             params: {
                                 latlng: `${latitude},${longitude}`,
-                                key: 'AIzaSyBbdDgOyvgEd1G_qyiRrhAT7SH8zwKBrzA'
+                                key: ""
                             }
                         });
 
