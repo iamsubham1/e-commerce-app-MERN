@@ -39,7 +39,7 @@ const CartDetails = () => {
             {items && items.length !== 0 ? (
                 <div className="flex flex-col md:flex-row gap-4">
                     <div className="w-full md:w-3/5 overflow-y-scroll ">
-                        <ul className='h-[50vh]'>
+                        <ul className='h-[60vh]'>
                             {items.map((item) => (
                                 <li key={item._id} className="border-b border-gray-200 py-4 px-2 flex text-sm md:text-base gap-2 items-center hover:bg-[#f1f1f1] hover:cursor-pointer" onClick={() => navigate(`/product/${item.product._id}`)}>
                                     <div className="mb-2 sm:mb-0 sm:w-1/6">

@@ -1,6 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { getCookie } from "../utility/getCookie";
+
 import { getUserDetails } from "../apis/api";
 
+const token = getCookie('JWT');
 
 const userSlice = createSlice({
     name: 'user',
@@ -30,17 +33,17 @@ const userSlice = createSlice({
 export const { setUserData, setUserDataloading, setUserDataErrors } = userSlice.actions
 
 
-//thunk 
+//thunk middleware
 export const getUserData = () => async (dispatch) => {
     dispatch(setUserDataloading(true));
     try {
-        const userData = await getUserDetails();
+        const userData = await getUserDetails(token);
         dispatch(setUserData(userData));
     } catch (error) {
         dispatch(setUserDataErrors(error.message));
     } finally {
         dispatch(setUserDataloading(false));
     }
-}
+};
 
 export default userSlice.reducer

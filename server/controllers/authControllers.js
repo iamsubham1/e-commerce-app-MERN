@@ -65,7 +65,7 @@ const loginController = async (req, res) => {
 
                 const token = generateJWT(user);
                 res.cookie('JWT', token, { httpOnly: false, secure: true, sameSite: 'none' });
-                return res.status(200).json({ success: true, token });
+                return res.status(200).json({ success: true, token, data: user });
 
             } else {
                 console.log("Incorrect password");

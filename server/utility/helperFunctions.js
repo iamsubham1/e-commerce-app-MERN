@@ -4,46 +4,52 @@ const jwt = require('jsonwebtoken');
 
 const calculateTotalPrice = async (items) => {
     try {
+        console.log("Cart items:", items);
         let totalValue = 0;
 
-        const getProductPrice = async (productId) => {
-            try {
-                // Check if the product price is cached in Redis
-                const cachedPrice = await redisClient.get(`product:${productId}:price`);
+        // Extract product IDs and filter out invalid IDs
+        const productIds = items
+            .map(item => item.productId || (item.product && item.product.toString()))  // Handle both formats
+            .filter(id => id);  // Filter out undefined or null IDs
 
-                if (cachedPrice !== null) {
-                    // If the price is cached, return it
-                    console.log('Cache hit for product:', productId);
-                    return parseFloat(cachedPrice);
-                } else {
-                    // If the price is not cached, fetch the product from the database
-                    console.log('Cache miss for product:', productId);
-                    const product = await Product.findById(productId);
+        if (productIds.length === 0) {
+            throw new Error('No valid products in cart.');
+        }
 
-                    if (product) {
+        // Redis MGET equivalent for node-redis@v4
+        const cachedPrices = await redisClient.sendCommand(['MGET', ...productIds.map(id => `product:${id}:price`)]);
 
+        const missingProductIds = [];
+        const pricesMap = {};
 
-                        return product.price;
-                    } else {
-
-                        return null;
-                    }
-                }
-            } catch (error) {
-
-                console.error('Error getting product price:', error);
-                throw error;
+        // Check cached prices
+        productIds.forEach((productId, index) => {
+            const cachedPrice = cachedPrices[index];
+            if (cachedPrice !== null) {
+                pricesMap[productId] = parseFloat(cachedPrice);
+            } else {
+                missingProductIds.push(productId); // Products not found in cache
             }
-        };
+        });
 
-        for (const item of items) {
+        // Fetch missing product prices from the database in one query
+        if (missingProductIds.length > 0) {
+            const missingProducts = await Product.find({ _id: { $in: missingProductIds } }, 'price');
 
-            const productPrice = await getProductPrice(item.product);
+            // Cache the fetched prices in Redis
+            missingProducts.forEach(product => {
+                pricesMap[product._id.toString()] = product.price;
+                redisClient.set(`product:${product._id}:price`, product.price, 'EX', 3600); // Set expiry of 1 hour
+            });
+        }
 
-            if (productPrice !== null) {
+        // Calculate total value using the prices map
+        items.forEach(item => {
+            const productPrice = pricesMap[item.productId || (item.product && item.product.toString())];
+            if (productPrice) {
                 totalValue += productPrice * item.quantity;
             }
-        }
+        });
 
         return totalValue;
     } catch (error) {
@@ -51,6 +57,8 @@ const calculateTotalPrice = async (items) => {
         throw error;
     }
 };
+
+
 
 const generateUniqueOTP = (length = 6) => {
     const chars = '0123456789';

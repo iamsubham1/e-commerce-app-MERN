@@ -14,7 +14,8 @@ const User = require('./models/UserModel.js');
 const corsOptions = {
     origin: process.env.ORIGIN,
     methods: "GET,POST,PUT,PATCH,DELETE,HEAD",
-    credentials: true
+    credentials: true,
+
 };
 
 app.use(cors(corsOptions));

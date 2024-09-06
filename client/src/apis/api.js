@@ -90,7 +90,7 @@ export const addPhNumber = async (phoneNumber) => {
         throw new Error(error.message);
 
     }
-}
+};
 
 export const getUserDetails = async () => {
     try {
@@ -114,7 +114,7 @@ export const getUserDetails = async () => {
         console.error("Error fetching user details:", error);
         throw new Error(error.message);
     }
-}
+};
 
 export const getSearchResults = async (keyword) => {
     try {
@@ -141,7 +141,7 @@ export const getSearchResults = async (keyword) => {
         return false;
 
     }
-}
+};
 
 export const addToCartApi = async (data) => {
     try {
@@ -166,9 +166,9 @@ export const addToCartApi = async (data) => {
         console.error('Error fetching search results:', error.message);
         return false;
     }
-}
+};
 
-export const fetchCartApi = async (id) => {
+export const fetchCartApi = async () => {
     try {
         const response = await fetch(`${baseUrl}order/cartdetails`, {
             headers: {
@@ -212,7 +212,7 @@ export const removeItemApi = async (data) => {
         console.error('Error fetching search results:', error.message);
         return false;
     }
-}
+};
 
 export const decreaseItemCountApi = async (data) => {
     try {
@@ -235,7 +235,7 @@ export const decreaseItemCountApi = async (data) => {
         console.error('Error fetching search results:', error.message);
         return false;
     }
-}
+};
 
 export const clearCartApi = async () => {
     try {
@@ -258,7 +258,7 @@ export const clearCartApi = async () => {
         console.error('Error fetching search results:', error.message);
         return false;
     }
-}
+};
 
 export const addAddress = async (address) => {
     try {
@@ -279,8 +279,7 @@ export const addAddress = async (address) => {
         throw new Error(error.message);
 
     }
-}
-
+};
 
 export const deleteAddress = async (id) => {
     try {
@@ -301,4 +300,68 @@ export const deleteAddress = async (id) => {
         throw new Error(error.message);
 
     }
-}
+};
+
+export const fetchOrderDetails = async () => {
+    try {
+        const response = await fetch(`${baseUrl}/order/orderDetails`, {
+            headers: {
+                'Content-Type': 'application/json',
+                JWT: token
+            }
+        });
+        if (!response.ok) {
+            throw new Error('Failed to fetch order details');
+        }
+        const data = await response.json();
+        setOrders(data);
+    } catch (error) {
+        console.error('Error fetching order details:', error);
+    }
+};
+
+
+export const placeOrder = async (products, paymentMode) => {
+    try {
+        const response = await fetch(`${baseUrl}order/placeorder`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                JWT: token
+            },
+            body: JSON.stringify({ products, paymentMode })
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to place order');
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error('Error placing order:', error);
+        throw error;
+    }
+};
+
+
+export const placeOnlineOrder = async (products, paymentMode, amount, phoneNumber) => {
+    try {
+        const response = await fetch('http://localhost:8080/api/order/newPayment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                JWT: token
+            },
+            body: JSON.stringify({ data: { products, paymentMode }, phoneNumber, amount })
+        });
+
+        const resData = await response.json();
+        console.log(resData);
+
+        if (resData && resData.data.instrumentResponse.redirectInfo.url) {
+            window.location.href = resData.data.instrumentResponse.redirectInfo.url;
+        }
+    } catch (error) {
+        console.error(error);
+    }
+};

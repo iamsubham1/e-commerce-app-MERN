@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { getUserData } from '../reducers/userSlice';
-import { getCookie } from "../utility/getCookie";
-const token = getCookie('JWT');
+import { fetchOrderDetails } from '../apis/api';
 
 const Profile = () => {
 
     const dispatch = useDispatch();
     const { userData } = useSelector(state => state.user);
+
     const [isEditing, setIsEditing] = useState(false);
     const [editedData, setEditedData] = useState(userData);
     const [selectedCategory, setSelectedCategory] = useState('personalInfo');
@@ -28,7 +28,6 @@ const Profile = () => {
     };
 
     const handleSaveAddress = () => {
-        // Logic to save edited address
         setIsEditing(false);
     };
 
@@ -65,27 +64,8 @@ const Profile = () => {
 
 
     useEffect(() => {
-        const fetchOrderDetails = async () => {
-            try {
-                const response = await fetch('http://localhost:8080/api/order/orderDetails', {
-                    headers: {
-                        'Content-Type': 'application/json',
-                        JWT: token
-                    }
-                });
-                if (!response.ok) {
-                    throw new Error('Failed to fetch order details');
-                }
-                const data = await response.json();
-                setOrders(data);
-            } catch (error) {
-                console.error('Error fetching order details:', error);
-            }
-        };
 
-        // Fetch user data
         dispatch(getUserData());
-        // Fetch order details
         fetchOrderDetails();
     }, [dispatch]);
 
@@ -182,25 +162,31 @@ const Profile = () => {
                 );
             case 'orders':
                 return (
-                    <div>
-                        {orders.map(order => (
-                            <div key={order._id} className="mb-4">
-                                <p>Order Placed on: {new Date(order.createdAt).toLocaleString()}</p>
-                                <ul className="list-disc ml-4">
-                                    {order.products.map(product => (
-                                        <li key={product.productId._id}>
-                                            <div className="flex items-center">
-                                                <img src={product.productId.pictures[0]} alt={product.productId.name} className="w-10 h-10 mr-2" />
-                                                <div>
-                                                    <p>{product.productId.name}</p>
-                                                    <p>${product.productId.price.toFixed(2)}</p>
-                                                </div>
-                                            </div>
-                                        </li>
-                                    ))}
-                                </ul>
-                            </div>
-                        ))}
+                    <div className='max-h-[50vh] h-[50vh] grid place-content-center'>
+                        <>
+                            {orders.length >= 1 ? (
+                                orders.map(order => (
+                                    <div key={order._id} className="mb-4">
+                                        <p>Order Placed on: {new Date(order.createdAt).toLocaleString()}</p>
+                                        <ul className="list-disc ml-4">
+                                            {order.products.map(product => (
+                                                <li key={product.productId._id}>
+                                                    <div className="flex items-center">
+                                                        <img src={product.productId.pictures[0]} alt={product.productId.name} className="w-10 h-10 mr-2" />
+                                                        <div>
+                                                            <p>{product.productId.name}</p>
+                                                            <p>${product.productId.price.toFixed(2)}</p>
+                                                        </div>
+                                                    </div>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                ))
+                            ) : (
+                                <p className='text-black text-center'>No previous orders</p>
+                            )}
+                        </>
                     </div>
                 );
 

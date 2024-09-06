@@ -21,7 +21,6 @@ const s3 = new S3Client({
     region: bucketRegion
 });
 
-
 const getUserDetails = async (req, res) => {
 
     try {

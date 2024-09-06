@@ -5,8 +5,11 @@ import { FcGoogle } from "react-icons/fc";
 import { login } from '../apis/api'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { getCookie } from '../utility/getCookie';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Login = () => {
+    const navigate = useNavigate();
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -46,10 +49,13 @@ const Login = () => {
     const handleGoogleLogin = (e) => {
         e.preventDefault();
         window.open("http://localhost:8080/api/auth/google", "_self");
-
-        console.log("Login with Google");
     };
-
+    useEffect(() => {
+        const cookie = getCookie('JWT')
+        if (cookie) {
+            navigate('/')
+        }
+    }, []);
 
     const notify = (message) => toast(`${message}`);
     return (
@@ -69,7 +75,7 @@ const Login = () => {
                     className='mt-14'
                 />
                 <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md border-2 border-[#eeeeee]">
-                    <h2 className="text-5xl font-bold mb-4 heading-font">Welcome Back !</h2>
+                    <h2 className="text-5xl font-bold mb-4 heading-font text-center">Welcome Back !</h2>
                     <form>
                         <div className="mb-4">
                             <input
@@ -92,7 +98,7 @@ const Login = () => {
                                 className="w-full px-4 py-2 border rounded-md focus:outline-none focus:border-blue-500"
                                 required
                             />
-                            <p className="mt-4">Forgot Password ? <a href="/signup" className="text-slate-400 hover:">Reset</a></p>
+                            <p className="mt-4">Forgot Password ? <Link to="/reset" className="text-slate-400 hover:">Reset</Link></p>
 
                             {showPassword ? (
                                 <FaRegEye

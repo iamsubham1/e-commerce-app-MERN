@@ -43,10 +43,16 @@ const deleteProduct = async (req, res) => {
 const searchedProduct = async (req, res) => {
     try {
         const { keyword } = req.params;
+
+        if (!keyword || keyword.trim() === '') {
+            return res.status(400).json({ error: 'Keyword parameter is required and cannot be empty' });
+        }
+
         console.log("API hit");
 
         // Check if the result is cached in Redis
-        const cache = await redisClient.get('products');
+        const cacheKey = `products:${keyword.toLowerCase()}`;
+        const cache = await redisClient.get(cacheKey);
 
         if (cache) {
             console.log('Result found in cache');
@@ -59,10 +65,16 @@ const searchedProduct = async (req, res) => {
                 product.category.toLowerCase().includes(keyword.toLowerCase())
             );
 
-            if (filteredProducts.length !== 0) {
-                return res.status(200).json(filteredProducts);
+            if (filteredProducts.length > 0) {
+                return res.status(200).json({
+                    message: 'Products found in cache',
+                    data: filteredProducts
+                });
             } else {
-                return res.status(400).json({ message: "No products found" });
+                return res.status(200).json({
+                    message: 'No products found matching the keyword',
+                    data: []
+                });
             }
         } else {
             console.log('Cache miss, querying database');
@@ -73,13 +85,32 @@ const searchedProduct = async (req, res) => {
                     { category: { $regex: keyword, $options: 'i' } }
                 ]
             });
-            return res.status(200).json(products);
+
+            if (products.length > 0) {
+                // Cache the result for future searches
+                await redisClient.set(cacheKey, JSON.stringify(products), 'EX', 3600); // Cache for 1 hour
+
+                return res.status(200).json({
+                    message: 'Products found and cached',
+                    data: products
+                });
+            } else {
+                return res.status(200).json({
+                    message: 'No products found matching the keyword',
+                    data: []
+                });
+            }
         }
     } catch (err) {
         console.error('Error searching for products:', err);
-        return res.status(500).json({ error: 'Internal server error' });
+        return res.status(500).json({
+            error: 'Internal server error',
+            message: 'An error occurred while searching for products'
+        });
     }
 };
+
+
 
 const getProductDetails = async (req, res) => {
     try {

@@ -58,13 +58,13 @@ const AccountSetup = () => {
 
 
     if (loading) {
-        return (
-            <div className="w-[100vw] h-[80vh] overflow flex justify-center items-center">
-                <span class="loader"></span>
-            </div>)
+        return (<div className="w-[100vw] h-[80vh] overflow flex justify-center items-center">
+            <span className="loader"></span>
+        </div>
+        )
     }
-    return (
-        <div className="max-w-full h-[80vh] flex justify-center items-center ">
+    return (<>
+        {!userData && !userData.phoneNumber ? <div className="max-w-full h-[80vh] flex justify-center items-center ">
             <ToastContainer position="top-right"
                 autoClose={5000}
                 hideProgressBar={false}
@@ -95,8 +95,11 @@ const AccountSetup = () => {
                     </button>
                 </div>
             </div>
+        </div> : <div className="w-[100vw] h-[80vh] overflow flex justify-center items-center">
+            <span className="loader"></span>
         </div>
-    );
+        }
+    </>);
 };
 
 export default AccountSetup;

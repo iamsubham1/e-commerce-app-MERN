@@ -18,18 +18,25 @@ import AudioPage from './pages/AudioPage';
 import Checkout from './pages/Checkout';
 import './components/css/navbar.css'
 import Profile from './pages/ProfilePage';
+import ResetPassword from './pages/resetPassword';
+import PhonePe from './pages/PhonePe';
 
 const App = () => {
 
 
   return (
+
     <Provider store={store}>
       <Router>
         <Navbar />
+
         <Routes>
+
           <Route path="/" element={<HomePage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
+          <Route path="/reset" element={<ResetPassword />} />
+
           <Route path="/googleloginnextstep" element={<AccountSetup />} />
           <Route path="/product/:productId" element={<ProductPage />} />
           <Route path="/mobile" element={<Phones />} />
@@ -40,10 +47,15 @@ const App = () => {
           <Route path="/orders" element={<OrdersPage />} />
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/phonePe" element={<PhonePe />} />
+
+
         </Routes>
+
         <Footer />
       </Router>
     </Provider>
+
   );
 };
 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import axios from 'axios';
 import { NavLink, Link, useNavigate } from 'react-router-dom';
 import logo from '../assets/logo.png';
 import { MdShoppingCart, MdMenu, MdOutlineClose } from "react-icons/md";
@@ -14,6 +15,8 @@ import { RiLoginCircleFill } from "react-icons/ri";
 import { getSearchResults } from '../apis/api';
 import { fetchInitialCartState } from '../reducers/cartslice';
 import '../components/css/navbar.css'
+import Loader from './Loader';
+import BeatLoader from "react-spinners/BeatLoader";
 
 const Navbar = () => {
     const cookie = getCookie('JWT');
@@ -26,6 +29,12 @@ const Navbar = () => {
     const [dropdownLeft, setDropdownLeft] = useState(0);
     const [dropdownWidth, setDropdownWidth] = useState(0);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [searchValue, setSearchValue] = useState('');
+    const [userLocation, setUserLocation] = useState('');
+    const [userAddress, setUserAddress] = useState('');
+    const [locationloading, setLocationloading] = useState(false);
+    const [loading, setloading] = useState(false);
+
     const searchInputRef = useRef(null);
     const debounceTimer = useRef(null);
 
@@ -37,9 +46,67 @@ const Navbar = () => {
 
     useEffect(() => {
         dispatch(getUserData());
-
         dispatch(fetchInitialCartState());
+    }, [dispatch]);
 
+    useEffect(() => {
+
+        if (navigator.geolocation) {
+            setLocationloading(true);
+            navigator.geolocation.getCurrentPosition(
+                async (position) => {
+                    const { latitude, longitude } = position.coords;
+                    setUserLocation(`${latitude}, ${longitude}`);
+                    console.log(latitude, longitude);
+
+                    // Convert coordinates to address
+                    try {
+                        const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json`, {
+                            params: {
+                                latlng: `${latitude},${longitude}`,
+                                key: 'AIzaSyBbdDgOyvgEd1G_qyiRrhAT7SH8zwKBrzA'
+                            }
+                        });
+
+                        if (response.data.results.length > 0) {
+                            console.log(response);
+                            setLocationloading(false);
+                            let formattedAddress = response.data.results[1].formatted_address;
+                            console.log("Original Address:", formattedAddress);
+
+                            // Remove the first word and comma
+                            const firstCommaIndex = formattedAddress.indexOf(',');
+                            if (firstCommaIndex !== -1) {
+                                formattedAddress = formattedAddress.substring(firstCommaIndex + 1).trim();
+                            }
+
+                            // Remove the last two words and their commas
+                            let addressParts = formattedAddress.split(',').map(part => part.trim());
+                            if (addressParts.length > 2) {
+                                // Remove the last two elements
+                                addressParts = addressParts.slice(0, -2);
+                            }
+                            // Reassemble the address
+                            let trimmedAddress = addressParts.join(', ').trim();
+
+                            console.log("Trimmed Address:", trimmedAddress);
+                            setUserAddress(trimmedAddress);
+
+
+                        }
+                    } catch (error) {
+                        console.error("Error fetching location address:", error);
+                    }
+                },
+                (error) => console.error("Error getting location:", error),
+
+                {
+                    enableHighAccuracy: true, // Request the highest possible accuracy
+                    maximumAge: 0, // Do not use a cached location
+
+                }
+            );
+        }
     }, []);
 
     const totalQuantity = items && items.reduce((total, item) => total + item.quantity, 0);
@@ -58,17 +125,21 @@ const Navbar = () => {
         };
     }, [lastScrollTop]);
 
-
+    console.log("dropdown", isDropdownOpen);
 
     const handleSearch = async (value) => {
+        setloading(true);
         const response = await getSearchResults(value);
         if (response) {
-            setSearchResults(response);
+            console.log(response);
             setIsDropdownOpen(true);
+            setloading(false);
+            setSearchResults(response.data);
             const inputRect = searchInputRef.current.getBoundingClientRect();
             setDropdownLeft(inputRect.left);
             setDropdownWidth(inputRect.width);
-        } else {
+        }
+        else {
             setSearchResults([]);
             setIsDropdownOpen(false);
         }
@@ -90,7 +161,10 @@ const Navbar = () => {
     const toggleMobileMenu = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
     };
-
+    const clearSearch = () => {
+        setSearchValue('');
+        setIsDropdownOpen(false);
+    };
     return (
         <div className={` w-full h-[7vh] mt-4 flex justify-end navbar border-t-2 border-b-2  border-black ${isNavbarVisible ? 'navbar-visible' : 'navbar-hidden'}`}>
             <div className=' flex items-center  gap-2 w-[85%] ml-1 '>
@@ -98,29 +172,82 @@ const Navbar = () => {
 
                 {cookie && (
                     <>
-                        <p className='flex items-center gap-2 hide-section hide-location'>
-                            <i className="fa-solid fa-location-dot"></i> Berhampur
-                        </p>
-                        <input type='text' ref={searchInputRef} placeholder='Search ' className='min-h-[100%] searchwidth px-2 bg-[#ececec] border-l-2 border-r-2 border-black  text-black text-lg' onChange={(e) => debounceSearch(e.target.value)} />
+                        <div className='w-[15%] cursor-hide'>
+                            {locationloading ? (
+                                <BeatLoader size={10} color={"white"} />
+                            ) : (
+                                <div className='flex items-center gap-2 hide-section hide-location'>
+                                    <i className="fa-solid fa-location-dot mb-1"></i>
+                                    <p className='text-sm select-none'>{userAddress || ''}</p>
+                                </div>
+                            )}
+                        </div>
+                        <div className='w-[50%] relative'>
+
+                            <input type='keyword'
+                                value={searchValue}
+
+                                ref={searchInputRef}
+                                placeholder='Search for products,brands,description'
+
+
+                                style={{
+                                    borderLeft: '2px solid black',
+                                    borderRight: '2px solid black',
+                                    borderColor: 'black',
+                                    color: 'black',
+                                    fontSize: '.95rem',
+                                    borderRadius: '0.375rem',
+                                    width: '100%',
+                                    minHeight: '100%',
+                                }} className='min-h-[100%] placeholder:text-[#161616] placeholder:font-[600] relative w-full px-2 py-[0.50rem] bg-[#cfcfcfd1] border-l-2 border-r-2 border-black text-black text-lg rounded-md'
+                                onChange={(e) => {
+                                    debounceSearch(e.target.value);
+                                    setSearchValue(e.target.value);
+                                }} />
+
+                            {searchValue && (
+                                <button
+                                    className='absolute z-12 -ml-[7.5%] top-1/2 transform -translate-y-1/2 text-black hover:text-red-500 text-md'
+                                    onClick={clearSearch}
+                                >
+                                    &#x2715;
+                                </button>
+                            )}
+                        </div>
                     </>
                 )}
 
 
                 {/* Dropdown for search results */}
                 {isDropdownOpen && (
-                    <div className="dropdown" style={{ left: dropdownLeft, width: dropdownWidth }}>
-                        {searchResults.map((result, index) => (
-                            <div key={index} className="dropdown-item text-black flex flex-row-reverse justify-end gap-2 items-center"
-                                onClick={() => {
-
-                                    navigate(`/product/${result._id}`);
-                                    setIsDropdownOpen(false);
-                                }}>
-                                <div>{result.name}</div>
-                                <img src={result.pictures[0]} className='w-[50px] h-[50px]'></img>
-
+                    <div className="dropdown left-5" style={{ left: dropdownLeft, width: dropdownWidth }}>
+                        {loading ? (
+                            <div className="py-10 text-center text-black">
+                                <Loader width={dropdownWidth}
+                                    height='200px' />
                             </div>
-                        ))}
+                        ) : (
+                            searchResults.length > 0 ? (
+                                searchResults.map((result, index) => (
+                                    <div
+                                        key={index}
+                                        className="dropdown-item text-black flex flex-row-reverse justify-end gap-2 items-center"
+                                        onClick={() => {
+                                            navigate(`/product/${result._id}`);
+                                            setIsDropdownOpen(false);
+                                        }}
+                                    >
+                                        <div>{result.name}</div>
+                                        <img src={result.pictures[0]} className='w-[50px] h-[50px]' alt={result.name} />
+                                    </div>
+                                ))
+                            ) : (
+                                <div className='py-10'>
+                                    <p className='text-center text-black'>No Search Results</p>
+                                </div>
+                            )
+                        )}
                     </div>
                 )}
             </div>
@@ -206,6 +333,7 @@ const Navbar = () => {
                     </ul>
                 </div>))
             }
+
 
         </div>
     );

@@ -26,7 +26,8 @@ export const cartSlice = createSlice({
         clearCart: (state) => {
             state.items = [];
             state.totalValue = 0;
-        }, setLoading: (state, action) => {
+        },
+        setLoading: (state, action) => {
             state.loading = action.payload;
         },
         setError: (state, action) => {
@@ -39,10 +40,10 @@ export const { setCart, setLoading, setError } = cartSlice.actions;
 
 
 // Action to fetch initial cart state
-export const fetchInitialCartState = (id) => async (dispatch) => {
+export const fetchInitialCartState = () => async (dispatch) => {
     dispatch(setLoading(true));
     try {
-        const cart = await fetchCartApi(id);
+        const cart = await fetchCartApi();
         dispatch(setCart(cart)); // Update Redux store with initial cart state
         dispatch(setLoading(false));
     } catch (error) {

@@ -30,6 +30,15 @@ const orderSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    paymentMode: {
+        type: String,
+        enum: ['COD', 'ONLINE'],
+        required: true
+    },
+    paymentStatus: {
+        typ: String,
+        enum: ["PENDING", "FAILED", "SUCCESSs"]
+    },
     createdAt: {
         type: Date,
         default: Date.now

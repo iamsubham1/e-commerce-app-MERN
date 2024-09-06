@@ -4,16 +4,22 @@ const Order = require('../models/OrderModel');
 const Cart = require('../models/CartModel');
 const { calculateTotalPrice } = require('../utility/helperFunctions');
 const redisClient = require('../redis');
+const axios = require("axios");
+const uniqid = require('uniqid');
+const crypto = require("crypto");
 
+const sha256 = require("sha256");
 
-
-
+const PHONE_PE_HOST_URL = "https://api-preprod.phonepe.com/apis/pg-sandbox";
+const MERCHANT_ID = "PGTESTPAYUAT86";
+const SALT_INDEX = 1;
+const SALT_KEY = "96434309-7796-489d-8924-ab56988a6076"
 
 const addtocart = async (req, res) => {
 
     try {
         const { productId, quantity } = req.body;
-        console.log(req.body);
+        console.log("req.body -------------> ", productId, quantity)
 
         // if no quantity given then 1 
         const userId = req.user._id;
@@ -48,7 +54,7 @@ const addtocart = async (req, res) => {
         // Save the updated cart
         await shoppingCart.save();
 
-        console.log(shoppingCart);
+        // console.log(shoppingCart);
         const response = await shoppingCart.populate('items.product', 'name reviews pictures price'); // Populate product info
         res.status(200).send(response);
     } catch (error) {
@@ -152,82 +158,121 @@ const clearCart = async (req, res) => {
 // added redis to update products stock
 const createOrder = async (req, res) => {
     const generateFakeTransactionId = () => {
-        return 'fake_txn_' + Math.random().toString(36);
+        return 'fake_txn_' + Math.random().toString(36).substring(2);
     };
+
+    console.log("Reached create order------------>", req.body);
 
     try {
         const userId = req.user._id;
+        // console.log("User ID:", userId);
+
         const products = req.body.products;
-        console.log(products);
+        // console.log("Products in cart:", products);
+
+        const paymentMode = req.body.paymentMode;
+        // console.log("Payment Mode:", paymentMode);
+
+        if (!['COD', 'ONLINE'].includes(paymentMode)) {
+            console.error('Invalid payment mode:', paymentMode);
+            return res.status(400).json({ error: 'Invalid payment mode. Must be COD or ONLINE.' });
+        }
 
         const user = await User.findById(userId);
-
         if (!user) {
-            return res.status(400).send("User not found");
-        } else {
-            // Calculate total price based on the product prices and quantities in the cart
-            const totalPrice = await calculateTotalPrice(products);
+            console.error('User not found for ID:', userId);
+            return res.status(400).json({ error: "User not found" });
+        }
 
-            // Make payment and get transaction ID
-            const transactionId = generateFakeTransactionId();
+        // Calculate total price based on the product prices and quantities in the cart
+        const totalPrice = await calculateTotalPrice(products);
+        console.log("Total Price:", totalPrice);
 
-            // Create the order
-            const order = new Order({
-                userId,
-                products: products,
-                totalPrice,
-                transactionId,
-                status: 'pending'
-            });
+        // Create the order
+        const order = new Order({
+            userId,
+            products,
+            totalPrice,
+            paymentMode,
+            paymentStatus: 'PENDING',
+            status: 'pending',
+            transactionId: paymentMode === 'COD' ? generateFakeTransactionId() : req.body.transactionId,
+        });
 
-            // Save the order to the database
-            await order.save();
-            user.orders.push(order._id);
-            await user.save();
+        console.log("Created Order:", order);
 
-            // Reduce the quantity of products from the inventory according to the order quantity
+        // Save the order to the database
+        await order.save();
+        console.log("Order saved to database:", order._id);
 
-            for (let i = 0; i < products.length; i++) {
-                const { productId, quantity } = products[i];
-                const product = await Product.findById(productId, '_id quantity');
+        user.orders.push(order._id);
+        await user.save();
+        console.log("User orders updated:", user.orders);
 
-                if (product) {
-                    product.quantity -= quantity;
+        // Fetch all product IDs and perform inventory updates in bulk
+        const productIds = products.map(p => p.productId);
+        console.log("Product IDs for inventory check:", productIds);
 
-                    // Save updated product quantity to MongoDB
-                    await product.save();
-                    console.log(product);
+        const foundProducts = await Product.find({ _id: { $in: productIds } }, '_id quantity');
+        console.log("Found Products:", foundProducts);
 
-                    // Update Redis cache for product quantity
-                    try {
-                        const reply = await redisClient.get('products');
-                        const productsArray = JSON.parse(reply);
-                        console.log(productsArray);
-
-                        const updatedProducts = productsArray.map(product => {
-                            if (product._id === productId) {
-                                product.quantity -= quantity;
-                                console.log(`Updated quantity for product ${productId}: ${product.quantity}`);
-                            }
-                            return product;
-                        });
-
-                        await redisClient.set('products', JSON.stringify(updatedProducts));
-                        console.log('Products array updated in Redis');
-                    } catch (error) {
-                        console.error('Error updating products array in Redis:', error);
-                    }
-
-
-                }
-                return res.status(201).json({ message: 'Order created successfully', order });
+        // Check if any product is out of stock before proceeding
+        for (const { productId, quantity } of products) {
+            const product = foundProducts.find(p => p._id.toString() === productId);
+            if (!product) {
+                console.error('Product not found:', productId);
+                return res.status(404).json({ error: `Product with ID ${productId} not found` });
+            }
+            if (product.quantity < quantity) {
+                console.error('Insufficient stock for product:', productId);
+                return res.status(400).json({ error: `Insufficient stock for product ${productId}` });
             }
         }
+
+        // Bulk update product quantities in MongoDB
+        const bulkOperations = products.map(({ productId, quantity }) => ({
+            updateOne: {
+                filter: { _id: productId },
+                update: { $inc: { quantity: -quantity } }
+            }
+        }));
+        console.log("Bulk Operations for MongoDB:", bulkOperations);
+        await Product.bulkWrite(bulkOperations);
+        console.log("Product quantities updated in MongoDB");
+
+        // Update Redis cache for product quantities in one operation
+        try {
+            const redisData = await redisClient.get('products');
+            if (redisData) {
+                const productsArray = JSON.parse(redisData);
+                const updatedProducts = productsArray.map(product => {
+                    const cartProduct = products.find(p => p.productId === product._id.toString());
+                    if (cartProduct) {
+                        product.quantity -= cartProduct.quantity;
+                    }
+                    return product;
+                });
+                await redisClient.set('products', JSON.stringify(updatedProducts));
+                console.log('Products array updated in Redis');
+            }
+        } catch (error) {
+            console.error('Error updating products array in Redis:', error);
+        }
+
+        // Return order details
+        return res.status(201).json({
+            message: 'Order created successfully',
+            order: order._id,
+            success: true
+
+        });
+
     } catch (error) {
         console.error('Error creating order:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
 
 
 const orderDetails = async (req, res) => {
@@ -247,12 +292,147 @@ const orderDetails = async (req, res) => {
         return res.status(500).json({ message: 'Internal server error' });
     }
 
-}
+};
 
 
 const paymentHandler = async (req, res) => {
 
-}
+};
 
-module.exports = { addtocart, getCartDetails, updateCart, clearCart, createOrder, orderDetails }
+
+const newPayment = async (req, res) => {
+    try {
+        const payEndpoint = '/pg/v1/pay';
+        const merchantTransactionId = uniqid();
+        const userId = req.user._id; // Use user ID from req.user
+        console.log(req.body.data);
+        // Ensure token is available in req.headers or req.user
+        const token = req.headers.jwt;
+
+        const payload = {
+            "merchantId": MERCHANT_ID,
+            "merchantTransactionId": merchantTransactionId,
+            "merchantUserId": userId,
+            "amount": Math.round(req.body.amount * 100), // in paise
+            "redirectUrl": `http://localhost:8080/api/order/status/${merchantTransactionId}?data=${encodeURIComponent(JSON.stringify(req.body.data))}&userId=${userId}&token=${encodeURIComponent(token)}`,
+            "redirectMode": "REDIRECT",
+            "mobileNumber": req.body.phoneNumber,
+            "paymentInstrument": {
+                "type": "PAY_PAGE"
+            }
+        };
+
+        // SHA256 calculation
+        const bufferObj = Buffer.from(JSON.stringify(payload), 'utf-8');
+        const base64EncodedPayload = bufferObj.toString('base64');
+        const xVerify = sha256(base64EncodedPayload + payEndpoint + SALT_KEY) + '###' + SALT_INDEX;
+
+        const options = {
+            method: 'post',
+            url: `${PHONE_PE_HOST_URL}${payEndpoint}`,
+            headers: {
+                'Content-Type': 'application/json',
+                'X-VERIFY': xVerify
+            },
+            data: {
+                request: base64EncodedPayload
+            }
+        };
+
+        const response = await axios.request(options);
+        res.send(response.data);
+    } catch (error) {
+        res.status(500).send({
+            message: error.message,
+            success: false
+        });
+    }
+};
+
+
+
+const statusCheck = async (req, res) => {
+    try {
+        console.log('Received request with params:', req.params);
+        console.log('Received request with query:', req.query);
+
+        const merchantTransactionId = req.params.id;
+        const { data, userId, token } = req.query; // Extract token from query parameters
+        const merchantId = MERCHANT_ID;
+        const statusEndpoint = `/pg/v1/status/${merchantId}/${merchantTransactionId}`;
+
+        console.log('Status Endpoint:', statusEndpoint);
+
+        if (!data || !userId || !token) {
+            throw new Error('Missing query parameters: data, userId, or token');
+        }
+
+        const decodedData = decodeURIComponent(data);
+
+        const parsedData = JSON.parse(decodedData);
+        console.log('Parsed Data:', parsedData);
+
+        const stringToHash = statusEndpoint + SALT_KEY;
+        const sha256Checksum = sha256(stringToHash);
+        const xVerify = sha256Checksum + '###' + SALT_INDEX;
+
+        const options = {
+            method: 'GET',
+            url: `${PHONE_PE_HOST_URL}${statusEndpoint}`,
+            headers: {
+                accept: 'application/json',
+                'Content-Type': 'application/json',
+                'X-VERIFY': xVerify,
+                'X-MERCHANT-ID': merchantId
+            }
+        };
+
+        console.log('API Request Options:', options);
+
+        const response = await axios.request(options);
+        const responseData = response.data;
+
+        if (responseData.success) {
+            const orderPayload = {
+                products: parsedData.products,  // Assuming `data` contains the products
+                paymentMode: 'ONLINE',
+                transactionId: merchantTransactionId // Payment was successful
+            };
+
+            console.log('Order Payload:', orderPayload);
+            console.log('Body:', JSON.stringify(orderPayload));
+
+            const createOrderResponse = await fetch('http://localhost:8080/api/order/placeorder', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'JWT': token
+                },
+                body: JSON.stringify(orderPayload)
+            });
+
+            const createOrderResponseJson = await createOrderResponse.json(); // Convert response to JSON
+            console.log('Create Order Response:', createOrderResponseJson);
+
+            if (createOrderResponseJson.success) {
+                return res.redirect('http://localhost:5173/success');
+            } else {
+                return res.redirect('http://localhost:5173/failure');
+            }
+        } else {
+            return res.redirect('http://localhost:5173/failure');
+        }
+    } catch (error) {
+        console.error('Error in statusCheck:', error);
+        res.status(500).send({
+            message: error.message,
+            success: false
+        });
+    }
+};
+
+
+
+
+module.exports = { addtocart, getCartDetails, updateCart, clearCart, createOrder, orderDetails, newPayment, statusCheck }
 
