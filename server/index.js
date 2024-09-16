@@ -12,8 +12,8 @@ const session = require('express-session');
 const User = require('./models/UserModel.js');
 
 const corsOptions = {
-    origin: process.env.ORIGIN,
-    methods: "GET,POST,PUT,PATCH,DELETE,HEAD",
+    origin: 'https://gadgetsgrabapp.netlify.app' || "http://localhost:8080",
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
 
 };
