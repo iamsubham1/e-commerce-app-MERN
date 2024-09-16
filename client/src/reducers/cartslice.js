@@ -54,7 +54,7 @@ export const fetchInitialCartState = () => async (dispatch) => {
 
 // Action to handle adding to cart
 export const handleAddToCart = (product) => async (dispatch) => {
-    console.log("redux triggered");
+    //console.log("redux triggered");
     dispatch(setLoading(true));
     try {
         const cart = await addToCartApi(product);
@@ -70,7 +70,7 @@ export const handleAddToCart = (product) => async (dispatch) => {
 
 // Action to clear cart
 export const handleRemoveItem = (product) => async (dispatch) => {
-    console.log("redux triggered");
+    //console.log("redux triggered");
     dispatch(setLoading(true));
     try {
         const cart = await removeItemApi(product);
@@ -83,7 +83,7 @@ export const handleRemoveItem = (product) => async (dispatch) => {
 };
 
 export const handleDecreaseItem = (product) => async (dispatch) => {
-    console.log("redux triggered");
+    //console.log("redux triggered");
     dispatch(setLoading(true));
     try {
         const cart = await decreaseItemCountApi(product);
@@ -96,7 +96,7 @@ export const handleDecreaseItem = (product) => async (dispatch) => {
 };
 
 export const clearCart = () => async (dispatch) => {
-    console.log("redux triggered");
+    //console.log("redux triggered");
     dispatch(setLoading(true));
     try {
         const cart = await clearCartApi();

@@ -60,17 +60,17 @@ const deleteReview = async (req, res) => {
 
             await product.save();
 
-            console.log('Review deleted successfully');
+            //console.log('Review deleted successfully');
 
             // Update the cached products in Redis if exists
             const cachedProducts = await redisClient.get('products');
             if (cachedProducts) {
                 const products = JSON.parse(cachedProducts);
-                console.log("products from redis", products)
+                //console.log("products from redis", products)
                 const updatedProducts = products.map((cachedProduct) => {
                     if (cachedProduct._id.toString() === product._id.toString()) {
-                        console.log("Cached product ID:", cachedProduct._id);
-                        console.log("Product ID:", product._id);
+                        //console.log("Cached product ID:", cachedProduct._id);
+                        //console.log("Product ID:", product._id);
                         // Filter out the deleted review from the reviews array
                         cachedProduct.reviews = cachedProduct.reviews.filter(cachedReview => cachedReview._id.toString() !== reviewId);
                     }
@@ -78,10 +78,10 @@ const deleteReview = async (req, res) => {
                 });
 
                 await redisClient.set('products', JSON.stringify(updatedProducts));
-                console.log('Cached products updated in Redis:', updatedProducts);
+                //console.log('Cached products updated in Redis:', updatedProducts);
             }
         } else {
-            console.log('Product not found with review:', reviewId);
+            //console.log('Product not found with review:', reviewId);
         }
 
         return res.status(200).json({ message: "Review deleted successfully" });

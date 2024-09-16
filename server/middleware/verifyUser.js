@@ -3,10 +3,10 @@ require('dotenv').config();
 
 const verifyUser = (req, res, next) => {
     const token = req.header('JWT');
-    console.log("------------------------------------------> in middleware", token);
+    //console.log("------------------------------------------> in middleware", token);
     try {
         const userData = jwt.verify(token, process.env.JWT_SECRET);
-        console.log(userData);
+        //console.log(userData);
 
 
         req.user = userData;

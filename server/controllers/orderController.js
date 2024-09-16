@@ -18,7 +18,7 @@ const SALT_KEY = "96434309-7796-489d-8924-ab56988a6076"
 const addtocart = async (req, res) => {
     try {
         const { productId, quantity } = req.body;
-        console.log("req.body -------------> ", productId, quantity);
+        //console.log("req.body -------------> ", productId, quantity);
 
         // if no quantity is given, set it to 1
         const requestedQuantity = quantity ? Number(quantity) : 1;
@@ -82,7 +82,7 @@ const addtocart = async (req, res) => {
 const getCartDetails = async (req, res) => {
     try {
         const userId = req.user._id;
-        console.log(userId);
+        //console.log(userId);
 
         const cartDetails = await Cart.findOne({ userId }).populate('items.product', 'name reviews pictures price');
 
@@ -148,7 +148,7 @@ const updateCart = async (req, res) => {
 const clearCart = async (req, res) => {
     try {
 
-        console.log("triggered clear cart");
+        //console.log("triggered clear cart");
         const userId = req.user._id;
 
         let cart = await Cart.findOne({ userId });
@@ -175,12 +175,12 @@ const clearCart = async (req, res) => {
 
 const createOrder = async (req, res) => {
     const token = req.header('JWT');
-    console.log("------------------------------------------> in create order", token);
+    //console.log("------------------------------------------> in create order", token);
     const generateFakeTransactionId = () => {
         return 'fake_txn_' + Math.random().toString(36).substring(2);
     };
 
-    console.log("Reached create order------------>", req.body);
+    //console.log("Reached create order------------>", req.body);
 
     try {
         const userId = req.user._id;
@@ -217,7 +217,7 @@ const createOrder = async (req, res) => {
 
         // Calculate total price based on the product prices and quantities in the cart
         const totalPrice = await calculateTotalPrice(products);
-        console.log("Total Price:", totalPrice);
+        //console.log("Total Price:", totalPrice);
 
         // Create the order
         const order = new Order({
@@ -230,15 +230,15 @@ const createOrder = async (req, res) => {
             transactionId: paymentMode === 'COD' ? generateFakeTransactionId() : req.body.transactionId,
         });
 
-        console.log("Created Order:", order);
+        //console.log("Created Order:", order);
 
         // Save the order to the database
         await order.save();
-        console.log("Order saved to database:", order._id);
+        //console.log("Order saved to database:", order._id);
 
         user.orders.push(order._id);
         await user.save();
-        console.log("User orders updated:", user.orders);
+        //console.log("User orders updated:", user.orders);
 
         // Bulk update product quantities in MongoDB
         const bulkOperations = products.map(({ productId, quantity }) => ({
@@ -247,9 +247,9 @@ const createOrder = async (req, res) => {
                 update: { $inc: { quantity: -quantity } }
             }
         }));
-        console.log("Bulk Operations for MongoDB:", bulkOperations);
+        //console.log("Bulk Operations for MongoDB:", bulkOperations);
         await Product.bulkWrite(bulkOperations);
-        console.log("Product quantities updated in MongoDB");
+        //console.log("Product quantities updated in MongoDB");
 
         // Update Redis cache for product quantities
         try {
@@ -264,7 +264,7 @@ const createOrder = async (req, res) => {
                     return product;
                 });
                 await redisClient.set('products', JSON.stringify(updatedProducts));
-                console.log('Products array updated in Redis');
+                //console.log('Products array updated in Redis');
             }
         } catch (error) {
             console.error('Error updating products array in Redis:', error);
@@ -272,7 +272,7 @@ const createOrder = async (req, res) => {
 
         // Call the clearCart API
         try {
-            console.log('before axios', token);
+            //console.log('before axios', token);
             const response = await fetch('http://localhost:8080/api/order/clearcart', {
                 method: 'DELETE',
                 headers: {
@@ -286,7 +286,7 @@ const createOrder = async (req, res) => {
             }
 
             const data = await response.json();
-            console.log('Cart cleared successfully:', data);
+            //console.log('Cart cleared successfully:', data);
         } catch (error) {
             console.error('Error clearing cart:', error);
         }
@@ -313,7 +313,7 @@ const orderDetails = async (req, res) => {
         const userId = req.user._id;
         const orders = await Order.find({ userId: userId }).populate('products.productId', 'name pictures price');
 
-        console.log(orders, userId);
+        //console.log(orders, userId);
         if (orders !== null) {
             return res.status(200).send(orders);
         } else {
@@ -337,7 +337,7 @@ const newPayment = async (req, res) => {
         const payEndpoint = '/pg/v1/pay';
         const merchantTransactionId = uniqid();
         const userId = req.user._id; // Use user ID from req.user
-        console.log(req.body.data);
+        //console.log(req.body.data);
         // Ensure token is available in req.headers or req.user
         const token = req.headers.jwt;
 
@@ -384,15 +384,15 @@ const newPayment = async (req, res) => {
 
 const statusCheck = async (req, res) => {
     try {
-        console.log('Received request with params:', req.params);
-        console.log('Received request with query:', req.query);
+        //console.log('Received request with params:', req.params);
+        //console.log('Received request with query:', req.query);
 
         const merchantTransactionId = req.params.id;
         const { data, userId, token } = req.query; // Extract token from query parameters
         const merchantId = MERCHANT_ID;
         const statusEndpoint = `/pg/v1/status/${merchantId}/${merchantTransactionId}`;
 
-        console.log('Status Endpoint:', statusEndpoint);
+        //console.log('Status Endpoint:', statusEndpoint);
 
         if (!data || !userId || !token) {
             throw new Error('Missing query parameters: data, userId, or token');
@@ -401,7 +401,7 @@ const statusCheck = async (req, res) => {
         const decodedData = decodeURIComponent(data);
 
         const parsedData = JSON.parse(decodedData);
-        console.log('Parsed Data:', parsedData);
+        //console.log('Parsed Data:', parsedData);
 
         const stringToHash = statusEndpoint + SALT_KEY;
         const sha256Checksum = sha256(stringToHash);
@@ -418,7 +418,7 @@ const statusCheck = async (req, res) => {
             }
         };
 
-        console.log('API Request Options:', options);
+        //console.log('API Request Options:', options);
 
         const response = await axios.request(options);
         const responseData = response.data;
@@ -431,8 +431,8 @@ const statusCheck = async (req, res) => {
                 transactionId: merchantTransactionId // Payment was successful
             };
 
-            console.log('Order Payload:', orderPayload);
-            console.log('Body:', JSON.stringify(orderPayload));
+            //console.log('Order Payload:', orderPayload);
+            //console.log('Body:', JSON.stringify(orderPayload));
 
             const createOrderResponse = await fetch('http://localhost:8080/api/order/placeorder', {
                 method: 'POST',
@@ -444,7 +444,7 @@ const statusCheck = async (req, res) => {
             });
 
             const createOrderResponseJson = await createOrderResponse.json(); // Convert response to JSON
-            console.log('Create Order Response:', createOrderResponseJson);
+            //console.log('Create Order Response:', createOrderResponseJson);
 
             if (createOrderResponseJson.success) {
                 return res.redirect('http://localhost:5173/success');

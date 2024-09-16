@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const calculateTotalPrice = async (items) => {
     try {
-        console.log("Cart items:", items);
+        //console.log("Cart items:", items);
         let totalValue = 0;
 
         // Extract product IDs and filter out invalid IDs

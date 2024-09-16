@@ -33,7 +33,7 @@ const Phones = () => {
                 setLoading(false);
             } catch (error) {
                 setError('Error fetching products');
-                console.log(error);
+                //console.log(error);
             } finally {
                 setLoading(false);
             }

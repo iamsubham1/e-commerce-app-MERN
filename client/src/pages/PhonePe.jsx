@@ -19,7 +19,7 @@ const PhonePe = () => {
 
     const handlePayment = async (e) => {
         e.preventDefault();
-        console.log("triggered");
+        //console.log("triggered");
         try {
             const response = await fetch('http://localhost:8080/api/order/newPayment', {
                 method: 'GET',
@@ -30,7 +30,7 @@ const PhonePe = () => {
             });
 
             const resData = await response.json();
-            console.log(resData);
+            //console.log(resData);
 
             if (resData && resData.data.instrumentResponse.redirectInfo.url) {
                 window.location.href = resData.data.instrumentResponse.redirectInfo.url;

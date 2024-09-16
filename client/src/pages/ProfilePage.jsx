@@ -58,7 +58,7 @@ const Profile = () => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        console.log("Edited Data:", editedData);
+        //console.log("Edited Data:", editedData);
         setIsEditing(false);
     };
 

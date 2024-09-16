@@ -17,7 +17,7 @@ passport.use(new GoogleStrategy({
     async (accessToken, refreshToken, profile, done) => {
         try {
             // Check if user already exists in the database
-            console.log(profile);
+            //console.log(profile);
             let user = await User.findOne({ email: profile.emails[0].value });
 
 
@@ -29,7 +29,7 @@ passport.use(new GoogleStrategy({
                     url: ''
                 }; if (profile.photos && profile.photos.length > 0) {
                     profilePic.url = profile._json.picture
-                    console.log(profilePic);
+                    //console.log(profilePic);
                 }
 
                 user = await User.create({

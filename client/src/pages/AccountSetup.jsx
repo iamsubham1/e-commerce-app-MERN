@@ -37,10 +37,10 @@ const AccountSetup = () => {
         const checkPhoneNumber = () => {
             setloading(true);
 
-            console.log("User details:", userData);
+            //console.log("User details:", userData);
 
             if (userData && userData.phoneNumber) {
-                console.log("User has a phone number");
+                //console.log("User has a phone number");
 
 
                 navigate('/');
@@ -48,7 +48,7 @@ const AccountSetup = () => {
 
 
             } else {
-                console.log("User does not have a phone number");
+                //console.log("User does not have a phone number");
                 setloading(false);
             }
         };

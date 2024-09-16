@@ -50,7 +50,7 @@ const Checkout = () => {
         setSelectedAddresses([index]);
     };
 
-    console.log(items);
+    //console.log(items);
     // Function to toggle modal visibility
     const toggleModal = () => {
         setIsFormOpen(!isFormOpen);
@@ -129,7 +129,7 @@ const Checkout = () => {
             const orderData = await placeOrder(transformedProducts, paymentMode);
 
 
-            console.log(transformedProducts, paymentMode);
+            //console.log(transformedProducts, paymentMode);
             if (paymentMode === 'ONLINE') {
                 // Redirect to PhonePe payment URL
                 window.location.href = orderData.paymentUrl;
@@ -145,7 +145,7 @@ const Checkout = () => {
     const handleOnlineOrder = async (paymentMode) => {
         try {
             const transformedProducts = transformProductsForAPI(items);
-            console.log("transformedProducts", transformedProducts);
+            //console.log("transformedProducts", transformedProducts);
             const orderData = await placeOnlineOrder(transformedProducts, paymentMode, totalValue, phoneNumber);
 
 

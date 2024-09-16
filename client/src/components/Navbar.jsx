@@ -54,7 +54,7 @@ const Navbar = () => {
             navigator.geolocation.watchPosition(
                 async (position) => {
                     const { latitude, longitude } = position.coords;
-                    console.log(latitude, longitude);
+                    //console.log(latitude, longitude);
 
                     // Convert coordinates to address
                     try {
@@ -66,10 +66,10 @@ const Navbar = () => {
                         });
 
                         if (response.data.results.length > 0) {
-                            console.log(response);
+                            //console.log(response);
                             setLocationloading(false);
                             let formattedAddress = response.data.results[1].formatted_address;
-                            console.log("Original Address:", formattedAddress);
+                            //console.log("Original Address:", formattedAddress);
 
                             // Remove the first word and comma
                             const firstCommaIndex = formattedAddress.indexOf(',');
@@ -86,7 +86,7 @@ const Navbar = () => {
                             // Reassemble the address
                             let trimmedAddress = addressParts.join(', ').trim();
 
-                            console.log("Trimmed Address:", trimmedAddress);
+                            //console.log("Trimmed Address:", trimmedAddress);
                             setUserAddress(trimmedAddress);
 
 
@@ -122,13 +122,13 @@ const Navbar = () => {
         };
     }, [lastScrollTop]);
 
-    console.log("dropdown", isDropdownOpen);
+    //console.log("dropdown", isDropdownOpen);
 
     const handleSearch = async (value) => {
         setloading(true);
         const response = await getSearchResults(value);
         if (response) {
-            console.log(response);
+            //console.log(response);
             setIsDropdownOpen(true);
             setloading(false);
             setSearchResults(response.data);

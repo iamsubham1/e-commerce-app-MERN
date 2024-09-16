@@ -27,7 +27,7 @@ const LaptopPage = () => {
                 setProducts(data);
             } catch (error) {
                 setError('Error fetching products');
-                console.log(error);
+                //console.log(error);
             } finally {
                 setLoading(false);
             }

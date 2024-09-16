@@ -38,7 +38,7 @@ const signUpController = async (req, res) => {
             return res.status(200).json({ success: true, msg: "account created", user });
         }
 
-        console.log("Account exists. Login instead");
+        //console.log("Account exists. Login instead");
         return res.status(400).json({ error: "account exists" });
 
     } catch (error) {
@@ -50,17 +50,17 @@ const signUpController = async (req, res) => {
 const loginController = async (req, res) => {
     try {
         const { email, password } = req.body;
-        console.log("Received login request for email:", email);
+        //console.log("Received login request for email:", email);
 
         let user = await User.findOne({ email: email });
-        console.log("User found in the database:", user);
+        //console.log("User found in the database:", user);
 
         if (user) {
             const passwordCompare = await bcrypt.compare(password, user.password);
-            console.log("Password comparison result:", passwordCompare);
+            //console.log("Password comparison result:", passwordCompare);
 
             if (passwordCompare) {
-                console.log("Password is correct. Generating JWT...");
+                //console.log("Password is correct. Generating JWT...");
 
 
                 const token = generateJWT(user);
@@ -68,11 +68,11 @@ const loginController = async (req, res) => {
                 return res.status(200).json({ success: true, token, data: user });
 
             } else {
-                console.log("Incorrect password");
+                //console.log("Incorrect password");
             }
 
         } else {
-            console.log("User not found");
+            //console.log("User not found");
         }
 
         return res.status(400).json({ success: false, error: "Enter correct credentials" });
@@ -122,7 +122,7 @@ const sendOtp = async (req, res) => {
                 console.error("Error sending email:", error);
                 return res.status(500).json({ error: "An error occurred while sending the email" });
             }
-            console.log("Email sent:", info.response);
+            //console.log("Email sent:", info.response);
 
             // Reset otp after 2 minutes
             setTimeout(() => {
@@ -141,7 +141,7 @@ const sendOtp = async (req, res) => {
 const verifyOtp = async (req, res) => {
     try {
         const receivedOtp = req.body.otp;
-        console.log(receivedOtp, otp);
+        //console.log(receivedOtp, otp);
         if (receivedOtp == otp) {
 
             res.status(200).json("yes it works");
@@ -149,7 +149,7 @@ const verifyOtp = async (req, res) => {
             res.status(400).json("entered otp is expired");
         }
     } catch (error) {
-        console.log(error);
+        //console.log(error);
         return res.status(500).json({ success: false, error: "Internal server error" });
     }
 }
@@ -171,7 +171,7 @@ const resetPassword = async (req, res) => {
 
 
     } catch (error) {
-        console.log(error);
+        //console.log(error);
         return res.status(500).json({ success: false, error: "Internal server error" });
     }
 

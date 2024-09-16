@@ -15,7 +15,7 @@ const HomePage = () => {
     const { products, loading: productsLoading, error } = useSelector((state) => state.products);
     const { loading: addingToCart } = useSelector((state) => state.cart);
 
-    console.log(addingToCart);
+    //console.log(addingToCart);
 
     const [selectedCategory, setSelectedCategory] = useState('');
     const [currentPage, setCurrentPage] = useState(1);

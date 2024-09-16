@@ -63,7 +63,7 @@ export const fetchAllProducts = async () => {
             }
         });
         const data = await response.json();
-        // console.log(getCookie('JWT'));
+        // //console.log(getCookie('JWT'));
         return data;
     } catch (error) {
         throw new Error(error.message);
@@ -94,7 +94,7 @@ export const addPhNumber = async (phoneNumber) => {
 
 export const getUserDetails = async () => {
     try {
-        // console.log("Fetching user details... from api");
+        // //console.log("Fetching user details... from api");
         const response = await fetch(`${baseUrl}user/details`, {
             headers: {
                 'Content-Type': 'application/json',
@@ -104,10 +104,10 @@ export const getUserDetails = async () => {
 
         if (response.ok) {
             const userData = await response.json();
-            console.log("User details:", userData);
+            //console.log("User details:", userData);
             return userData;
         } else {
-            console.log("Failed to fetch user details. Status:", response.status);
+            //console.log("Failed to fetch user details. Status:", response.status);
             return null;
         }
     } catch (error) {
@@ -143,7 +143,7 @@ export const getSearchResults = async (keyword) => {
 
 export const addToCartApi = async (data) => {
     try {
-        console.log("triggered api", data);
+        //console.log("triggered api", data);
         const response = await fetch(`${baseUrl}order/addtocart`, {
             method: 'POST',
             headers: {
@@ -157,7 +157,7 @@ export const addToCartApi = async (data) => {
         }
 
         const cartData = await response.json();
-        console.log(cartData, response.status);
+        //console.log(cartData, response.status);
         return { cartData, status: response.status };
 
     } catch (error) {
@@ -204,7 +204,7 @@ export const removeItemApi = async (data) => {
         }
 
         const cartData = await response.json();
-        console.log(cartData);
+        //console.log(cartData);
         return cartData;
     } catch (error) {
         console.error('Error fetching search results:', error.message);
@@ -227,7 +227,7 @@ export const decreaseItemCountApi = async (data) => {
         }
 
         const cartData = await response.json();
-        console.log(cartData);
+        //console.log(cartData);
         return cartData;
     } catch (error) {
         console.error('Error fetching search results:', error.message);
@@ -250,7 +250,7 @@ export const clearCartApi = async () => {
         }
 
         const cartData = await response.json();
-        console.log(cartData);
+        //console.log(cartData);
         return cartData;
     } catch (error) {
         console.error('Error fetching search results:', error.message);
@@ -353,7 +353,7 @@ export const placeOnlineOrder = async (products, paymentMode, amount, phoneNumbe
         });
 
         const resData = await response.json();
-        console.log(resData);
+        //console.log(resData);
 
         if (resData && resData.data.instrumentResponse.redirectInfo.url) {
             window.location.href = resData.data.instrumentResponse.redirectInfo.url;

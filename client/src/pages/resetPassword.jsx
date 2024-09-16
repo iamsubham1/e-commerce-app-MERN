@@ -47,8 +47,8 @@ const ResetPassword = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
         if (validateForm()) {
-            console.log('OTP:', otp);
-            console.log('New Password:', password);
+            //console.log('OTP:', otp);
+            //console.log('New Password:', password);
             alert('Password reset successfully!');
         }
     };
