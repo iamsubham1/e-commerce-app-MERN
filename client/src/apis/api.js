@@ -3,6 +3,7 @@ const baseUrl = 'https://e-commerce-app-mern-bmty.onrender.com/api/'
 const token = getCookie('JWT');
 
 console.log(token, "token_______________________>");
+
 export const login = async (formData) => {
 
     try {
@@ -18,7 +19,7 @@ export const login = async (formData) => {
         if (response.ok) {
             const data = await response.json();
 
-            return true;
+            return data;
         }
         else if (response.status === 400) {
 

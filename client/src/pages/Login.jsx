@@ -7,6 +7,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { getCookie } from '../utility/getCookie';
 import { useNavigate, Link } from 'react-router-dom';
+import Cookies from 'universal-cookie';
 
 const Login = () => {
     const navigate = useNavigate();
@@ -37,6 +38,10 @@ const Login = () => {
         e.preventDefault();
         const response = await login(formData);
         if (response) {
+            console.log(response);
+            const cookies = new Cookies();
+
+            cookies.set('JWT', response.token, { httpOnly: false, secure: true, sameSite: 'none', maxAge: 60 * 60 * 24 })
             notify("Login Successfull");
             setTimeout(() => {
                 window.location.href = '/'

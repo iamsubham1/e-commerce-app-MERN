@@ -58,8 +58,11 @@ router.get('/google/callback', passport.authenticate('google', { failureRedirect
 
         const token = generateJWT(req.user);
         res.cookie('JWT', token, { httpOnly: false, maxAge: 30 * 24 * 60 * 60 * 1000, sameSite: 'None', secure: true });
-        res.redirect('https://gadgetsgrabapp.netlify.app/googleloginnextstep');
+        const encodedToken = encodeURIComponent(token);
+        const redirectUrl = `https://e-commerce-app-mern-bmty.onrender.com/googleloginnextstep?token=${encodedToken}`;
 
+        // Redirect the user to the constructed URL
+        res.redirect(redirectUrl);
 
 
     }
