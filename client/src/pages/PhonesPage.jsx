@@ -17,7 +17,7 @@ const Phones = () => {
         const fetchProducts = async () => {
             setLoading(true);
             try {
-                const response = await fetch('http://localhost:8080/api/product/category/mobile', {
+                const response = await fetch('https://e-commerce-app-mern-bmty.onrender.com/api/product/category/mobile', {
                     headers: {
                         JWT: getCookie('JWT')
                     }

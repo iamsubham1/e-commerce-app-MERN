@@ -22,7 +22,7 @@ const ProductPage = () => {
     useEffect(() => {
         const fetchProduct = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/api/product/productdetails/${productId}`, {
+                const response = await fetch(`https://e-commerce-app-mern-bmty.onrender.com/api/product/productdetails/${productId}`, {
                     headers: {
                         'Content-Type': 'application/json',
                         'JWT': getCookie('JWT'),

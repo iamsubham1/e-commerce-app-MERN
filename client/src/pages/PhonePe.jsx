@@ -21,7 +21,7 @@ const PhonePe = () => {
         e.preventDefault();
         //console.log("triggered");
         try {
-            const response = await fetch('http://localhost:8080/api/order/newPayment', {
+            const response = await fetch('https://e-commerce-app-mern-bmty.onrender.com/api/order/newPayment', {
                 method: 'GET',
 
                 headers: {

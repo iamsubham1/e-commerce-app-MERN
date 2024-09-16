@@ -13,7 +13,7 @@ const LaptopPage = () => {
         const fetchProducts = async () => {
             setLoading(true);
             try {
-                const response = await fetch('http://localhost:8080/api/product/category/laptop', {
+                const response = await fetch('https://e-commerce-app-mern-bmty.onrender.com/api/product/category/laptop', {
                     headers: {
                         JWT: getCookie('JWT')
                     }

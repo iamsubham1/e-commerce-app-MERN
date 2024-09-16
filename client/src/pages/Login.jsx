@@ -48,7 +48,7 @@ const Login = () => {
     //google login
     const handleGoogleLogin = (e) => {
         e.preventDefault();
-        window.open("http://localhost:8080/api/auth/google", "_self");
+        window.open("https://e-commerce-app-mern-bmty.onrender.com/api/auth/google", "_self");
     };
     useEffect(() => {
         const cookie = getCookie('JWT')

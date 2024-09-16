@@ -273,7 +273,7 @@ const createOrder = async (req, res) => {
         // Call the clearCart API
         try {
             //console.log('before axios', token);
-            const response = await fetch('http://localhost:8080/api/order/clearcart', {
+            const response = await fetch('https://e-commerce-app-mern-bmty.onrender.com/api/order/clearcart', {
                 method: 'DELETE',
                 headers: {
                     'Content-Type': 'application/json',
@@ -346,7 +346,7 @@ const newPayment = async (req, res) => {
             "merchantTransactionId": merchantTransactionId,
             "merchantUserId": userId,
             "amount": Math.round(req.body.amount * 100), // in paise
-            "redirectUrl": `http://localhost:8080/api/order/status/${merchantTransactionId}?data=${encodeURIComponent(JSON.stringify(req.body.data))}&userId=${userId}&token=${encodeURIComponent(token)}`,
+            "redirectUrl": `https://e-commerce-app-mern-bmty.onrender.com/api/order/status/${merchantTransactionId}?data=${encodeURIComponent(JSON.stringify(req.body.data))}&userId=${userId}&token=${encodeURIComponent(token)}`,
             "redirectMode": "REDIRECT",
             "mobileNumber": req.body.phoneNumber,
             "paymentInstrument": {
@@ -434,7 +434,7 @@ const statusCheck = async (req, res) => {
             //console.log('Order Payload:', orderPayload);
             //console.log('Body:', JSON.stringify(orderPayload));
 
-            const createOrderResponse = await fetch('http://localhost:8080/api/order/placeorder', {
+            const createOrderResponse = await fetch('https://e-commerce-app-mern-bmty.onrender.com/api/order/placeorder', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

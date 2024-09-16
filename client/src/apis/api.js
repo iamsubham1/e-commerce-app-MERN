@@ -1,5 +1,5 @@
 import { getCookie } from "../utility/getCookie";
-const baseUrl = 'http://localhost:8080/api/'
+const baseUrl = 'https://e-commerce-app-mern-bmty.onrender.com/api/'
 const token = getCookie('JWT');
 
 
@@ -343,7 +343,7 @@ export const placeOrder = async (products, paymentMode) => {
 
 export const placeOnlineOrder = async (products, paymentMode, amount, phoneNumber) => {
     try {
-        const response = await fetch('http://localhost:8080/api/order/newPayment', {
+        const response = await fetch('https://e-commerce-app-mern-bmty.onrender.com/api/order/newPayment', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
