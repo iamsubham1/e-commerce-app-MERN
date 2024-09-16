@@ -64,7 +64,7 @@ const loginController = async (req, res) => {
 
 
                 const token = generateJWT(user);
-                res.cookie('JWT', token, { httpOnly: false, secure: true, sameSite: 'none' });
+                res.cookie('Jwt', token, { httpOnly: false });
                 return res.status(200).json({ success: true, token, data: user });
 
             } else {

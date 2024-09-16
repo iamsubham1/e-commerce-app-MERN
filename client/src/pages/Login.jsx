@@ -51,7 +51,7 @@ const Login = () => {
         window.open("https://e-commerce-app-mern-bmty.onrender.com/api/auth/google", "_self");
     };
     useEffect(() => {
-        const cookie = getCookie('JWT')
+        const cookie = getCookie('Jwt')
         if (cookie) {
             navigate('/')
         }

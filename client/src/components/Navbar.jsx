@@ -21,7 +21,7 @@ import BeatLoader from "react-spinners/BeatLoader";
 
 
 const Navbar = () => {
-    const cookie = getCookie('JWT');
+    const cookie = getCookie('Jwt');
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [lastScrollTop, setLastScrollTop] = useState(0);

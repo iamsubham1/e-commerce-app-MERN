@@ -25,7 +25,7 @@ const ProductPage = () => {
                 const response = await fetch(`https://e-commerce-app-mern-bmty.onrender.com/api/product/productdetails/${productId}`, {
                     headers: {
                         'Content-Type': 'application/json',
-                        'JWT': getCookie('JWT'),
+                        'JWT': getCookie('Jwt'),
                     },
                 });
 

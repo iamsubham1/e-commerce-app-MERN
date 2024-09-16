@@ -3,7 +3,7 @@ import { getCookie } from "../utility/getCookie";
 
 import { getUserDetails } from "../apis/api";
 
-const token = getCookie('JWT');
+const token = getCookie('Jwt');
 
 const userSlice = createSlice({
     name: 'user',

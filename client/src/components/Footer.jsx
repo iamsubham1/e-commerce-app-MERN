@@ -4,7 +4,7 @@ import { getCookie } from '../utility/getCookie';
 
 const Footer = () => {
 
-    const token = getCookie('JWT');
+    const token = getCookie('Jwt');
     return (
         <>
             {token && (<footer className="bg-[#1a1a1a] text-[#FAF2E2] py-8 px-4 w-full">
