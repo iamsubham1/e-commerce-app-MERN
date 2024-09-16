@@ -3,18 +3,18 @@ import { addPhNumber } from '../apis/api';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import Cookies from 'universal-cookie';
+import { getUserData } from '../reducers/userSlice';
 
 const AccountSetup = () => {
     const navigate = useNavigate();
     const { userData } = useSelector((state) => state.user);
-    console.log(userData, "================>>");
     const cookies = new Cookies();
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [loading, setLoading] = useState(true);
 
     const notify = (message) => toast(message);
-    const [phoneNumber, setPhoneNumber] = useState('');
-    const [loading, setLoading] = useState(false);
 
     const handleInputChange = (event) => {
         setPhoneNumber(event.target.value);
@@ -24,7 +24,7 @@ const AccountSetup = () => {
         setLoading(true);
         const response = await addPhNumber(phoneNumber);
         if (response) {
-            notify("Login Successful");
+            notify("Phonenumber added");
             setTimeout(() => {
                 navigate('/');
             }, 1000);
@@ -34,41 +34,25 @@ const AccountSetup = () => {
     };
 
     useEffect(() => {
-
         const urlParams = new URLSearchParams(window.location.search);
         const token = urlParams.get('token');
 
-
-
-
         if (token) {
             cookies.set('JWT', token, { httpOnly: false, secure: true, sameSite: 'none', maxAge: 60 * 60 * 24 });
-
+            // Fetch user details after setting the cookie
+            dispatch(getUserData());
         }
-
-
-
-
-
-
-
-
-    }, [userData, navigate, cookies]);
+    }, [cookies, getUserDetails]);
 
     useEffect(() => {
-
-        userData && checkPhoneNumber();
-    }, [userData]);
-
-    const checkPhoneNumber = () => {
-        setLoading(true);
-
-        if (userData && userData.phoneNumber) {
-            navigate('/');
-        } else {
-            setLoading(false);
+        if (userData) {
+            if (userData.phoneNumber) {
+                navigate('/');
+            } else {
+                setLoading(false);
+            }
         }
-    };
+    }, [userData, navigate]);
 
     if (loading) {
         return (
