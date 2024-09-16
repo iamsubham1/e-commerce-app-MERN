@@ -9,6 +9,7 @@ import Cookies from 'universal-cookie';
 const AccountSetup = () => {
     const navigate = useNavigate();
     const { userData } = useSelector((state) => state.user);
+    console.log(userData, "================>>");
     const cookies = new Cookies();
 
     const notify = (message) => toast(message);
@@ -33,25 +34,41 @@ const AccountSetup = () => {
     };
 
     useEffect(() => {
-        const checkPhoneNumber = () => {
-            setLoading(true);
 
-            if (userData && userData.phoneNumber) {
-                navigate('/');
-            } else {
-                setLoading(false);
-            }
-        };
-
-        checkPhoneNumber();
-
-        // Extract token from URL parameters and set the cookie
         const urlParams = new URLSearchParams(window.location.search);
         const token = urlParams.get('token');
+
+
+
+
         if (token) {
             cookies.set('JWT', token, { httpOnly: false, secure: true, sameSite: 'none', maxAge: 60 * 60 * 24 });
+
         }
+
+
+
+
+
+
+
+
     }, [userData, navigate, cookies]);
+
+    useEffect(() => {
+
+        userData && checkPhoneNumber();
+    }, [userData]);
+
+    const checkPhoneNumber = () => {
+        setLoading(true);
+
+        if (userData && userData.phoneNumber) {
+            navigate('/');
+        } else {
+            setLoading(false);
+        }
+    };
 
     if (loading) {
         return (

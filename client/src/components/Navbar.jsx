@@ -43,6 +43,7 @@ const Navbar = () => {
     const { userData } = useSelector((state) => state.user);
 
     useEffect(() => {
+
         dispatch(getUserData());
         dispatch(fetchInitialCartState());
     }, [dispatch]);

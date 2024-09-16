@@ -1,7 +1,9 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { getCookie } from "../utility/getCookie";
+import { useNavigate } from 'react-router-dom';
 
 import { getUserDetails } from "../apis/api";
+const navigate = useNavigate();
 
 const token = getCookie('JWT');
 
@@ -39,6 +41,11 @@ export const getUserData = () => async (dispatch) => {
     try {
         const userData = await getUserDetails(token);
         dispatch(setUserData(userData));
+        if (userData && userData.phoneNumber) {
+            navigate('/');
+        } else {
+            navigate('/');
+        }
     } catch (error) {
         dispatch(setUserDataErrors(error.message));
     } finally {
