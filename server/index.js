@@ -29,6 +29,8 @@ const corsOptions = {
             callback(new Error('Not allowed by CORS'));  // Origin is not allowed
         }
     },
+    allowedHeaders: ['Content-Type', 'JWT'],
+
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,  // Enable credentials (cookies, authorization headers, etc.)
 };

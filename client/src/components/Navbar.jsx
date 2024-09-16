@@ -21,7 +21,7 @@ import BeatLoader from "react-spinners/BeatLoader";
 
 
 const Navbar = () => {
-    const cookie = getCookie('Jwt');
+    const cookie = getCookie('JWT');
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [lastScrollTop, setLastScrollTop] = useState(0);
@@ -152,7 +152,7 @@ const Navbar = () => {
     };
     const handleLogout = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
-        logout('Jwt');
+        logout('JWT');
     };
 
     const toggleMobileMenu = () => {

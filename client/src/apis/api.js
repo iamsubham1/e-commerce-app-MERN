@@ -1,12 +1,12 @@
 import { getCookie } from "../utility/getCookie";
 const baseUrl = 'https://e-commerce-app-mern-bmty.onrender.com/api/'
-const token = getCookie('Jwt');
+const token = await getCookie('JWT');
 
-console.log(token);
+console.log(token, "token_______________________>");
 export const login = async (formData) => {
 
     try {
-        const response = await fetch(`${baseUrl}auth/login`, {
+        const response = await fetch(`https://e-commerce-app-mern-bmty.onrender.com/api/auth/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ export const fetchAllProducts = async () => {
 
         });
         const data = await response.json();
-        // //console.log(getCookie('Jwt'));
+        // //console.log(getCookie('JWT'));
         return data;
     } catch (error) {
         throw new Error(error.message);

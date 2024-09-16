@@ -15,7 +15,7 @@ const Phones = () => {
             try {
                 const response = await fetch('https://e-commerce-app-mern-bmty.onrender.com/api/product/category/headphone', {
                     headers: {
-                        JWT: getCookie('Jwt')
+                        JWT: getCookie('JWT')
                     }
                 });
 

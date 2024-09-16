@@ -24,7 +24,7 @@ const HomePage = () => {
 
 
     useEffect(() => {
-        const cookie = getCookie('Jwt');
+        const cookie = getCookie('JWT');
         if (!cookie) {
             navigate('/login');
         }

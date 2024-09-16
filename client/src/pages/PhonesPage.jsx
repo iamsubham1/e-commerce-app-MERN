@@ -19,7 +19,7 @@ const Phones = () => {
             try {
                 const response = await fetch('https://e-commerce-app-mern-bmty.onrender.com/api/product/category/mobile', {
                     headers: {
-                        JWT: getCookie('Jwt')
+                        JWT: getCookie('JWT')
                     }
                 });
                 const data = await response.json();
