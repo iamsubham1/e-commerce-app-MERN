@@ -12,7 +12,7 @@ const session = require('express-session');
 const User = require('./models/UserModel.js');
 
 const corsOptions = {
-    origin: 'https://gadgetsgrabapp.netlify.app' || "http://localhost:8080",
+    origin: 'https://gadgetsgrabapp.netlify.app' || "http://localhost:5173",
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     credentials: true,
 
