@@ -447,12 +447,12 @@ const statusCheck = async (req, res) => {
             //console.log('Create Order Response:', createOrderResponseJson);
 
             if (createOrderResponseJson.success) {
-                return res.redirect('http://localhost:5173/success');
+                return res.redirect('https://gadgetsgrabapp.netlify.app/success');
             } else {
-                return res.redirect('http://localhost:5173/failure');
+                return res.redirect('https://gadgetsgrabapp.netlify.app/failure');
             }
         } else {
-            return res.redirect('http://localhost:5173/failure');
+            return res.redirect('https://gadgetsgrabapp.netlify.app/failure');
         }
     } catch (error) {
         console.error('Error in statusCheck:', error);
