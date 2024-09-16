@@ -157,8 +157,8 @@ export const addToCartApi = async (data) => {
         }
 
         const cartData = await response.json();
-        console.log(cartData);
-        return cartData;
+        console.log(cartData, response.status);
+        return { cartData, status: response.status };
 
     } catch (error) {
         console.error('Error fetching search results:', error.message);

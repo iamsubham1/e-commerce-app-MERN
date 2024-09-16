@@ -154,7 +154,7 @@ const ProductPage = () => {
 
                     {/* Add to Cart Button */}
                     <button
-                        className={`shine-btn max-w-[55%] ${addingToCart ? 'disabled-button' : ''}`}
+                        className={`shine-btn w-[200px] ${addingToCart ? 'disabled-button' : ''}`}
                         onClick={() => addToCartHandler(product._id)}
                         disabled={addingToCart}
                     >

@@ -16,16 +16,18 @@ const SALT_INDEX = 1;
 const SALT_KEY = "96434309-7796-489d-8924-ab56988a6076"
 
 const addtocart = async (req, res) => {
-
     try {
         const { productId, quantity } = req.body;
-        console.log("req.body -------------> ", productId, quantity)
+        console.log("req.body -------------> ", productId, quantity);
 
-        // if no quantity given then 1 
+        // if no quantity is given, set it to 1
+        const requestedQuantity = quantity ? Number(quantity) : 1;
+
         const userId = req.user._id;
         const user = await User.findById(userId);
         let shoppingCart = await Cart.findOne({ userId });
 
+        // Check if the user has a shopping cart; create one if not
         if (!shoppingCart) {
             shoppingCart = new Cart({ userId, items: [], totalValue: 0 });
             await shoppingCart.save();
@@ -34,15 +36,28 @@ const addtocart = async (req, res) => {
             await user.save();
         }
 
+        // Fetch product details to check stock availability
+        const product = await Product.findById(productId);
+
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found' });
+        }
+
+        if (requestedQuantity > product.quantity) {
+            return res.status(400).json({ data: shoppingCart, message: 'Requested quantity exceeds available stock' });
+        }
 
         const existingItem = shoppingCart.items.find(item => item.product.toString() === productId);
 
         if (existingItem) {
             // If product already exists in the cart, update the quantity
-            existingItem.quantity += quantity ? Number(quantity) : 1;
+            existingItem.quantity += requestedQuantity;
+            if (existingItem.quantity > product.quantity) {
+                return res.status(400).json({ data: shoppingCart, message: 'Requested quantity exceeds available stock' });
+            }
         } else {
             // If product doesn't exist in the cart, add a new item
-            shoppingCart.items.push({ product: productId, quantity: quantity ? Number(quantity) : 1 });
+            shoppingCart.items.push({ product: productId, quantity: requestedQuantity });
         }
 
         // Calculate total value of the cart based on product prices
@@ -54,9 +69,10 @@ const addtocart = async (req, res) => {
         // Save the updated cart
         await shoppingCart.save();
 
-        // console.log(shoppingCart);
-        const response = await shoppingCart.populate('items.product', 'name reviews pictures price'); // Populate product info
-        res.status(200).send(response);
+        // Populate product info in the cart response
+        const response = await shoppingCart.populate('items.product', 'name reviews pictures price');
+
+        res.status(200).send({ data: response, message: "added successfully" });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: 'Internal server error' });

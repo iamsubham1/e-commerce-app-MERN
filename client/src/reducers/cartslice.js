@@ -58,8 +58,10 @@ export const handleAddToCart = (product) => async (dispatch) => {
     dispatch(setLoading(true));
     try {
         const cart = await addToCartApi(product);
-        dispatch(setCart(cart)); // Update Redux store with updated cart state
+
+        dispatch(setCart(cart.cartData.data)); // Update Redux store with updated cart state
         dispatch(setLoading(false));
+        return cart.status;
     } catch (error) {
         dispatch(setError(error.message));
         dispatch(setLoading(false));

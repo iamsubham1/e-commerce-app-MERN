@@ -51,7 +51,7 @@ const Navbar = () => {
 
         if (navigator.geolocation) {
             setLocationloading(true);
-            navigator.geolocation.getCurrentPosition(
+            navigator.geolocation.watchPosition(
                 async (position) => {
                     const { latitude, longitude } = position.coords;
                     console.log(latitude, longitude);

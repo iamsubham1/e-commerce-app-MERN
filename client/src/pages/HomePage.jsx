@@ -31,13 +31,24 @@ const HomePage = () => {
         dispatch(fetchProducts());
     }, []);
 
-    const addToCartHandler = (product) => {
+    const addToCartHandler = async (product) => {
         const payload = {
-            "productId": product,
-            "quantity": 1
+            productId: product,
+            quantity: 1
+        };
+
+        try {
+            const responseStatus = await dispatch(handleAddToCart(payload));
+
+            // Notify based on response status
+            if (responseStatus === 200) {
+                notify("Item added to cart successfully!", 'success');
+            } else {
+                notify("Item not in stock", 'error');
+            }
+        } catch (error) {
+            notify("An error occurred while adding item to cart.", 'error');
         }
-        dispatch(handleAddToCart(payload));
-        notify("item added to cart");
     };
 
     // Filtered products based on search query and selected category
@@ -107,7 +118,15 @@ const HomePage = () => {
     const endIndex = startIndex + perPage;
     const currentProducts = filteredProducts.slice(startIndex, endIndex);
 
-    const notify = (message) => toast.success(`${message}`);
+    const notify = (message, type) => {
+        if (type.toLowerCase() === 'success') {
+            toast.success(message);
+        } else if (type.toLowerCase() === 'error') {
+            toast.error(message);
+        } else {
+            toast.info(message); // Default to info if type is not specified
+        }
+    };
 
 
     return (
