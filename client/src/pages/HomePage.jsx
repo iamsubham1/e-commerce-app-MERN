@@ -37,7 +37,6 @@ const HomePage = () => {
             "quantity": 1
         }
         dispatch(handleAddToCart(payload));
-        console.log('triggered', payload);
         notify("item added to cart");
     };
 

@@ -118,8 +118,6 @@ export const getUserDetails = async () => {
 
 export const getSearchResults = async (keyword) => {
     try {
-
-
         const response = await fetch(`${baseUrl}product/search/${keyword}`, {
             method: 'POST',
             headers: {
@@ -304,7 +302,7 @@ export const deleteAddress = async (id) => {
 
 export const fetchOrderDetails = async () => {
     try {
-        const response = await fetch(`${baseUrl}/order/orderDetails`, {
+        const response = await fetch(`${baseUrl}order/orderDetails`, {
             headers: {
                 'Content-Type': 'application/json',
                 JWT: token
@@ -314,22 +312,22 @@ export const fetchOrderDetails = async () => {
             throw new Error('Failed to fetch order details');
         }
         const data = await response.json();
-        setOrders(data);
+        return data;
     } catch (error) {
         console.error('Error fetching order details:', error);
     }
 };
 
-
 export const placeOrder = async (products, paymentMode) => {
     try {
+        const status = 'pending'
         const response = await fetch(`${baseUrl}order/placeorder`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 JWT: token
             },
-            body: JSON.stringify({ products, paymentMode })
+            body: JSON.stringify({ products, paymentMode, status })
         });
 
         if (!response.ok) {
@@ -342,7 +340,6 @@ export const placeOrder = async (products, paymentMode) => {
         throw error;
     }
 };
-
 
 export const placeOnlineOrder = async (products, paymentMode, amount, phoneNumber) => {
     try {

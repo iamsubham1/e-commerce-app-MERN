@@ -119,8 +119,14 @@ const getProductDetails = async (req, res) => {
         console.log("productId :", productId);
         const details = await Product.findById(productId);
         if (details) {
-            const data = await details.populate('reviews');
-            res.status(200).json(data);
+            const product = await Product.findById(productId).populate({
+                path: 'reviews',
+                populate: {
+                    path: 'userId',
+                    select: 'name profilePic' // Select only specific fields from the user data
+                }
+            });
+            res.status(200).json(product);
         } else {
             res.status(400).json({ msg: "product not found" });
         }
@@ -129,7 +135,8 @@ const getProductDetails = async (req, res) => {
         console.error('Error fetching products:', error);
         res.status(500).json({ error: 'Internal server error' });
     }
-}
+};
+
 //get all avalabile products(redis added)
 const getAllProducts = async (req, res) => {
     try {

@@ -135,7 +135,7 @@ const Checkout = () => {
                 window.location.href = orderData.paymentUrl;
             } else {
                 // For COD, navigate to a success page or show a success message
-                navigate('/order-success', { state: { orderId: orderData.order } });
+                navigate('/success', { state: { orderId: orderData.order } });
             }
         } catch (error) {
             console.error('Error in handleOrder:', error);
@@ -148,13 +148,7 @@ const Checkout = () => {
             console.log("transformedProducts", transformedProducts);
             const orderData = await placeOnlineOrder(transformedProducts, paymentMode, totalValue, phoneNumber);
 
-            if (paymentMode === 'ONLINE') {
-                // Redirect to PhonePe payment URL
-                window.location.href = orderData.paymentUrl;
-            } else {
-                // For COD, navigate to a success page or show a success message
-                navigate('/order-success', { state: { orderId: orderData.order } });
-            }
+
         } catch (error) {
             console.error('Error in handleOrder:', error);
         }

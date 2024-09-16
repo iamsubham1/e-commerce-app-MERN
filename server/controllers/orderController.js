@@ -156,7 +156,10 @@ const clearCart = async (req, res) => {
 }
 
 // added redis to update products stock
+
 const createOrder = async (req, res) => {
+    const token = req.header('JWT');
+    console.log("------------------------------------------> in create order", token);
     const generateFakeTransactionId = () => {
         return 'fake_txn_' + Math.random().toString(36).substring(2);
     };
@@ -165,13 +168,8 @@ const createOrder = async (req, res) => {
 
     try {
         const userId = req.user._id;
-        // console.log("User ID:", userId);
-
         const products = req.body.products;
-        // console.log("Products in cart:", products);
-
         const paymentMode = req.body.paymentMode;
-        // console.log("Payment Mode:", paymentMode);
 
         if (!['COD', 'ONLINE'].includes(paymentMode)) {
             console.error('Invalid payment mode:', paymentMode);
@@ -184,37 +182,9 @@ const createOrder = async (req, res) => {
             return res.status(400).json({ error: "User not found" });
         }
 
-        // Calculate total price based on the product prices and quantities in the cart
-        const totalPrice = await calculateTotalPrice(products);
-        console.log("Total Price:", totalPrice);
-
-        // Create the order
-        const order = new Order({
-            userId,
-            products,
-            totalPrice,
-            paymentMode,
-            paymentStatus: 'PENDING',
-            status: 'pending',
-            transactionId: paymentMode === 'COD' ? generateFakeTransactionId() : req.body.transactionId,
-        });
-
-        console.log("Created Order:", order);
-
-        // Save the order to the database
-        await order.save();
-        console.log("Order saved to database:", order._id);
-
-        user.orders.push(order._id);
-        await user.save();
-        console.log("User orders updated:", user.orders);
-
-        // Fetch all product IDs and perform inventory updates in bulk
+        // Fetch all product IDs and their current quantities from the database
         const productIds = products.map(p => p.productId);
-        console.log("Product IDs for inventory check:", productIds);
-
         const foundProducts = await Product.find({ _id: { $in: productIds } }, '_id quantity');
-        console.log("Found Products:", foundProducts);
 
         // Check if any product is out of stock before proceeding
         for (const { productId, quantity } of products) {
@@ -229,6 +199,31 @@ const createOrder = async (req, res) => {
             }
         }
 
+        // Calculate total price based on the product prices and quantities in the cart
+        const totalPrice = await calculateTotalPrice(products);
+        console.log("Total Price:", totalPrice);
+
+        // Create the order
+        const order = new Order({
+            userId,
+            products,
+            totalPrice,
+            paymentMode,
+            paymentStatus: req.body.paymentStatus,
+            status: req.body.status,
+            transactionId: paymentMode === 'COD' ? generateFakeTransactionId() : req.body.transactionId,
+        });
+
+        console.log("Created Order:", order);
+
+        // Save the order to the database
+        await order.save();
+        console.log("Order saved to database:", order._id);
+
+        user.orders.push(order._id);
+        await user.save();
+        console.log("User orders updated:", user.orders);
+
         // Bulk update product quantities in MongoDB
         const bulkOperations = products.map(({ productId, quantity }) => ({
             updateOne: {
@@ -240,7 +235,7 @@ const createOrder = async (req, res) => {
         await Product.bulkWrite(bulkOperations);
         console.log("Product quantities updated in MongoDB");
 
-        // Update Redis cache for product quantities in one operation
+        // Update Redis cache for product quantities
         try {
             const redisData = await redisClient.get('products');
             if (redisData) {
@@ -259,12 +254,32 @@ const createOrder = async (req, res) => {
             console.error('Error updating products array in Redis:', error);
         }
 
+        // Call the clearCart API
+        try {
+            console.log('before axios', token);
+            const response = await fetch('http://localhost:8080/api/order/clearcart', {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'JWT': token
+                }
+
+            });
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log('Cart cleared successfully:', data);
+        } catch (error) {
+            console.error('Error clearing cart:', error);
+        }
+
         // Return order details
         return res.status(201).json({
             message: 'Order created successfully',
             order: order._id,
             success: true
-
         });
 
     } catch (error) {
@@ -272,6 +287,7 @@ const createOrder = async (req, res) => {
         res.status(500).json({ error: 'Internal server error' });
     }
 };
+
 
 
 
@@ -350,7 +366,6 @@ const newPayment = async (req, res) => {
 };
 
 
-
 const statusCheck = async (req, res) => {
     try {
         console.log('Received request with params:', req.params);
@@ -396,6 +411,7 @@ const statusCheck = async (req, res) => {
             const orderPayload = {
                 products: parsedData.products,  // Assuming `data` contains the products
                 paymentMode: 'ONLINE',
+                paymentStatus: 'SUCCESS',
                 transactionId: merchantTransactionId // Payment was successful
             };
 

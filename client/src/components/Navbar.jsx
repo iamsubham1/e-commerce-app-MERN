@@ -32,7 +32,6 @@ const Navbar = () => {
     const [dropdownWidth, setDropdownWidth] = useState(0);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [searchValue, setSearchValue] = useState('');
-    const [userLocation, setUserLocation] = useState('');
     const [userAddress, setUserAddress] = useState('');
     const [locationloading, setLocationloading] = useState(false);
     const [loading, setloading] = useState(false);
@@ -42,9 +41,6 @@ const Navbar = () => {
 
     const { items } = useSelector((state) => state.cart);
     const { userData } = useSelector((state) => state.user);
-
-    const apiUrl = process.env.REACT_APP_API_URL;
-    console.log(apiUrl);
 
     useEffect(() => {
         dispatch(getUserData());
@@ -58,7 +54,6 @@ const Navbar = () => {
             navigator.geolocation.getCurrentPosition(
                 async (position) => {
                     const { latitude, longitude } = position.coords;
-                    setUserLocation(`${latitude}, ${longitude}`);
                     console.log(latitude, longitude);
 
                     // Convert coordinates to address
@@ -66,7 +61,7 @@ const Navbar = () => {
                         const response = await axios.get(`https://maps.googleapis.com/maps/api/geocode/json`, {
                             params: {
                                 latlng: `${latitude},${longitude}`,
-                                key: ""
+                                key: "AIzaSyBbdDgOyvgEd1G_qyiRrhAT7SH8zwKBrzA"
                             }
                         });
 
@@ -174,7 +169,7 @@ const Navbar = () => {
 
                 {cookie && (
                     <>
-                        <div className='w-[15%] cursor-hide'>
+                        <div className={`max-w-[20%] ${isNavbarVisible ? 'inline' : 'hidden'} transition-all duration-300`}>
                             {locationloading ? (
                                 <BeatLoader size={10} color={"white"} />
                             ) : (
@@ -337,7 +332,7 @@ const Navbar = () => {
             }
 
 
-        </div>
+        </div >
     );
 };
 

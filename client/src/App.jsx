@@ -20,6 +20,7 @@ import './components/css/navbar.css'
 import Profile from './pages/ProfilePage';
 import ResetPassword from './pages/resetPassword';
 import PhonePe from './pages/PhonePe';
+import SuccessPage from './pages/successPage';
 
 const App = () => {
 
@@ -48,6 +49,8 @@ const App = () => {
           <Route path="/checkout" element={<Checkout />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/phonePe" element={<PhonePe />} />
+          <Route path="/success" element={<SuccessPage />} />
+
 
 
         </Routes>

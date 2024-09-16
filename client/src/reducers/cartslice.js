@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { fetchCartApi, addToCartApi, removeItemApi, decreaseItemCountApi, clearCartApi } from '../apis/api'; // Assuming there's an API for fetching cart data
+import { fetchCartApi, addToCartApi, removeItemApi, decreaseItemCountApi, clearCartApi } from '../apis/api';
 
 
 export const cartSlice = createSlice({
