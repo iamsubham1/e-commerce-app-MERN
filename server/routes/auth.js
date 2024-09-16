@@ -58,7 +58,7 @@ router.get('/google/callback', passport.authenticate('google', { failureRedirect
 
         const token = generateJWT(req.user);
         res.cookie('JWT', token, { httpOnly: false, maxAge: 30 * 24 * 60 * 60 * 1000, });
-        res.redirect('http://localhost:5173/googleloginnextstep');
+        res.redirect(`${process.env.origin}/googleloginnextstep`);
 
 
 
