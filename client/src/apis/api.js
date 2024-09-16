@@ -1,6 +1,6 @@
 import { getCookie } from "../utility/getCookie";
 const baseUrl = 'https://e-commerce-app-mern-bmty.onrender.com/api/'
-const token = await getCookie('JWT');
+const token = getCookie('JWT');
 
 console.log(token, "token_______________________>");
 export const login = async (formData) => {
