@@ -10,15 +10,30 @@ const port = process.env.PORT;
 const cors = require('cors');
 const session = require('express-session');
 const User = require('./models/UserModel.js');
+const cookieParser = require('cookie-parser');
+
+const allowedOrigins = [
+    'http://localhost:5173',
+    'https://gadgetsgrabapp.netlify.app',
+
+];
 
 const corsOptions = {
-    origin: 'https://gadgetsgrabapp.netlify.app' || "http://localhost:5173",
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+
+        if (allowedOrigins.includes(origin)) {
+            callback(null, true);  // Origin is allowed
+        } else {
+            callback(new Error('Not allowed by CORS'));  // Origin is not allowed
+        }
+    },
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-    credentials: true,
-
+    credentials: true,  // Enable credentials (cookies, authorization headers, etc.)
 };
-
 app.use(cors(corsOptions));
+app.use(cookieParser()); // Use cookie-parser middleware
 app.use(session({
     secret: process.env.JWT_SECRET,
     resave: false,

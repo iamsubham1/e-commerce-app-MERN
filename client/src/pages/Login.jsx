@@ -118,10 +118,10 @@ const Login = () => {
 
                                 <FcGoogle className="mr-2" />Continue with Google
                             </button>
-                            <div class="flex w-full items-center justify-center mb-3 mt-3">
-                                <span class="line"></span>
+                            <div className="flex w-full items-center justify-center mb-3 mt-3">
+                                <span className="line"></span>
                                 <p>&nbsp;&nbsp;&nbsp;&nbsp;or&nbsp;&nbsp;&nbsp;&nbsp;</p>
-                                <span class="line"></span>
+                                <span className="line"></span>
                             </div>
 
 

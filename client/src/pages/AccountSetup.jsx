@@ -64,7 +64,7 @@ const AccountSetup = () => {
         )
     }
     return (<>
-        {!userData && !userData.phoneNumber ? <div className="max-w-full h-[80vh] flex justify-center items-center ">
+        {!userData && !userData?.phoneNumber ? <div className="max-w-full h-[80vh] flex justify-center items-center ">
             <ToastContainer position="top-right"
                 autoClose={5000}
                 hideProgressBar={false}

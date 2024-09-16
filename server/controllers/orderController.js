@@ -440,19 +440,20 @@ const statusCheck = async (req, res) => {
                     'Content-Type': 'application/json',
                     'JWT': token
                 },
-                body: JSON.stringify(orderPayload)
+                body: JSON.stringify(orderPayload),
+
             });
 
             const createOrderResponseJson = await createOrderResponse.json(); // Convert response to JSON
             //console.log('Create Order Response:', createOrderResponseJson);
 
             if (createOrderResponseJson.success) {
-                return res.redirect('https://gadgetsgrabapp.netlify.app/success');
+                return res.redirect('https://e-commerce-app-mern-bmty.onrender.com/success');
             } else {
-                return res.redirect('https://gadgetsgrabapp.netlify.app/failure');
+                return res.redirect('https://e-commerce-app-mern-bmty.onrender.com/failure');
             }
         } else {
-            return res.redirect('https://gadgetsgrabapp.netlify.app/failure');
+            return res.redirect('https://e-commerce-app-mern-bmty.onrender.com/failure');
         }
     } catch (error) {
         console.error('Error in statusCheck:', error);

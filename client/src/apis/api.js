@@ -2,7 +2,7 @@ import { getCookie } from "../utility/getCookie";
 const baseUrl = 'https://e-commerce-app-mern-bmty.onrender.com/api/'
 const token = getCookie('Jwt');
 
-
+console.log(token);
 export const login = async (formData) => {
 
     try {
@@ -60,7 +60,8 @@ export const fetchAllProducts = async () => {
             headers: {
                 'Content-Type': 'application/json',
                 JWT: token
-            }
+            }, credentials: 'include',  // Include credentials (cookies)
+
         });
         const data = await response.json();
         // //console.log(getCookie('Jwt'));
@@ -79,7 +80,9 @@ export const addPhNumber = async (phoneNumber) => {
                 'Content-Type': 'application/json',
                 JWT: token
             },
-            body: JSON.stringify({ phoneNumber })
+            body: JSON.stringify({ phoneNumber }),
+            credentials: 'include',  // Include credentials (cookies)
+
         });
         if (response.ok) {
             return true
@@ -99,7 +102,8 @@ export const getUserDetails = async () => {
             headers: {
                 'Content-Type': 'application/json',
                 'JWT': token
-            }
+            }, credentials: 'include',  // Include credentials (cookies)
+
         });
 
         if (response.ok) {
@@ -124,7 +128,8 @@ export const getSearchResults = async (keyword) => {
                 'Content-Type': 'application/json',
 
                 JWT: token
-            }
+            }, credentials: 'include',  // Include credentials (cookies)
+
         });
 
         if (!response.ok) {
@@ -150,7 +155,9 @@ export const addToCartApi = async (data) => {
                 'Content-Type': 'application/json',
                 JWT: token
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
+            credentials: 'include',  // Include credentials (cookies)
+
         })
         if (!response.ok) {
             throw new Error('response was not ok');
@@ -173,7 +180,9 @@ export const fetchCartApi = async () => {
                 'Content-Type': 'application/json',
                 JWT: token
 
-            }
+            },
+            credentials: 'include',  // Include credentials (cookies)
+
         });
 
         if (!response.ok) {
@@ -197,7 +206,9 @@ export const removeItemApi = async (data) => {
                 'Content-Type': 'application/json',
                 JWT: token
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
+            credentials: 'include',  // Include credentials (cookies)
+
         })
         if (!response.ok) {
             throw new Error('response was not ok');
@@ -220,7 +231,9 @@ export const decreaseItemCountApi = async (data) => {
                 'Content-Type': 'application/json',
                 JWT: token
             },
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
+            credentials: 'include',  // Include credentials (cookies)
+
         })
         if (!response.ok) {
             throw new Error('response was not ok');
@@ -243,6 +256,8 @@ export const clearCartApi = async () => {
                 'Content-Type': 'application/json',
                 JWT: token
             },
+            credentials: 'include',  // Include credentials (cookies)
+
 
         })
         if (!response.ok) {
@@ -266,7 +281,9 @@ export const addAddress = async (address) => {
                 'Content-Type': 'application/json',
                 JWT: token
             },
-            body: JSON.stringify({ ...address })
+            body: JSON.stringify({ ...address }),
+            credentials: 'include',  // Include credentials (cookies)
+
         });
         if (response.ok) {
             return true
@@ -286,7 +303,8 @@ export const deleteAddress = async (id) => {
             headers: {
                 'Content-Type': 'application/json',
                 JWT: token
-            },
+            }, credentials: 'include',  // Include credentials (cookies)
+
 
         });
         if (response.ok) {
@@ -306,7 +324,8 @@ export const fetchOrderDetails = async () => {
             headers: {
                 'Content-Type': 'application/json',
                 JWT: token
-            }
+            }, credentials: 'include',  // Include credentials (cookies)
+
         });
         if (!response.ok) {
             throw new Error('Failed to fetch order details');
@@ -327,7 +346,9 @@ export const placeOrder = async (products, paymentMode) => {
                 'Content-Type': 'application/json',
                 JWT: token
             },
-            body: JSON.stringify({ products, paymentMode, status })
+            body: JSON.stringify({ products, paymentMode, status }),
+            credentials: 'include',  // Include credentials (cookies)
+
         });
 
         if (!response.ok) {
@@ -349,7 +370,9 @@ export const placeOnlineOrder = async (products, paymentMode, amount, phoneNumbe
                 'Content-Type': 'application/json',
                 JWT: token
             },
-            body: JSON.stringify({ data: { products, paymentMode }, phoneNumber, amount })
+            body: JSON.stringify({ data: { products, paymentMode }, phoneNumber, amount }),
+            credentials: 'include',  // Include credentials (cookies)
+
         });
 
         const resData = await response.json();

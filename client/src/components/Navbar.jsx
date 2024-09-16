@@ -152,7 +152,7 @@ const Navbar = () => {
     };
     const handleLogout = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
-        logout('JWT');
+        logout('Jwt');
     };
 
     const toggleMobileMenu = () => {
@@ -253,7 +253,7 @@ const Navbar = () => {
             <div className='max-w-[10%] flex justify-end mr-10 items-center gap-12 hide-section '>
 
 
-                {cookie && userData.profilePic && (
+                {cookie && userData?.profilePic && (
                     <ul className='flex justify-around items-center w-[]'>
                         <li>
                             <Link to='/profile' activeclassname="active" className='flex items-center h-full w-10 hover:w-[2.4rem]'>
