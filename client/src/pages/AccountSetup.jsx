@@ -9,6 +9,8 @@ import { getUserData } from '../reducers/userSlice';
 
 const AccountSetup = () => {
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+
     const { userData } = useSelector((state) => state.user);
     const cookies = new Cookies();
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -42,7 +44,7 @@ const AccountSetup = () => {
             // Fetch user details after setting the cookie
             dispatch(getUserData());
         }
-    }, [cookies, getUserDetails]);
+    }, [cookies, getUserData]);
 
     useEffect(() => {
         if (userData) {
@@ -52,7 +54,7 @@ const AccountSetup = () => {
                 setLoading(false);
             }
         }
-    }, [userData, navigate]);
+    }, [userData, getUserData]);
 
     if (loading) {
         return (

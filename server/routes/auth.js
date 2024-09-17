@@ -19,7 +19,7 @@ passport.use(new GoogleStrategy({
             // Check if user already exists in the database
             console.log(profile);
             let user = await User.findOne({ email: profile.emails[0].value });
-
+            console.log("=============>", "user");
 
             if (!user) {
 
@@ -37,6 +37,7 @@ passport.use(new GoogleStrategy({
                     name: profile.displayName,
                     email: profile.emails[0].value,
                     profilePic: profilePic
+
                 });
             }
 
@@ -57,16 +58,23 @@ router.get('/google/callback', passport.authenticate('google', { failureRedirect
     (req, res) => {
 
         const token = generateJWT(req.user);
+
         res.cookie('JWT', token, { httpOnly: false, maxAge: 30 * 24 * 60 * 60 * 1000, sameSite: 'None', secure: true });
         const encodedToken = encodeURIComponent(token);
-        const redirectUrl = `https://gadgetsgrabapp.netlify.app/googleloginnextstep?token=${encodedToken}`;
 
-        // Redirect the user to the constructed URL
-        res.redirect(redirectUrl);
-
-
+        // Check if user has a phone number
+        if (req.user.phoneNumber) {
+            r
+            const redirectUrl = `https://gadgetsgrabapp.netlify.app/?token=${encodedToken}`;
+            res.redirect(redirectUrl);
+        } else {
+            // Redirect to the next step page if phone number does not exist
+            const redirectUrl = `https://gadgetsgrabapp.netlify.app/googleloginnextstep?token=${encodedToken}`;
+            res.redirect(redirectUrl);
+        }
     }
 );
+
 
 router.post('/signup', signUpController);
 router.post('/login', loginController);
