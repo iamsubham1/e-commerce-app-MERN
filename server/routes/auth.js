@@ -56,24 +56,29 @@ router.get('/google', passport.authenticate('google', { scope: ['profile', 'emai
 // Callback route after successful Google OAuth authentication
 router.get('/google/callback', passport.authenticate('google', { failureRedirect: '/login-failure' }),
     (req, res) => {
-
         const token = generateJWT(req.user);
 
-        res.cookie('JWT', token, { httpOnly: false, maxAge: 30 * 24 * 60 * 60 * 1000, sameSite: 'None', secure: true });
+        // Set the JWT cookie
+        res.cookie('JWT', token, {
+            httpOnly: false,
+            maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+            sameSite: 'None',
+            secure: true
+        });
+
         const encodedToken = encodeURIComponent(token);
 
-        // Check if user has a phone number
-        if (req.user.phoneNumber) {
+        // Determine if the user has a phone number
+        const hasPhoneNumber = req.user.phoneNumber ? 'true' : 'false';
 
-            const redirectUrl = `https://gadgetsgrabapp.netlify.app/?token=${encodedToken}`;
-            res.redirect(redirectUrl);
-        } else {
-            // Redirect to the next step page if phone number does not exist
-            const redirectUrl = `https://gadgetsgrabapp.netlify.app/googleloginnextstep?token=${encodedToken}`;
-            res.redirect(redirectUrl);
-        }
+        // Build the redirect URL with the token and phone number presence parameter
+        const redirectUrl = `https://gadgetsgrabapp.netlify.app/googleloginnextstep?token=${encodedToken}&hasPhoneNumber=${hasPhoneNumber}`;
+
+        // Redirect the user
+        res.redirect(redirectUrl);
     }
 );
+
 
 
 router.post('/signup', signUpController);

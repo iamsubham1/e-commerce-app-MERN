@@ -26,39 +26,38 @@ const AccountSetup = () => {
         setLoading(true);
         const response = await addPhNumber(phoneNumber);
         if (response) {
-            notify("Phonenumber added");
+            notify("Phone number added");
             setTimeout(() => {
                 navigate('/');
             }, 1000);
         } else {
-            notify("Something is wrong with Google");
+            notify("Something went wrong");
         }
+        setLoading(false);
     };
 
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
         const token = urlParams.get('token');
+        const hasPhoneNumberParam = urlParams.get('hasPhoneNumber') === 'true';
 
         if (token) {
             cookies.set('JWT', token, { httpOnly: false, secure: true, sameSite: 'none', maxAge: 60 * 60 * 24 });
             // Fetch user details after setting the cookie
             dispatch(getUserData());
-        }
-    }, [cookies, getUserData]);
 
-    useEffect(() => {
-        if (userData) {
-            if (userData.phoneNumber) {
+            if (hasPhoneNumberParam) {
                 navigate('/');
             } else {
                 setLoading(false);
             }
         }
-    }, [userData, getUserData]);
+    }, [dispatch, cookies, navigate]);
+
 
     if (loading) {
         return (
-            <div className="w-[100vw] h-[80vh] overflow flex justify-center items-center">
+            <div className="w-[100vw] h-[80vh] flex justify-center items-center">
                 <span className="loader"></span>
             </div>
         );
@@ -66,7 +65,7 @@ const AccountSetup = () => {
 
     return (
         <>
-            {!userData && !userData?.phoneNumber ? (
+            {!userData?.phoneNumber ? (
                 <div className="max-w-full h-[80vh] flex justify-center items-center">
                     <ToastContainer
                         position="top-right"
@@ -101,7 +100,7 @@ const AccountSetup = () => {
                     </div>
                 </div>
             ) : (
-                <div className="w-[100vw] h-[80vh] overflow flex justify-center items-center">
+                <div className="w-[100vw] h-[80vh] flex justify-center items-center">
                     <span className="loader"></span>
                 </div>
             )}
