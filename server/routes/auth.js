@@ -64,7 +64,7 @@ router.get('/google/callback', passport.authenticate('google', { failureRedirect
 
         // Check if user has a phone number
         if (req.user.phoneNumber) {
-            r
+
             const redirectUrl = `https://gadgetsgrabapp.netlify.app/?token=${encodedToken}`;
             res.redirect(redirectUrl);
         } else {
