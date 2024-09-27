@@ -290,7 +290,7 @@ const Navbar = () => {
 
             {/*mobile hambuger menu section*/}
 
-            {!isMobileMenuOpen ? <MdMenu className={'text-3xl cursor-pointer self-center hamburger mr-5 '} onClick={toggleMobileMenu} /> : <MdOutlineClose className={'text-3xl cursor-pointer self-center hamburger '} onClick={toggleMobileMenu} />}
+            {!isMobileMenuOpen ? <MdMenu className={'text-3xl cursor-pointer self-center hamburger mr-5 '} onClick={toggleMobileMenu} /> : <MdOutlineClose className={'text-3xl cursor-pointer self-center hamburger mr-5 '} onClick={toggleMobileMenu} />}
 
             {
                 isMobileMenuOpen && (cookie ? (
