@@ -10,7 +10,7 @@ import { getUserData } from '../reducers/userSlice';
 const AccountSetup = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch();
-
+    let token;
     const { userData } = useSelector((state) => state.user);
     const cookies = new Cookies();
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -24,7 +24,7 @@ const AccountSetup = () => {
 
     const handleDoneClick = async () => {
         setLoading(true);
-        const response = await addPhNumber(phoneNumber);
+        const response = await addPhNumber(phoneNumber, token);
         if (response) {
             notify("Phone number added");
             setTimeout(() => {
@@ -38,16 +38,18 @@ const AccountSetup = () => {
 
     useEffect(() => {
         const urlParams = new URLSearchParams(window.location.search);
-        const token = urlParams.get('token');
+        token = urlParams.get('token');
         const hasPhoneNumberParam = urlParams.get('hasPhoneNumber') === 'true';
 
         if (token) {
             cookies.set('JWT', token, { httpOnly: false, secure: true, sameSite: 'none', maxAge: 60 * 60 * 24 });
             // Fetch user details after setting the cookie
-            dispatch(getUserData());
+            // dispatch(getUserData());
 
             if (hasPhoneNumberParam) {
-                navigate('/');
+                setTimeout(() => {
+                    window.location.href = '/';
+                }, 1000);
             } else {
                 setLoading(false);
             }

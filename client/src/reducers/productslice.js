@@ -30,11 +30,11 @@ const productSlice = createSlice({
 
 export const { setProducts, setProductsLoading, setProductsError } = productSlice.actions;
 
-export const fetchProducts = () => async (dispatch) => {
+export const fetchProducts = (cookie) => async (dispatch) => {
     dispatch(setProductsLoading(true));
     try {
 
-        const data = await fetchAllProducts();
+        const data = await fetchAllProducts(cookie);
         dispatch(setProducts(data));
 
 

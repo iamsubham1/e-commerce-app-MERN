@@ -129,14 +129,9 @@ const Checkout = () => {
             const orderData = await placeOrder(transformedProducts, paymentMode);
 
 
-            //console.log(transformedProducts, paymentMode);
-            if (paymentMode === 'ONLINE') {
-                // Redirect to PhonePe payment URL
-                window.location.href = orderData.paymentUrl;
-            } else {
-                // For COD, navigate to a success page or show a success message
-                navigate('/success', { state: { orderId: orderData.order } });
-            }
+
+            navigate('/success', { state: { orderId: orderData.order } });
+
         } catch (error) {
             console.error('Error in handleOrder:', error);
         }

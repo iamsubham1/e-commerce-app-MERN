@@ -31,6 +31,8 @@ const OrdersPage = () => {
                             <p>Status: <strong>{order.status}</strong></p>
                             <p>Transaction ID: {order.transactionId}</p>
                             <p>Payment Mode: {order.paymentMode}</p>
+                            <p>Payment Status: {order.paymentStatus}</p>
+
                             <p>Total Price: ${order.totalPrice.toFixed(2)}</p>
                             <h3 className="font-semibold mt-4">Products:</h3>
                             <ul className="mt-2">

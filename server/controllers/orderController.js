@@ -103,6 +103,7 @@ const updateCart = async (req, res) => {
         const userId = req.user._id;
         const { productId, quantity } = req.body;
 
+
         let shoppingCart = await Cart.findOne({ userId });
 
         if (!shoppingCart) {
@@ -117,38 +118,38 @@ const updateCart = async (req, res) => {
         }
 
         if (quantity == 0) {
-            // Remove the item from the cart
+
             shoppingCart.items = shoppingCart.items.filter(item => item.product.toString() !== productId);
         } else {
-            // Decrease the quantity of the item
             if (cartItem.quantity > 1) {
                 cartItem.quantity -= 1;
             } else {
-                // If quantity is already 1, remove the item from the cart
                 shoppingCart.items = shoppingCart.items.filter(item => item.product.toString() !== productId);
             }
         }
 
-        const totalValue = await calculateTotalPrice(shoppingCart.items);
-
-        // Update the totalValue field of the cart
-        shoppingCart.totalValue = totalValue;
+        // Check if the cart is empty after the item has been removed/updated
+        if (shoppingCart.items.length === 0) {
+            shoppingCart.totalValue = 0;
+        } else {
+            const totalValue = await calculateTotalPrice(shoppingCart.items);
+            shoppingCart.totalValue = totalValue;
+        }
 
         await shoppingCart.save();
         const response = await shoppingCart.populate('items.product', 'name reviews pictures price'); // Populate product info
+
         return res.status(200).send(response);
 
     } catch (error) {
-        console.error(error);
+        console.error('Error in updateCart:', error); // Log any errors
         return res.status(500).json({ message: 'Internal server error' });
     }
-}
-
+};
 
 const clearCart = async (req, res) => {
     try {
 
-        //console.log("triggered clear cart");
         const userId = req.user._id;
 
         let cart = await Cart.findOne({ userId });
@@ -157,11 +158,9 @@ const clearCart = async (req, res) => {
             return res.status(404).json({ message: "Cart not found" });
         }
 
-        // Clear all items from the cart
         cart.items = [];
         cart.totalValue = 0;
 
-        // Save the updated empty cart
         await cart.save();
 
         return res.status(200).json({ message: "Cart cleared successfully", cart });
@@ -170,14 +169,13 @@ const clearCart = async (req, res) => {
         return res.status(500).json({ message: 'Internal server error' });
     }
 }
-
 // added redis to update products stock
 
 const createOrder = async (req, res) => {
     const token = req.header('JWT');
     //console.log("------------------------------------------> in create order", token);
     const generateFakeTransactionId = () => {
-        return 'fake_txn_' + Math.random().toString(36).substring(2);
+        return 'COD_TXN_NO:' + Math.random().toString(36).substring(2);
     };
 
     //console.log("Reached create order------------>", req.body);
@@ -186,6 +184,11 @@ const createOrder = async (req, res) => {
         const userId = req.user._id;
         const products = req.body.products;
         const paymentMode = req.body.paymentMode;
+        const paymentStatus = req.body?.paymentStatus || "PENDING";
+        console.log(paymentStatus);
+
+
+
 
         if (!['COD', 'ONLINE'].includes(paymentMode)) {
             console.error('Invalid payment mode:', paymentMode);
@@ -225,7 +228,7 @@ const createOrder = async (req, res) => {
             products,
             totalPrice,
             paymentMode,
-            paymentStatus: req.body.paymentStatus,
+            paymentStatus,
             status: req.body.status,
             transactionId: paymentMode === 'COD' ? generateFakeTransactionId() : req.body.transactionId,
         });
@@ -304,9 +307,6 @@ const createOrder = async (req, res) => {
     }
 };
 
-
-
-
 const orderDetails = async (req, res) => {
 
     try {
@@ -326,19 +326,12 @@ const orderDetails = async (req, res) => {
 
 };
 
-
-const paymentHandler = async (req, res) => {
-
-};
-
-
 const newPayment = async (req, res) => {
     try {
         const payEndpoint = '/pg/v1/pay';
         const merchantTransactionId = uniqid();
         const userId = req.user._id; // Use user ID from req.user
         //console.log(req.body.data);
-        // Ensure token is available in req.headers or req.user
         const token = req.headers.jwt;
 
         const payload = {
@@ -423,12 +416,14 @@ const statusCheck = async (req, res) => {
         const response = await axios.request(options);
         const responseData = response.data;
 
+        console.log(responseData);
+
         if (responseData.success) {
             const orderPayload = {
-                products: parsedData.products,  // Assuming `data` contains the products
+                products: parsedData.products,
                 paymentMode: 'ONLINE',
-                paymentStatus: 'SUCCESS',
-                transactionId: merchantTransactionId // Payment was successful
+                paymentStatus: responseData.data.state, //payment current state
+                transactionId: responseData.data.transactionId
             };
 
             //console.log('Order Payload:', orderPayload);

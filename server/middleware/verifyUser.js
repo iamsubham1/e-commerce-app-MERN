@@ -5,9 +5,7 @@ require('dotenv').config();
 const verifyUser = (req, res, next) => {
     // Extract JWT from the cookie named 'Jwt'
     const token = req.cookies.Jwt || req.header('JWT');
-    // Assuming your JWT cookie is named 'Jwt'
 
-    console.log("------------------------------------------> in middleware", token);
 
     if (!token) {
         return res.status(401).send({ error: "Authentication token not found" });

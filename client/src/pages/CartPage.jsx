@@ -4,6 +4,8 @@ import { MdDelete } from "react-icons/md";
 import { handleAddToCart, handleRemoveItem, handleDecreaseItem, clearCart } from '../reducers/cartslice';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
+import { FaPlusCircle } from "react-icons/fa";
+import { FaMinusCircle } from "react-icons/fa";
 
 const CartDetails = () => {
     const dispatch = useDispatch();
@@ -46,28 +48,37 @@ const CartDetails = () => {
                                         <img
                                             src={item.product.pictures ? item.product.pictures[0] : "https://via.placeholder.com/300"}
                                             alt={item.product.name}
-                                            className="w-16 h-16 md:w-20 md:h-20 object-cover rounded-md aspect-square"
+                                            className="w-16 h-16 md:w-20 md:h-20 object-cover rounded-md aspect-square "
                                         />
                                     </div>
-                                    <div className="mb-2 sm:mb-0 sm:w-auto flex-1">{item.product.name}</div>
-                                    <div className="mb-2 sm:mb-0 sm:w-1/6">${item.product.price.toFixed(2)}</div>
+                                    <div className="mb-2 sm:mb-0 sm:w-auto flex-[0.8] ">{item.product.name}</div>
+                                    <div className="mb-2 sm:mb-0 sm:w-1/6 ">${item.product.price.toFixed(2)}</div>
                                     <div className="mb-2 sm:mb-0 sm:w-1/6 flex items-center gap-2 ">
-                                        <div>
-                                            <button className="text-black rounded-full mr-3 bg-[#e6e6e6] px-[0.6px] hover:bg-[#d7d7d7]" onClick={(e) => {
+                                        <div className='flex '>
+                                            <button className="text-black rounded-full mr-3 bg-[#e6e6e6] px-[4px] hover:bg-[#d7d7d7]" onClick={(e) => {
                                                 e.stopPropagation();
-                                                reduceCount(item.product._id)
-                                            }}>&nbsp;-&nbsp;</button>
+                                                reduceCount(item.product._id, item.quantity)
+                                            }}><FaMinusCircle className='text-xs md:text-xl' />
+
+                                            </button>
                                             <span className="px-2 bg-[#000000] text-[#ffffff] rounded">{item.quantity}</span>
-                                            <button className="text-black rounded-full ml-3 bg-[#e8e8e8] hover:bg-[#d7d7d7]" onClick={(e) => {
+                                            <button className="text-black rounded-full ml-3 bg-[#e8e8e8] px-[4px] hover:bg-[#d7d7d7]" onClick={(e) => {
                                                 e.stopPropagation();
                                                 increaseCount(item.product._id)
-                                            }}>&nbsp;+&nbsp;</button>
+                                            }}><FaPlusCircle className='text-xs md:text-xl' />
+
+                                            </button>
                                         </div>
                                     </div>
-                                    <MdDelete className="text-[1.5rem]  hover:text-[rgb(255,0,0)] hover:cursor-pointer" onClick={(e) => {
-                                        e.stopPropagation();
-                                        removeItem(item.product._id)
-                                    }} />
+                                    <div className="button mb-2 sm:mb-0 ml-0 md:ml-8 p-1 text-xl">
+                                        <MdDelete
+                                            className="hover:text-[rgb(255,0,0)] hover:cursor-pointer"
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                removeItem(item.product._id)
+                                            }}
+                                        />
+                                    </div>
                                 </li>
                             ))}
                         </ul>

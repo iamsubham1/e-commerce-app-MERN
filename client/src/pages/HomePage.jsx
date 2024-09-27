@@ -29,7 +29,7 @@ const HomePage = () => {
         if (!cookie) {
             navigate('/login');
         }
-        dispatch(fetchProducts());
+        dispatch(fetchProducts(cookie));
     }, []);
 
     const addToCartHandler = async (product) => {

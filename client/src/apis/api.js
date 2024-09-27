@@ -7,7 +7,7 @@ console.log(token, "token_______________________>");
 export const login = async (formData) => {
 
     try {
-        const response = await fetch(`https://e-commerce-app-mern-bmty.onrender.com/api/auth/login`, {
+        const response = await fetch(`${baseUrl}auth/login`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -55,12 +55,13 @@ export const signup = async (formData) => {
     }
 }
 
-export const fetchAllProducts = async () => {
+export const fetchAllProducts = async (cookie) => {
+    console.log(cookie, "got from home page+++++++++++++++++>>>");
     try {
         const response = await fetch(`${baseUrl}product/allproducts`, {
             headers: {
                 'Content-Type': 'application/json',
-                JWT: token
+                JWT: cookie
             }, credentials: 'include',  // Include credentials (cookies)
 
         });
@@ -73,13 +74,13 @@ export const fetchAllProducts = async () => {
     }
 };
 
-export const addPhNumber = async (phoneNumber) => {
+export const addPhNumber = async (phoneNumber, cookie) => {
     try {
         const response = await fetch(`${baseUrl}user/edituser`, {
             method: 'PATCH',
             headers: {
                 'Content-Type': 'application/json',
-                JWT: token
+                JWT: cookie
             },
             body: JSON.stringify({ phoneNumber }),
             credentials: 'include',  // Include credentials (cookies)
@@ -174,12 +175,12 @@ export const addToCartApi = async (data) => {
     }
 };
 
-export const fetchCartApi = async () => {
+export const fetchCartApi = async (cookie) => {
     try {
         const response = await fetch(`${baseUrl}order/cartdetails`, {
             headers: {
                 'Content-Type': 'application/json',
-                JWT: token
+                JWT: cookie
 
             },
             credentials: 'include',  // Include credentials (cookies)
@@ -340,14 +341,14 @@ export const fetchOrderDetails = async () => {
 
 export const placeOrder = async (products, paymentMode) => {
     try {
-        const status = 'pending'
+
         const response = await fetch(`${baseUrl}order/placeorder`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
                 JWT: token
             },
-            body: JSON.stringify({ products, paymentMode, status }),
+            body: JSON.stringify({ products, paymentMode }),
             credentials: 'include',  // Include credentials (cookies)
 
         });
@@ -365,7 +366,7 @@ export const placeOrder = async (products, paymentMode) => {
 
 export const placeOnlineOrder = async (products, paymentMode, amount, phoneNumber) => {
     try {
-        const response = await fetch('https://e-commerce-app-mern-bmty.onrender.com/api/order/newPayment', {
+        const response = await fetch(`${baseUrl}order/newPayment`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -377,7 +378,7 @@ export const placeOnlineOrder = async (products, paymentMode, amount, phoneNumbe
         });
 
         const resData = await response.json();
-        //console.log(resData);
+        console.log(resData);
 
         if (resData && resData.data.instrumentResponse.redirectInfo.url) {
             window.location.href = resData.data.instrumentResponse.redirectInfo.url;

@@ -21,9 +21,9 @@ import BeatLoader from "react-spinners/BeatLoader";
 
 
 const Navbar = () => {
-    const cookie = getCookie('JWT');
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const cookie = getCookie('JWT');
     const [lastScrollTop, setLastScrollTop] = useState(0);
     const [isNavbarVisible, setIsNavbarVisible] = useState(true);
     const [searchResults, setSearchResults] = useState([]);
@@ -35,6 +35,7 @@ const Navbar = () => {
     const [userAddress, setUserAddress] = useState('');
     const [locationloading, setLocationloading] = useState(false);
     const [loading, setloading] = useState(false);
+    const [token, setToken] = useState(null);
 
     const searchInputRef = useRef(null);
     const debounceTimer = useRef(null);
@@ -43,10 +44,16 @@ const Navbar = () => {
     const { userData } = useSelector((state) => state.user);
 
     useEffect(() => {
+        const token = getCookie('JWT');
+        if (token) {
+            dispatch(getUserData(token));
+            dispatch(fetchInitialCartState(token));
+        }
 
-        dispatch(getUserData());
-        dispatch(fetchInitialCartState());
-    }, [dispatch]);
+    }, []);
+
+
+
 
     useEffect(() => {
 
@@ -165,22 +172,22 @@ const Navbar = () => {
     };
     return (
         <div className={` w-full h-[7vh] mt-4 flex justify-end navbar border-t-2 border-b-2  border-black ${isNavbarVisible ? 'navbar-visible' : 'navbar-hidden'}`}>
-            <div className=' flex items-center  gap-2 w-[85%] ml-1 '>
-                <img src={logo} className='w-[60px] hover:cursor-pointer' alt='Logo' onClick={() => navigate('/')} />
+            <div className=' flex items-center w-[85%] mr-5 '>
+                <img src={logo} className='w-[60px] hover:cursor-pointer ml-4' alt='Logo' onClick={() => navigate('/')} />
 
                 {cookie && (
                     <>
-                        <div className={`max-w-[20%] ${isNavbarVisible ? 'inline' : 'hidden'} transition-all duration-300`}>
+                        <div className={`w-[20%] mr-4 ml-3 ${isNavbarVisible ? 'inline' : 'hidden'} transition-all duration-300 hide-location`}>
                             {locationloading ? (
                                 <BeatLoader size={10} color={"white"} />
                             ) : (
-                                <div className='flex items-center gap-2 hide-section hide-location'>
+                                <div className='flex items-center gap-2 hide-section'>
                                     <i className="fa-solid fa-location-dot mb-1"></i>
-                                    <p className='text-sm select-none'>{userAddress || ''}</p>
+                                    <p className='text-sm select-none'>{userAddress || 'unable to get location'}</p>
                                 </div>
                             )}
                         </div>
-                        <div className='w-[50%] relative'>
+                        <div className='w-[80%] md:w-[50%] sm:w-[70%] relative'>
 
                             <input type='keyword'
                                 value={searchValue}
@@ -196,7 +203,6 @@ const Navbar = () => {
                                     color: 'black',
                                     fontSize: '.95rem',
                                     borderRadius: '0.375rem',
-                                    width: '100%',
                                     minHeight: '100%',
                                 }} className='min-h-[100%] placeholder:text-[#161616] placeholder:font-[600] relative w-full px-2 py-[0.50rem] bg-[#cfcfcfd1] border-l-2 border-r-2 border-black text-black text-lg rounded-md'
                                 onChange={(e) => {
@@ -258,7 +264,7 @@ const Navbar = () => {
                     <ul className='flex justify-around items-center w-[]'>
                         <li>
                             <Link to='/profile' activeclassname="active" className='flex items-center h-full w-10 hover:w-[2.4rem]'>
-                                <img src={userData && userData.profilePic && userData.profilePic.url ? userData.profilePic.url : "https://res.cloudinary.com/dmb0ooxo5/image/upload/v1706984465/ftfdy0ic7ftz2awihjts.jpg"} className='rounded-full' alt='Profile' />
+                                <img src={userData && userData.profilePic && userData.profilePic.url ? userData.profilePic.url : "https://res.cloudinary.com/dmb0ooxo5/image/upload/v1706984465/ftfdy0ic7ftz2awihjts.jpg"} referrerPolicy="no-referrer" className='rounded-full' alt='Profile' />
                             </Link>
                         </li>
                         <Link className='over' id='link' to='/orders'><span data-hover="ORDERS">Orders</span></Link>
@@ -284,7 +290,7 @@ const Navbar = () => {
 
             {/*mobile hambuger menu section*/}
 
-            {!isMobileMenuOpen ? <MdMenu className={'text-3xl cursor-pointer self-center hamburger '} onClick={toggleMobileMenu} /> : <MdOutlineClose className={'text-3xl cursor-pointer self-center hamburger'} onClick={toggleMobileMenu} />}
+            {!isMobileMenuOpen ? <MdMenu className={'text-3xl cursor-pointer self-center hamburger mr-5 '} onClick={toggleMobileMenu} /> : <MdOutlineClose className={'text-3xl cursor-pointer self-center hamburger '} onClick={toggleMobileMenu} />}
 
             {
                 isMobileMenuOpen && (cookie ? (
@@ -333,7 +339,7 @@ const Navbar = () => {
             }
 
 
-        </div >
+        </div>
     );
 };
 

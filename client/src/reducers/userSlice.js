@@ -3,7 +3,6 @@ import { getCookie } from "../utility/getCookie";
 
 import { getUserDetails } from "../apis/api";
 
-const token = getCookie('JWT');
 
 const userSlice = createSlice({
     name: 'user',
@@ -34,10 +33,10 @@ export const { setUserData, setUserDataloading, setUserDataErrors } = userSlice.
 
 
 //thunk middleware
-export const getUserData = () => async (dispatch) => {
+export const getUserData = (cookie) => async (dispatch) => {
     dispatch(setUserDataloading(true));
     try {
-        const userData = await getUserDetails(token);
+        const userData = await getUserDetails(cookie);
         dispatch(setUserData(userData));
 
     } catch (error) {

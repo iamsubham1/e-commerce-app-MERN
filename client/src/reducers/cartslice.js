@@ -40,10 +40,10 @@ export const { setCart, setLoading, setError } = cartSlice.actions;
 
 
 // Action to fetch initial cart state
-export const fetchInitialCartState = () => async (dispatch) => {
+export const fetchInitialCartState = (cookie) => async (dispatch) => {
     dispatch(setLoading(true));
     try {
-        const cart = await fetchCartApi();
+        const cart = await fetchCartApi(cookie);
         dispatch(setCart(cart)); // Update Redux store with initial cart state
         dispatch(setLoading(false));
     } catch (error) {
