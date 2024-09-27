@@ -2,7 +2,7 @@ import { getCookie } from "../utility/getCookie";
 const baseUrl = 'https://e-commerce-app-mern-bmty.onrender.com/api/'
 const token = getCookie('JWT');
 
-console.log(token, "token_______________________>");
+//console.log(token, "token_______________________>");
 
 export const login = async (formData) => {
 
@@ -56,7 +56,7 @@ export const signup = async (formData) => {
 }
 
 export const fetchAllProducts = async (cookie) => {
-    console.log(cookie, "got from home page+++++++++++++++++>>>");
+    //console.log(cookie, "got from home page+++++++++++++++++>>>");
     try {
         const response = await fetch(`${baseUrl}product/allproducts`, {
             headers: {
@@ -66,7 +66,7 @@ export const fetchAllProducts = async (cookie) => {
 
         });
         const data = await response.json();
-        // //console.log(getCookie('JWT'));
+        //console.log(getCookie('JWT'));
         return data;
     } catch (error) {
         throw new Error(error.message);
@@ -99,7 +99,7 @@ export const addPhNumber = async (phoneNumber, cookie) => {
 
 export const getUserDetails = async () => {
     try {
-        // //console.log("Fetching user details... from api");
+        //console.log("Fetching user details... from api");
         const response = await fetch(`${baseUrl}user/details`, {
             headers: {
                 'Content-Type': 'application/json',
@@ -378,7 +378,7 @@ export const placeOnlineOrder = async (products, paymentMode, amount, phoneNumbe
         });
 
         const resData = await response.json();
-        console.log(resData);
+        //console.log(resData);
 
         if (resData && resData.data.instrumentResponse.redirectInfo.url) {
             window.location.href = resData.data.instrumentResponse.redirectInfo.url;

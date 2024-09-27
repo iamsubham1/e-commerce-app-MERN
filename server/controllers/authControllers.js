@@ -148,7 +148,7 @@ const verifyOtp = async (req, res) => {
             res.status(400).json("entered otp is expired");
         }
     } catch (error) {
-        //console.log(error);
+        console.log(error);
         return res.status(500).json({ success: false, error: "Internal server error" });
     }
 }
@@ -170,7 +170,7 @@ const resetPassword = async (req, res) => {
 
 
     } catch (error) {
-        //console.log(error);
+        console.log(error);
         return res.status(500).json({ success: false, error: "Internal server error" });
     }
 

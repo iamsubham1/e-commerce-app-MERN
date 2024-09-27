@@ -173,7 +173,7 @@ const ProductPage = () => {
                                 placeholder="Enter pincode"
                             />
                             <button
-                                className="bg-[#0e0e0e] text-sm px-3 rounded text-[#a8a8a8]"
+                                className="bg-[#0e0e0e] text-sm px-3 py-2 rounded text-[#a8a8a8]"
                                 onClick={checkDeliveryEligibility}
                             >
                                 Check Eligibility

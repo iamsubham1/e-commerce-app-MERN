@@ -185,7 +185,7 @@ const createOrder = async (req, res) => {
         const products = req.body.products;
         const paymentMode = req.body.paymentMode;
         const paymentStatus = req.body?.paymentStatus || "PENDING";
-        console.log(paymentStatus);
+        //console.log(paymentStatus);
 
 
 
@@ -416,7 +416,7 @@ const statusCheck = async (req, res) => {
         const response = await axios.request(options);
         const responseData = response.data;
 
-        console.log(responseData);
+        //console.log(responseData);
 
         if (responseData.success) {
             const orderPayload = {

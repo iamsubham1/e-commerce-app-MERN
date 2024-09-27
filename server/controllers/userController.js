@@ -64,7 +64,7 @@ const editUserDetails = async (req, res) => {
 
 
     } catch (error) {
-        //console.log(error);
+        console.log(error);
         return res.status(500).send("Internal server error");
     }
 };
@@ -105,7 +105,7 @@ const addAddress = async (req, res) => {
         user.password = null;
         return res.status(200).send(user);
     } catch (error) {
-        //console.log(error);
+        console.log(error);
         return res.status(500).send("Internal server error");
     }
 };

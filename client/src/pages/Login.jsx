@@ -38,7 +38,7 @@ const Login = () => {
         e.preventDefault();
         const response = await login(formData);
         if (response) {
-            console.log(response);
+            //console.log(response);
             const cookies = new Cookies();
 
             cookies.set('JWT', response.token, { httpOnly: false, secure: true, sameSite: 'none', maxAge: 60 * 60 * 24 })
