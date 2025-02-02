@@ -90,7 +90,7 @@ const startServer = async () => {
 const initializeApp = async () => {
 
 
-    await connectToRedis.connect();
+    //await connectToRedis.connect();
 
     await connectToMongo();
 
