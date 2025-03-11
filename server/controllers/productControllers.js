@@ -60,56 +60,55 @@ const searchedProduct = async (req, res) => {
     //console.log("API hit");
 
     // Check if the result is cached in Redis
-    const cacheKey = `products:${keyword.toLowerCase()}`;
-    const cache = await redisClient.get(cacheKey);
+    // const cacheKey = `products:${keyword.toLowerCase()}`;
+    // const cache = await redisClient.get(cacheKey);
 
-    if (cache) {
-      //console.log('Result found in cache');
-      const products = JSON.parse(cache);
+    // if (cache) {
+    //   //console.log('Result found in cache');
+    //   const products = JSON.parse(cache);
 
-      // Filter products based on keyword
-      const filteredProducts = products.filter(
-        (product) =>
-          product.name.toLowerCase().includes(keyword.toLowerCase()) ||
-          product.description.toLowerCase().includes(keyword.toLowerCase()) ||
-          product.category.toLowerCase().includes(keyword.toLowerCase())
-      );
+    //   // Filter products based on keyword
+    //   const filteredProducts = products.filter(
+    //     (product) =>
+    //       product.name.toLowerCase().includes(keyword.toLowerCase()) ||
+    //       product.description.toLowerCase().includes(keyword.toLowerCase()) ||
+    //       product.category.toLowerCase().includes(keyword.toLowerCase())
+    //   );
 
-      if (filteredProducts.length > 0) {
-        return res.status(200).json({
-          message: "Products found in cache",
-          data: filteredProducts,
-        });
-      } else {
-        return res.status(200).json({
-          message: "No products found matching the keyword",
-          data: [],
-        });
-      }
-    } else {
-      //console.log('Cache miss, querying database');
-      const products = await Product.find({
-        $or: [
-          { name: { $regex: keyword, $options: "i" } },
-          { description: { $regex: keyword, $options: "i" } },
-          { category: { $regex: keyword, $options: "i" } },
-        ],
+    //   if (filteredProducts.length > 0) {
+    //     return res.status(200).json({
+    //       message: "Products found in cache",
+    //       data: filteredProducts,
+    //     });
+    //   } else {
+    //     return res.status(200).json({
+    //       message: "No products found matching the keyword",
+    //       data: [],
+    //     });
+    //   }
+    // } else {
+    //console.log('Cache miss, querying database');
+    const products = await Product.find({
+      $or: [
+        { name: { $regex: keyword, $options: "i" } },
+        { description: { $regex: keyword, $options: "i" } },
+        { category: { $regex: keyword, $options: "i" } },
+      ],
+    });
+
+    if (products.length > 0) {
+      // Cache the result for future searches
+      //   await redisClient.set(cacheKey, JSON.stringify(products), "EX", 3600); // Cache for 1 hour
+
+      return res.status(200).json({
+        message: "Products found and cached",
+        data: products,
       });
-
-      if (products.length > 0) {
-        // Cache the result for future searches
-        await redisClient.set(cacheKey, JSON.stringify(products), "EX", 3600); // Cache for 1 hour
-
-        return res.status(200).json({
-          message: "Products found and cached",
-          data: products,
-        });
-      } else {
-        return res.status(200).json({
-          message: "No products found matching the keyword",
-          data: [],
-        });
-      }
+    } else {
+      return res.status(200).json({
+        message: "No products found matching the keyword",
+        data: [],
+      });
     }
   } catch (err) {
     console.error("Error searching for products:", err);
