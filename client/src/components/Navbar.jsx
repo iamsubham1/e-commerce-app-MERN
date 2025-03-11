@@ -161,6 +161,8 @@ const Navbar = () => {
     const handleLogout = () => {
         setIsMobileMenuOpen(!isMobileMenuOpen);
         logout('JWT');
+        localStorage.removeItem('serverReady'); // Remove server readiness flag
+
     };
 
     const toggleMobileMenu = () => {
@@ -171,7 +173,7 @@ const Navbar = () => {
         setIsDropdownOpen(false);
     };
     return (
-        <div className={` w-full h-[7vh] mt-4 flex justify-end navbar border-t-2 border-b-2  border-black ${isNavbarVisible ? 'navbar-visible' : 'navbar-hidden'}`}>
+        <div className={` w-full h-[7vh] mt-4 flex justify-end navbar border-t-2 border-b-2  border-black ${isNavbarVisible ? 'navbar-visible' : 'navbar-hidden'}`} >
             <div className=' flex items-center w-[85%] mr-5 '>
                 <img src={logo} className='w-[60px] hover:cursor-pointer ml-4' alt='Logo' onClick={() => navigate('/')} />
 

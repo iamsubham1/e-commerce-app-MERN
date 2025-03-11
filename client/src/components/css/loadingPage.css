@@ -1,0 +1,109 @@
+/* Container styles */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #000000;
+    color: #fff;
+    font-family: 'Arial', sans-serif;
+    padding: 20px;
+    text-align: center;
+}
+
+/* Headings styles */
+
+
+/* Spinner animation */
+.spinner {
+    border: 12px solid #fdfde7d9;
+    border-top: 12px solid #b593db;
+    border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    animation: spin 1s linear infinite;
+    margin-top: 30px;
+    animation: spin 1s linear infinite, pulse 1.5s infinite;
+}
+
+.text-glow {
+    text-shadow:
+        0 0 500px rgba(255, 255, 255, 0.5),
+        0 0 10px rgba(172, 23, 23, 0.7),
+        0 0 15px rgb(195, 8, 8),
+        0 0 20px rgba(0, 0, 255, 0.8),
+        /* Change to any color you prefer */
+        0 0 30px rgba(0, 0, 255, 0.6),
+        0 0 40px rgba(255, 255, 255, 0.5);
+}
+
+/* Keyframes for the spinner animation */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* Pulse animation to give the spinner a glowing effect */
+@keyframes pulse {
+
+    0%,
+    100% {
+        box-shadow: 0 0 55px rgb(172, 112, 225);
+    }
+
+    50% {
+        box-shadow: 0 0 30px rgb(200, 52, 219);
+    }
+}
+
+/* Fade-in animation for text elements */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 768px) {
+
+
+    .spinner {
+        width: 80px;
+        height: 80px;
+    }
+}
+
+@media (max-width: 480px) {
+
+
+    .spinner {
+        width: 60px;
+        height: 60px;
+    }
+}
+
+/* Fade out animation when loading is complete */
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+
+    to {
+        opacity: 0;
+    }
+}
+
+.fade-out {
+    animation: fadeOut 1s forwards;
+    pointer-events: none;
+}
