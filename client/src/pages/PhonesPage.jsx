@@ -75,7 +75,7 @@ const Phones = () => {
         className="product-image"
       />
       <h3 className="text-lg font-semibold">{product.name}</h3>
-      <p className="text-gray-700">${product.price}</p>
+      <p className="text-gray-700">₹ {product.price}</p>
     </div>
   );
 

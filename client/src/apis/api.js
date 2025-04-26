@@ -300,6 +300,30 @@ export const deleteAddress = async (id) => {
   }
 };
 
+export const updateAddress = async (id, addressData) => {
+  try {
+    const response = await fetch(`${baseUrl}user/updateaddress/${id}`, {
+      method: "PATCH",
+      headers: {
+        "Content-Type": "application/json",
+        JWT: token,
+      },
+      body: JSON.stringify(addressData),
+      credentials: "include", // Include credentials (cookies)
+    });
+
+    if (response.ok) {
+      const data = await response.json();
+      return data;
+    } else {
+      return false;
+    }
+  } catch (error) {
+    console.error("Error updating address:", error);
+    throw new Error(error.message);
+  }
+};
+
 export const fetchOrderDetails = async () => {
   try {
     const response = await fetch(`${baseUrl}order/orderDetails`, {

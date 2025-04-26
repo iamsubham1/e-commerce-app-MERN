@@ -17,25 +17,14 @@
 
 /* Spinner animation */
 .spinner {
-    border: 12px solid #fdfde7d9;
-    border-top: 12px solid #b593db;
+    border: 6px solid #141414d9;
+    border-top: 4px solid #0c8dc0;
     border-radius: 50%;
-    width: 100px;
-    height: 100px;
+    width: 80px;
+    height: 80px;
     animation: spin 1s linear infinite;
     margin-top: 30px;
     animation: spin 1s linear infinite, pulse 1.5s infinite;
-}
-
-.text-glow {
-    text-shadow:
-        0 0 500px rgba(255, 255, 255, 0.5),
-        0 0 10px rgba(172, 23, 23, 0.7),
-        0 0 15px rgb(195, 8, 8),
-        0 0 20px rgba(0, 0, 255, 0.8),
-        /* Change to any color you prefer */
-        0 0 30px rgba(0, 0, 255, 0.6),
-        0 0 40px rgba(255, 255, 255, 0.5);
 }
 
 /* Keyframes for the spinner animation */
@@ -54,11 +43,11 @@
 
     0%,
     100% {
-        box-shadow: 0 0 55px rgb(172, 112, 225);
+        box-shadow: 0 0 55px rgb(64, 52, 116);
     }
 
     50% {
-        box-shadow: 0 0 30px rgb(200, 52, 219);
+        box-shadow: 0 0 30px rgb(120, 48, 129);
     }
 }
 

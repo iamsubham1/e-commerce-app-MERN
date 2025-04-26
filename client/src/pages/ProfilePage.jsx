@@ -1,229 +1,372 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { getUserData } from '../reducers/userSlice';
-import { fetchOrderDetails } from '../apis/api';
+import React, { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { getUserData, updateUserAddress } from "../reducers/userSlice";
+import { fetchOrderDetails } from "../apis/api";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const Profile = () => {
+  const dispatch = useDispatch();
+  const { userData } = useSelector((state) => state.user);
 
-    const dispatch = useDispatch();
-    const { userData } = useSelector(state => state.user);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedData, setEditedData] = useState(userData);
+  const [selectedCategory, setSelectedCategory] = useState("personalInfo");
+  const [editedAddress, setEditedAddress] = useState(null);
+  const [editedAddressIndex, setEditedAddressIndex] = useState(null);
+  const [orders, setOrders] = useState([]);
 
-    const [isEditing, setIsEditing] = useState(false);
-    const [editedData, setEditedData] = useState(userData);
-    const [selectedCategory, setSelectedCategory] = useState('personalInfo');
-    const [editedAddress, setEditedAddress] = useState(null);
-    const [editedAddressIndex, setEditedAddressIndex] = useState(null);
-    const [orders, setOrders] = useState([]);
-
-    const handleEditAddressClick = (address, index) => {
-        setEditedAddress({ ...address });
-        setEditedAddressIndex(index);
-        setIsEditing(true);
+  const handleEditAddressClick = (address, index) => {
+    // Make sure we have all the necessary fields
+    const addressToEdit = {
+      _id: address._id,
+      streetname: address.streetname || "",
+      landmark: address.landmark || "",
+      city: address.city || "",
+      state: address.state || "",
+      pincode: address.pincode || "",
+      type: address.type || "home",
     };
 
-    const handleCancelAddressEdit = () => {
-        setEditedAddress(null);
-        setEditedAddressIndex(null);
-        setIsEditing(false);
+    setEditedAddress(addressToEdit);
+    setEditedAddressIndex(index);
+    setIsEditing(true);
+  };
+
+  const handleCancelAddressEdit = (e) => {
+    if (e) e.preventDefault();
+    setEditedAddress(null);
+    setEditedAddressIndex(null);
+    setIsEditing(false);
+  };
+
+  const handleSaveAddress = (e) => {
+    e.preventDefault();
+
+    if (!editedAddress || !editedAddress._id) {
+      toast.error("Invalid address data");
+      return;
+    }
+
+    // Create a clean address object with only the fields needed by the API
+    const addressData = {
+      streetname: editedAddress.streetname || "",
+      landmark: editedAddress.landmark || "",
+      city: editedAddress.city || "",
+      state: editedAddress.state || "",
+      pincode: editedAddress.pincode || "",
+      type: editedAddress.type || "home",
     };
 
-    const handleSaveAddress = () => {
-        setIsEditing(false);
-    };
+    // Get the address ID from the edited address
+    const addressId = editedAddress._id;
 
-    const handleAddressInputChange = (e) => {
-        const { name, value } = e.target;
-        setEditedAddress(prevAddress => ({
-            ...prevAddress,
-            [name]: value
-        }));
-    };
+    // Debug log
+    console.log("Updating address with ID:", addressId);
+    console.log("Address data being sent:", addressData);
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setEditedData(prevData => ({
-            ...prevData,
-            [name]: value
-        }));
-    };
-
-    const handleEditClick = () => {
-        setIsEditing(true);
-    };
-
-    const handleCancelEdit = () => {
-        setIsEditing(false);
-        setEditedData(userData);
-    };
-
-    const handleSubmit = (e) => {
-        e.preventDefault();
-        //console.log("Edited Data:", editedData);
-        setIsEditing(false);
-    };
-
-
-    useEffect(() => {
-
-        dispatch(getUserData());
-        fetchOrderDetails();
-    }, [dispatch]);
-
-    const renderContent = () => {
-        switch (selectedCategory) {
-            case 'personalInfo':
-                return (
-                    <div className='h-[50vh] overflow-y-scroll'>
-                        <div className='flex justify-between items-baseline'>
-                            <h3 className="text-lg font-bold mb-4">Personal Info</h3>
-                            {!isEditing ? (
-                                <button className="shine-btn text-white rounded mr-5 " onClick={handleEditClick}>Edit</button>
-                            ) : (
-                                <div>
-                                    <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2" onClick={handleSubmit}>Save</button>
-                                    <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" onClick={handleCancelEdit}>Cancel</button>
-                                </div>
-                            )}
-                        </div>
-                        <form onSubmit={handleSubmit}>
-                            <div className="mb-4">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="email">Email:</label>
-                                {!isEditing ? (
-                                    <p className="text-gray-800">{userData.email}</p>
-                                ) : (
-                                    <input type="email" id="email" name="email" value={editedData.email} onChange={handleInputChange} className="w-full border border-gray-300 px-3 py-2 rounded" />
-                                )}
-                            </div>
-                            <div className="mb-4 ">
-                                <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor="phoneNumber">Phone Number:</label>
-                                {!isEditing ? (
-                                    <p className="text-gray-800">{userData.phoneNumber}</p>
-                                ) : (
-                                    <input type="tel" id="phoneNumber" name="phoneNumber" value={editedData.phoneNumber} onChange={handleInputChange} className="w-full border border-gray-300 px-3 py-2 rounded" />
-                                )}
-                            </div>
-                        </form>
-                    </div>
-                );
-            case 'addresses':
-                return (
-                    <div className='max-h-[50vh] h-[50vh] overflow-y-scroll'>
-                        <h3 className="text-lg font-bold mb-2">Addresses</h3>
-                        {userData.address?.length === 0 ? (
-                            <p className="text-gray-800">No addresses yet</p>
-                        ) : (
-                            <div className="flex flex-col gap-3">
-                                {userData.address?.map((address, index) => (
-                                    <div key={index} className="bg-white border border-gray-200 rounded-lg p-4 mr-4">
-                                        {editedAddressIndex === index ? (
-                                            <form onSubmit={handleSaveAddress}>
-                                                <div className="mb-4">
-                                                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`streetname_${index}`}>Street Name:</label>
-                                                    <input type="text" id={`streetname_${index}`} name={`streetname_${index}`} value={editedAddress.streetname} onChange={handleAddressInputChange} className="w-full border border-gray-300 px-3 py-2 rounded" />
-                                                </div>
-                                                <div className="mb-4">
-                                                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`landmark_${index}`}>Landmark:</label>
-                                                    <input type="text" id={`landmark_${index}`} name={`landmark_${index}`} value={editedAddress.landmark} onChange={handleAddressInputChange} className="w-full border border-gray-300 px-3 py-2 rounded" />
-                                                </div>
-                                                <div className="mb-4">
-                                                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`city_${index}`}>City:</label>
-                                                    <input type="text" id={`city_${index}`} name={`city_${index}`} value={editedAddress.city} onChange={handleAddressInputChange} className="w-full border border-gray-300 px-3 py-2 rounded" />
-                                                </div>
-                                                <div className="mb-4">
-                                                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`state_${index}`}>State:</label>
-                                                    <input type="text" id={`state_${index}`} name={`state_${index}`} value={editedAddress.state} onChange={handleAddressInputChange} className="w-full border border-gray-300 px-3 py-2 rounded" />
-                                                </div>
-                                                <div className="mb-4">
-                                                    <label className="block text-gray-700 text-sm font-bold mb-2" htmlFor={`pincode_${index}`}>Pincode:</label>
-                                                    <input type="text" id={`pincode_${index}`} name={`pincode_${index}`} value={editedAddress.pincode} onChange={handleAddressInputChange} className="w-full border border-gray-300 px-3 py-2 rounded" />
-                                                </div>
-                                                <div>
-                                                    <button className="bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded mr-2" type="submit">Save Address</button>
-                                                    <button className="bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded" onClick={handleCancelAddressEdit}>Cancel</button>
-                                                </div>
-                                            </form>
-                                        ) : (
-                                            <>
-                                                <p className="text-gray-800 mb-2"><span className="font-semibold">Street Name:</span> {address.streetname}</p>
-                                                <p className="text-gray-800 mb-2"><span className="font-semibold">Landmark:</span> {address.landmark}</p>
-                                                <p className="text-gray-800 mb-2"><span className="font-semibold">City:</span> {address.city}</p>
-                                                <p className="text-gray-800 mb-2"><span className="font-semibold">State:</span> {address.state}</p>
-                                                <p className="text-gray-800 mb-2"><span className="font-semibold">Pincode:</span> {address.pincode}</p>
-                                                <button className="shine-btn text-white rounded" onClick={() => handleEditAddressClick(address, index)}>Edit Address</button>
-                                            </>
-                                        )}
-
-
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-                );
-            case 'orders':
-                return (
-                    <div className='max-h-[50vh] h-[50vh] grid place-content-center'>
-                        <>
-                            {orders.length >= 1 ? (
-                                orders.map(order => (
-                                    <div key={order._id} className="mb-4">
-                                        <p>Order Placed on: {new Date(order.createdAt).toLocaleString()}</p>
-                                        <ul className="list-disc ml-4">
-                                            {order.products.map(product => (
-                                                <li key={product.productId._id}>
-                                                    <div className="flex items-center">
-                                                        <img src={product.productId.pictures[0]} alt={product.productId.name} className="w-10 h-10 mr-2" />
-                                                        <div>
-                                                            <p>{product.productId.name}</p>
-                                                            <p>${product.productId.price.toFixed(2)}</p>
-                                                        </div>
-                                                    </div>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                ))
-                            ) : (
-                                <p className='text-black text-center'>No previous orders</p>
-                            )}
-                        </>
-                    </div>
-                );
-
-            default:
-                return null;
+    // Dispatch the updateUserAddress action
+    dispatch(updateUserAddress(addressId, addressData))
+      .then((success) => {
+        if (success) {
+          toast.success("Address updated successfully");
+        } else {
+          toast.error("Failed to update address");
         }
+      })
+      .catch((error) => {
+        toast.error("Error updating address");
+        console.error(error);
+      });
+
+    setEditedAddress(null);
+    setEditedAddressIndex(null);
+    setIsEditing(false);
+  };
+
+  const handleAddressInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditedAddress((prevAddress) => ({ ...prevAddress, [name]: value }));
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setEditedData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
+  const handleEditClick = () => setIsEditing(true);
+  const handleCancelEdit = () => {
+    setIsEditing(false);
+    setEditedData(userData);
+  };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setIsEditing(false);
+  };
+
+  useEffect(() => {
+    dispatch(getUserData());
+    const fetchOrders = async () => {
+      const response = await fetchOrderDetails();
+      setOrders(response);
     };
+    fetchOrders();
+  }, [dispatch]);
 
-    return (
-        <div className="max-w-6xl mx-auto px-4 py-8 flex min-h-[100vh]">
-            <div className="mr-8">
-                <div className="mb-4 flex flex-col items-center justify-center h-full">
-                    <button className={`block text-left w-full py-2 px-4 mb-2 ${selectedCategory === 'personalInfo' && 'bg-gray-200'}`} onClick={() => setSelectedCategory('personalInfo')}>Personal Info</button>
-                    <button className={`block text-left w-full py-2 px-4 mb-2 ${selectedCategory === 'addresses' && 'bg-gray-200'}`} onClick={() => setSelectedCategory('addresses')}>Addresses</button>
-                    <button className={`block text-left w-full py-2 px-4 mb-2 ${selectedCategory === 'orders' && 'bg-gray-200'}`} onClick={() => setSelectedCategory('orders')}>Orders</button>
+  const renderContent = () => {
+    switch (selectedCategory) {
+      case "personalInfo":
+        return (
+          <div className="bg-white rounded-lg p-6 shadow-md overflow-y-auto h-[50vh] ">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="text-2xl font-semibold text-gray-800">
+                Personal Information
+              </h3>
+              {!isEditing ? (
+                <button className="shine-btn rounded" onClick={handleEditClick}>
+                  Edit
+                </button>
+              ) : (
+                <div className="flex gap-2">
+                  <button className="shine-btn rounded" onClick={handleSubmit}>
+                    Save
+                  </button>
+                  <button
+                    className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
+                    onClick={handleCancelEdit}
+                  >
+                    Cancel
+                  </button>
                 </div>
+              )}
             </div>
-            <div className="flex-grow">
-                <div className="mb-4 flex flex-col items-center">
-                    {userData && userData.profilePic ? (
-                        <>
-                            <img className="w-24 h-24 rounded-full mb-2" src={userData.profilePic.url} alt={userData.profilePic.name} />
 
-                        </>
-                    ) : <>
-                        <img className="w-24 h-24 rounded-full mb-2" src="https://res.cloudinary.com/dmb0ooxo5/image/upload/v1706984465/ftfdy0ic7ftz2awihjts.jpg" />
+            <form onSubmit={handleSubmit}>
+              <div className="mb-4">
+                <label className="block text-gray-600 text-sm font-semibold mb-2">
+                  Email Address
+                </label>
+                {!isEditing ? (
+                  <p className="text-gray-700">{userData.email}</p>
+                ) : (
+                  <input
+                    type="email"
+                    name="email"
+                    value={editedData.email}
+                    onChange={handleInputChange}
+                    className="w-full border border-gray-300 px-4 py-2 rounded-lg"
+                  />
+                )}
+              </div>
+              <div>
+                <label className="block text-gray-600 text-sm font-semibold mb-2">
+                  Phone Number
+                </label>
+                {!isEditing ? (
+                  <p className="text-gray-700">{userData.phoneNumber}</p>
+                ) : (
+                  <input
+                    type="tel"
+                    name="phoneNumber"
+                    value={editedData.phoneNumber}
+                    onChange={handleInputChange}
+                    className="w-full border border-gray-300 px-4 py-2 rounded-lg"
+                  />
+                )}
+              </div>
+            </form>
+          </div>
+        );
 
-                    </>}
-                    <h2 className="text-2xl font-bold">{userData.name}</h2>
+      case "addresses":
+        return (
+          <div className="bg-white rounded-lg p-6 shadow-md overflow-y-auto h-[50vh]">
+            <h3 className="text-2xl font-semibold text-gray-800 mb-6">
+              My Addresses
+            </h3>
+            {userData.address?.length === 0 ? (
+              <p className="text-gray-600">No addresses added yet.</p>
+            ) : (
+              userData.address.map((address, index) => (
+                <div
+                  key={index}
+                  className="border p-4 rounded-lg mb-4 bg-gray-50"
+                >
+                  {editedAddressIndex === index ? (
+                    <form onSubmit={handleSaveAddress}>
+                      {[
+                        "streetname",
+                        "landmark",
+                        "city",
+                        "state",
+                        "pincode",
+                      ].map((field) => (
+                        <div className="mb-3" key={field}>
+                          <label className="block text-gray-600 mb-1 capitalize">
+                            {field}
+                          </label>
+                          <input
+                            type="text"
+                            name={field}
+                            value={editedAddress?.[field] || ""}
+                            onChange={handleAddressInputChange}
+                            className="w-full border border-gray-300 px-4 py-2 rounded-lg"
+                          />
+                        </div>
+                      ))}
+                      <div className="mb-3">
+                        <label className="block text-gray-600 mb-1 capitalize">
+                          Address Type
+                        </label>
+                        <select
+                          name="type"
+                          value={editedAddress?.type || "home"}
+                          onChange={handleAddressInputChange}
+                          className="w-full border border-gray-300 px-4 py-2 rounded-lg"
+                        >
+                          <option value="home">Home</option>
+                          <option value="work">Work</option>
+                          <option value="other">Other</option>
+                        </select>
+                      </div>
+                      <div className="flex gap-2 mt-4">
+                        <button type="submit" className="shine-btn rounded">
+                          Save
+                        </button>
+                        <button
+                          onClick={handleCancelAddressEdit}
+                          className="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </form>
+                  ) : (
+                    <>
+                      {Object.entries(address)
+                        .filter(
+                          ([key]) => !key.startsWith("_") && key !== "__v"
+                        )
+                        .map(([key, value]) => (
+                          <p key={key} className="text-gray-700">
+                            <span className="font-semibold capitalize">
+                              {key}:
+                            </span>{" "}
+                            {value}
+                          </p>
+                        ))}
+                      <button
+                        className="mt-3 shine-btn rounded"
+                        onClick={() => handleEditAddressClick(address, index)}
+                      >
+                        Edit Address
+                      </button>
+                    </>
+                  )}
                 </div>
-                <div className="border border-gray-300 p-4">
-                    {renderContent()}
+              ))
+            )}
+          </div>
+        );
+
+      case "orders":
+        return (
+          <div className="bg-white rounded-lg p-6 shadow-md overflow-y-auto h-[50vh]">
+            <h3 className="text-2xl font-semibold text-gray-800 mb-6">
+              My Orders
+            </h3>
+            {orders.length > 0 ? (
+              orders.map((order) => (
+                <div key={order._id} className="border p-4 rounded-lg mb-4">
+                  <p className="text-gray-700 mb-2">
+                    Order Placed on:{" "}
+                    {new Date(order.createdAt).toLocaleString()}
+                  </p>
+                  <ul className="ml-4 list-disc">
+                    {order.products.map((product) => (
+                      <li
+                        key={product.productId._id}
+                        className="flex items-center gap-2 mb-2"
+                      >
+                        <img
+                          src={product.productId.pictures[0]}
+                          alt={product.productId.name}
+                          className="w-10 h-10 object-cover rounded"
+                        />
+                        <div>
+                          <p className="text-gray-800">
+                            {product.productId.name}
+                          </p>
+                          <p className="text-gray-600">
+                            ₹ {product.productId.price.toFixed(2)}
+                          </p>
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-            </div>
+              ))
+            ) : (
+              <p className="text-gray-600">No previous orders found.</p>
+            )}
+          </div>
+        );
+
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="flex flex-col lg:flex-row max-w-7xl mx-auto px-6 py-[20vh] gap-8 min-h-[800px]">
+      <ToastContainer position="top-right" autoClose={3000} />
+      {/* Sidebar */}
+      <div className="lg:w-1/4 w-full h-[50vh] ">
+        <div className="bg-white rounded-lg shadow-md p-6 h-full">
+          <div className="flex flex-col items-center">
+            {userData?.profilePic?.url ? (
+              <img
+                src={userData.profilePic.url}
+                alt="Profile"
+                className="w-24 h-24 rounded-full mb-2 object-cover"
+              />
+            ) : (
+              <img
+                src="https://res.cloudinary.com/dmb0ooxo5/image/upload/v1706984465/ftfdy0ic7ftz2awihjts.jpg"
+                alt="Default"
+                className="w-24 h-24 rounded-full mb-2 object-cover"
+              />
+            )}
+            <h2 className="text-xl font-bold text-gray-800">
+              {userData?.name}
+            </h2>
+          </div>
+          <div className="mt-8 flex flex-col gap-4">
+            {["personalInfo", "addresses", "orders"].map((category) => (
+              <button
+                key={category}
+                className={`w-full text-left px-4 py-2 rounded-lg font-semibold ${
+                  selectedCategory === category
+                    ? "shine-btn"
+                    : "hover:bg-gray-100"
+                }`}
+                onClick={() => setSelectedCategory(category)}
+              >
+                {category === "personalInfo"
+                  ? "Personal Info"
+                  : category === "addresses"
+                  ? "Addresses"
+                  : "Orders"}
+              </button>
+            ))}
+          </div>
         </div>
-    );
+      </div>
 
+      {/* Main Content */}
+      <div className="lg:w-3/4 w-full h-full">{renderContent()}</div>
+    </div>
+  );
 };
 
 export default Profile;

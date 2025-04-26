@@ -148,7 +148,7 @@ const ProductPage = () => {
             {product.description}
           </p>
           <p className="text-xl md:text-2xl font-bold text-[#040404] mb-4">
-            ${product.price}
+            ₹ {product.price}
           </p>
 
           {/* Quantity Component */}
