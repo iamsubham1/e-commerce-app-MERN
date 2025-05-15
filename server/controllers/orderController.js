@@ -44,12 +44,10 @@ const addtocart = async (req, res) => {
     }
 
     if (requestedQuantity > product.quantity) {
-      return res
-        .status(400)
-        .json({
-          data: shoppingCart,
-          message: "Requested quantity exceeds available stock",
-        });
+      return res.status(400).json({
+        data: shoppingCart,
+        message: "Requested quantity exceeds available stock",
+      });
     }
 
     const existingItem = shoppingCart.items.find(
@@ -60,12 +58,10 @@ const addtocart = async (req, res) => {
       // If product already exists in the cart, update the quantity
       existingItem.quantity += requestedQuantity;
       if (existingItem.quantity > product.quantity) {
-        return res
-          .status(400)
-          .json({
-            data: shoppingCart,
-            message: "Requested quantity exceeds available stock",
-          });
+        return res.status(400).json({
+          data: shoppingCart,
+          message: "Requested quantity exceeds available stock",
+        });
       }
     } else {
       // If product doesn't exist in the cart, add a new item
@@ -347,10 +343,9 @@ const createOrder = async (req, res) => {
 const orderDetails = async (req, res) => {
   try {
     const userId = req.user._id;
-    const orders = await Order.find({ userId: userId }).populate(
-      "products.productId",
-      "name pictures price"
-    );
+    const orders = await Order.find({ userId: userId })
+      .populate("products.productId", "name pictures price")
+      .sort({ createdAt: -1 });
 
     //console.log(orders, userId);
     if (orders !== null) {

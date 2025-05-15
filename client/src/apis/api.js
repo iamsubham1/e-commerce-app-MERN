@@ -373,6 +373,7 @@ export const placeOnlineOrder = async (
   phoneNumber
 ) => {
   try {
+    amount = Number(amount) + 5 + 10;
     const response = await fetch(`${baseUrl}order/newPayment`, {
       method: "POST",
       headers: {
